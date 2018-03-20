@@ -1,0 +1,25 @@
+@import (reference) './variables.less';
+
+.topnav-layout {
+  position: relative;
+  margin: 0 auto;
+  max-width: @container-width;
+
+  .left {
+    position: absolute;
+    width: @left-width;
+  }
+
+  .right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: @right-width;
+    justify-content: flex-end;
+    display: flex;
+
+    li.ant-menu-item:first-child, li.ant-menu-item:last-child {
+      margin: 0 20px;
+    }
+  }
+}

@@ -1,0 +1,4 @@
+export const FETCH_POSTS = 'FETCH_POSTS';
+export const FETCH_POSTS_ERROR = 'FETCH_POSTS_ERROR';
+export const FETCH_MEDIA = 'FETCH_MEDIA';
+export const FETCH_MEDIA_ERROR = 'FETCH_MEDIA_ERROR';

@@ -1,0 +1,60 @@
+{
+  "name": "review",
+  "version": "1.0.0",
+  "description": "Blockchain based TV and movie review app",
+  "scripts": {
+    "start": "webpack-dev-server --progress --colors --config ./webpack.config.js"
+  },
+  "author": "Jake Rawsthorne",
+  "babel": {
+    "presets": [
+      "env",
+      "react",
+      "stage-2"
+    ]
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.1",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "css-loader": "^0.28.9",
+    "eslint": "^4.19.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-loader": "^1.9.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.6.1",
+    "less": "2.7.2",
+    "less-loader": "^4.0.5",
+    "postcss-flexbugs-fixes": "^3.3.0",
+    "postcss-loader": "^2.1.0",
+    "style-loader": "^0.20.1",
+    "url-loader": "^0.6.2",
+    "webpack-dev-server": "^2.11.1"
+  },
+  "dependencies": {
+    "antd": "^3.3.1",
+    "autoprefixer": "^8.0.0",
+    "lodash": "^4.17.5",
+    "moviedb-promise": "^1.2.1",
+    "prop-types": "^15.6.1",
+    "react": "^16.2.0",
+    "react-autosuggest": "^9.3.4",
+    "react-dom": "^16.2.0",
+    "react-dotdotdot": "^1.2.3",
+    "react-redux": "^5.0.6",
+    "react-router-dom": "^4.2.2",
+    "react-router-redux": "^4.0.8",
+    "redux": "^3.7.2",
+    "redux-devtools-extension": "^2.13.2",
+    "redux-thunk": "^2.2.0",
+    "remarkable": "^1.7.1",
+    "sc2-sdk": "^1.0.2",
+    "steem": "^0.7.1",
+    "webpack": "^3.11.0"
+  }
+}
