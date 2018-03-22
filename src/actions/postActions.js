@@ -1,5 +1,5 @@
-import { FETCH_POSTS, FETCH_POSTS_ERROR, FETCH_MEDIA, FETCH_MEDIA_ERROR } from './types';
-import { getDiscussionsFromAPI, getMediaItem } from '../helpers/apiHelpers';
+import { FETCH_POSTS, FETCH_POSTS_ERROR, FETCH_MEDIA, FETCH_MEDIA_ERROR, FETCH_MEDIA_ITEM, FETCH_MEDIA_ITEM_ERROR, FETCH_MEDIA_ITEM_START } from './types';
+import { getDiscussionsFromAPI, getMediaItem, getMediaItems } from '../helpers/apiHelpers';
 
 const testPosts = [{
   id: 39339798, author: 'berniesanders', permlink: 'dmania-is-bad-for-steem-time-to-take-this-shit-down', category: 'steem', parent_author: '', parent_permlink: 'steem', title: '@dmania is BAD FOR STEEM - rewarding plagiarizers and thieves!', body: "<html>\n<h1>@ned supports @dmaina.</h1>\n<h1>@dmania supports plagiarism and <a href=\"https://steemit.com/dmania/@garudi/stunning-in-its-ugliness-nutella-is-delish-zg1hbmlh-zuui4\">stealing others original work</a>.</h1>\n<h1>Does @ned support plagiarism and stealing others original work?</h1>\n<p><br></p>\n<p>Example: &nbsp;<a href=\"https://steemit.com/dmania/@garudi/yokai-watch-is-where-its-at-zg1hbmlh-cde5r\">$25 reward for a STOLEN image with 0 attribution provided</a><br>\nExample: <a href=\"https://steemit.com/dmania/@garudi/stunning-in-its-ugliness-nutella-is-delish-zg1hbmlh-zuui4\">Stolen Nutella image</a><br>\n<a href=\"https://steemit.com/dmania/@garudi/baby-get-face-mauled-by-viscous-dog-zg1hbmlh-2uae3\">Another example...</a><br>\n<a href=\"http://dmania.lol/post/horpey/cryptocurrency-investors-addict-zg1hbmlh-crt2y\">Here's one too...</a><br>\n<a href=\"http://dmania.lol/post/therockman/why-i-always-carry-a-picture-of-my-family-in-my-wallet-zg1hbmlh-hoa2b\">At least put some effort into it!</a></p>\n<p>If you want more examples, do a Google reverse image search on pretty much any high paying shitmeme <a href=\"http://dmania.lol\">here</a>.</p>\n<p><br></p>\n</html>", json_metadata: '{"review_type":"show","tmdb_id":"1407","tags":["steem","steemit","dmania","theft","review.app"],"users":["ned","dmaina","dmania"],"app":"steemit/0.1","format":"html","links":["https://steemit.com/dmania/@garudi/stunning-in-its-ugliness-nutella-is-delish-zg1hbmlh-zuui4","https://steemit.com/dmania/@garudi/yokai-watch-is-where-its-at-zg1hbmlh-cde5r","https://steemit.com/dmania/@garudi/baby-get-face-mauled-by-viscous-dog-zg1hbmlh-2uae3","http://dmania.lol/post/horpey/cryptocurrency-investors-addict-zg1hbmlh-crt2y","http://dmania.lol/post/therockman/why-i-always-carry-a-picture-of-my-family-in-my-wallet-zg1hbmlh-hoa2b","http://dmania.lol"]}', last_update: '2018-03-19T02:42:39', created: '2018-03-19T01:09:03', active: '2018-03-19T23:35:39', last_payout: '1970-01-01T00:00:00', depth: 0, children: 249, net_rshares: '155191986583465', abs_rshares: '155320528485475', vote_rshares: '155263683650392', children_abs_rshares: '173388126561605', cashout_time: '2018-03-26T01:09:03', max_cashout_time: '1969-12-31T23:59:59', total_vote_weight: 13012520, reward_weight: 10000, total_payout_value: '0.000 SBD', curator_payout_value: '0.000 SBD', author_rewards: 0, net_votes: 788, root_comment: 39339798, max_accepted_payout: '1000000.000 SBD', percent_steem_dollars: 10000, allow_replies: true, allow_votes: true, allow_curation_rewards: true, beneficiaries: [], url: '/steem/@berniesanders/dmania-is-bad-for-steem-time-to-take-this-shit-down', root_title: '@dmania is BAD FOR STEEM - rewarding plagiarizers and thieves!', pending_payout_value: '473.198 SBD', total_pending_payout_value: '0.000 STEEM', replies: [], author_reputation: -47256007567876, promoted: '0.000 SBD', body_length: 1172, reblogged_by: [],
@@ -23,34 +23,13 @@ const testPosts = [{
   id: 7, title: 'Just a test', json_metadata: '{"review_type":"movie","tmdb_id":"374720","tags":["steem","steemit","dmania","theft","review.app"]}',
 }];
 
-const getTmdbIdFromPost = post => JSON.parse(post.json_metadata).tmdb_id;
-const getReviewTypeFromPost = post => JSON.parse(post.json_metadata).review_type;
-const getEpisodeNumberFromPost = post => JSON.parse(post.json_metadata).episode_num;
-const getSeasonNumberFromPost = post => JSON.parse(post.json_metadata).season_num;
-
-export function fetchMediaItems(posts) {
-  return Promise.all(posts.map(post => getMediaItem(getReviewTypeFromPost(post), {
-    id: getTmdbIdFromPost(post),
-    season_number: getSeasonNumberFromPost(post),
-    episode_number: getEpisodeNumberFromPost(post),
-  })));
-}
-
 export const fetchMedia = posts => (dispatch) => {
-  fetchMediaItems(posts)
-    .then((mediaItems) => {
-      const media = [];
-      mediaItems.forEach((item) => {
-        const newItem = item;
-        const index = mediaItems.indexOf(item);
-        newItem.postId = posts[index].id;
-        media.push(newItem);
-      });
+  getMediaItems(posts)
+    .then(mediaItems =>
       dispatch({
         type: FETCH_MEDIA,
-        payload: media,
-      });
-    })
+        payload: mediaItems,
+      }))
     .catch(err => dispatch({
       type: FETCH_MEDIA_ERROR,
       payload: err,
@@ -67,6 +46,24 @@ export const fetchPosts = () => (dispatch) => {
       type: FETCH_POSTS_ERROR,
       payload: err,
     }));
+};
+
+export const fetchMediaItem = (id, reviewType) => (dispatch) => {
+  getMediaItem(reviewType, { id })
+    .then(mediaItem => dispatch({
+      type: FETCH_MEDIA_ITEM,
+      payload: mediaItem,
+    }))
+    .catch(err => dispatch({
+      type: FETCH_MEDIA_ITEM_ERROR,
+      payload: err,
+    }));
+};
+
+export const fetchMediaItemStart = () => (dispatch) => {
+  dispatch({
+    type: FETCH_MEDIA_ITEM_START,
+  });
 };
 
 

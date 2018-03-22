@@ -22,4 +22,11 @@
       margin: 0 20px;
     }
   }
+
+  .center {
+  position: absolute;
+  z-index: 1;
+  width: calc(100% ~'-' (@left-width + @right-width + 4 * @margin));
+      margin-left: @left-width + 2 * @margin;
+}
 }

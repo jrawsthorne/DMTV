@@ -1,9 +1,10 @@
-import { FETCH_MEDIA, FETCH_MEDIA_ERROR } from '../actions/types';
+import { FETCH_MEDIA, FETCH_MEDIA_ERROR, FETCH_MEDIA_ITEM, FETCH_MEDIA_ITEM_ERROR, FETCH_MEDIA_ITEM_START } from '../actions/types';
 
 const initialState = {
   items: [],
   loading: true,
   error: {},
+  itemLoading: false,
 };
 
 export default function (state = initialState, action) {
@@ -19,7 +20,23 @@ export default function (state = initialState, action) {
         ...state,
         loading: false,
         error: { ...state.error, FETCH_MEDIA_ERROR: action.payload.message },
-        items: [],
+      };
+    case FETCH_MEDIA_ITEM_START:
+      return {
+        ...state,
+        itemLoading: true,
+      };
+    case FETCH_MEDIA_ITEM:
+      return {
+        ...state,
+        itemLoading: false,
+        items: [...state.items, action.payload],
+      };
+    case FETCH_MEDIA_ITEM_ERROR:
+      return {
+        ...state,
+        itemLoading: false,
+        error: { ...state.error, FETCH_MEDIA_ITEM_ERROR: action.payload.message },
       };
     default:
       return state;
