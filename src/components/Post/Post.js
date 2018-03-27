@@ -26,11 +26,16 @@ class Post extends React.Component {
       visible: false,
     });
   }
+  slugify = text =>
+    text.toString().toLowerCase()
+      .replace(/\s+/g, '-') // Replace spaces with -
+  ;
   render() {
     const reviewType = getReviewTypeFromPost(this.props.post);
     const { media } = this.props;
+    const title = this.props.media.title ? this.props.media.title : this.props.media.name;
     return (
-      <div id={this.props.post.id}>
+      <div id={this.slugify(title)}>
         <Link to={`/${reviewType}/${media.id}`}>
           <Card
             style={{ width: '100%' }}
@@ -39,7 +44,7 @@ class Post extends React.Component {
           >
             <Meta
               avatar={<Avatar src={`https://steemitimages.com/u/${this.props.post.author}/avatar`} />}
-              title={this.props.media.title || this.props.media.name}
+              title={title}
               description={<Dotdotdot clamp={6}>{this.props.media.overview}</Dotdotdot>}
               style={{ height: '170px', textOverflow: 'ellipsis', overflow: 'hidden' }}
             />

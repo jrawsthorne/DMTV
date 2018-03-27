@@ -1,4 +1,4 @@
-import { FETCH_MEDIA, FETCH_MEDIA_ERROR, FETCH_MEDIA_ITEM, FETCH_MEDIA_ITEM_ERROR, FETCH_MEDIA_ITEM_START } from '../actions/types';
+import { FETCH_MEDIA_END, FETCH_MEDIA_START, FETCH_MEDIA_ERROR, FETCH_MEDIA_ITEM, FETCH_MEDIA_ITEM_ERROR, FETCH_MEDIA_ITEM_START } from '../actions/types';
 
 const initialState = {
   items: [],
@@ -9,11 +9,16 @@ const initialState = {
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case FETCH_MEDIA:
+    case FETCH_MEDIA_START:
+      return {
+        ...state,
+        loading: true,
+      };
+    case FETCH_MEDIA_END:
       return {
         ...state,
         loading: false,
-        items: action.payload,
+        error: {},
       };
     case FETCH_MEDIA_ERROR:
       return {
@@ -31,6 +36,7 @@ export default function (state = initialState, action) {
         ...state,
         itemLoading: false,
         items: [...state.items, action.payload],
+        error: {},
       };
     case FETCH_MEDIA_ITEM_ERROR:
       return {

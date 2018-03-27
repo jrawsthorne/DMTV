@@ -1,97 +1,67 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
-import { connect } from 'react-redux';
-import { Card, Icon, Avatar, Spin } from 'antd';
-import Dotdotdot from 'react-dotdotdot';
-import { fetchMediaItem, fetchMediaItemStart } from '../../actions/postActions';
-
+// import Dotdotdot from 'react-dotdotdot';
+import { Link } from 'react-router-dom';
+import './Media.less';
 import noImageFound from '../../images/no-image-found.jpg';
+import PostsContainer from '../../containers/PostsContainer';
 
-const loadingIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
+// const loadingIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 
-const { Meta } = Card;
 
 class Media extends React.Component {
   static propTypes = {
-    fetchMediaItem: PropTypes.func.isRequired,
-    fetchMediaItemStart: PropTypes.func.isRequired,
-    mediaItems: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
-    mediaLoading: PropTypes.bool.isRequired,
-    mediaError: PropTypes.shape().isRequired,
-    match: PropTypes.shape().isRequired,
+    mediaItem: PropTypes.shape().isRequired,
   };
   state = {
-    mediaItem: {},
-    avatarImageLoaded: false,
-    mediaImageLoaded: false,
+    posterLoaded: false,
   }
-  componentDidMount() {
-    if (!this.props.mediaItems.find(mediaItem =>
-      mediaItem.id === parseInt(this.props.match.params.id, 10))) {
-      this.props.fetchMediaItemStart();
-      this.props.fetchMediaItem(this.props.match.params.id, this.props.match.params.reviewType);
-    } else {
-      this.setState({
-        mediaItem: this.props.mediaItems.find(mediaItem =>
-          mediaItem.id === parseInt(this.props.match.params.id, 10)),
-      });
-    }
-  }
-  componentWillReceiveProps(nextProps) {
+  handlePosterLoaded = () => {
     this.setState({
-      mediaItem: nextProps.mediaItems.find(mediaItem =>
-        mediaItem.id === parseInt(this.props.match.params.id, 10)),
-    });
-  }
-  handleMediaImageLoaded = () => {
-    this.setState({
-      mediaImageLoaded: true,
-    });
-  }
-  handleAvatarImageLoaded = () => {
-    this.setState({
-      avatarImageLoaded: true,
+      posterLoaded: true,
     });
   }
   render() {
     const {
-      mediaError, mediaLoading,
+      mediaItem,
     } = this.props;
-    const { mediaItem, mediaImageLoaded, avatarImageLoaded } = this.state;
+    const { posterLoaded } = this.state;
+    const episodeInfo = mediaItem.mediaType === 'episode' && mediaItem && mediaItem[`season/${mediaItem.seasonNum}/episode/${mediaItem.episodeNum}`];
+    const backdropPath = mediaItem.backdrop_path && `https://image.tmdb.org/t/p/original${mediaItem.backdrop_path}`;
+    const title = (episodeInfo.name && episodeInfo.season_number && episodeInfo.episode_number && (`${episodeInfo.name} S${episodeInfo.season_number} E${episodeInfo.episode_number}`)) || (mediaItem.title && mediaItem.title) || (mediaItem.name && mediaItem.name);
+    const overview = (episodeInfo.overview && episodeInfo.overview) || (!episodeInfo && mediaItem.overview && mediaItem.overview) || "Sorry, we don't have an overview for this item";
+    const poster = (mediaItem.poster_path && `https://image.tmdb.org/t/p/w200${mediaItem.poster_path}`) || noImageFound
+    || (mediaItem.overview && mediaItem.overview);
+    const category = `tmdbid-${mediaItem.id}`;
     return (
-      <div>
-        {!_.isEmpty(mediaError.FETCH_MEDIA_ERROR) && <p>{mediaError.FETCH_MEDIA_ERROR}</p>}
-        {_.isEmpty(mediaError.FETCH_MEDIA_ERROR)
-          && !mediaLoading
-          && !_.isEmpty(mediaItem)
-          &&
-          <div id={mediaItem.id}>
-            <Card
-              style={{ width: '100%' }}
-              cover={<img onLoad={this.handleMediaImageLoaded} alt="example" src={(mediaItem.poster_path && `https://image.tmdb.org/t/p/w300${mediaItem.poster_path}`) || (mediaItem.still_path && `https://image.tmdb.org/t/p/w300${mediaItem.still_path}`) || noImageFound} />}
-              actions={mediaImageLoaded && ([<Icon type="setting" />, <Icon type="edit" />, <Icon type="ellipsis" />])}
-              onClick={this.handleClick}
-            >
-              <Meta
-                avatar={mediaImageLoaded && <Avatar onLoad={this.handleAvatarImageLoaded} src="https://steemitimages.com/u/jrawsthorne/avatar" />}
-                title={!avatarImageLoaded ? <Spin indicator={loadingIcon} />
-                  : (mediaItem.title || mediaItem.name)}
-                description={avatarImageLoaded &&
-                  <Dotdotdot clamp={6}>{mediaItem.overview}</Dotdotdot>}
-                style={{ height: '170px', textOverflow: 'ellipsis', overflow: 'hidden' }}
-              />
-            </Card>
-          </div>}
+      <div id={mediaItem.id} className="MediaItem">
+        <div
+          className="MediaItem__background"
+          style={{ background: `linear-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.8)),url(${backdropPath})` }}
+        >
+          <div className="MediaHeader">
+            <div className="MediaHeader__poster"><img onLoad={this.handlePosterLoaded} alt="poster" src={poster} /></div>
+            {posterLoaded &&
+            <div className="MediaHeader__info">
+              <div className="MediaHeader__info__title">
+                {title}
+              </div>
+              <div className="MediaHeader__info__overview">{overview}</div>
+              {episodeInfo.season_number && episodeInfo.episode_number && (
+                <div className="MediaHeader__link">
+                  <Link to={`/show/${mediaItem.id}`}>Go to show</Link>
+                </div>
+              )}
+            </div>
+          }
+          </div>
+        </div>
+        <div style={{ padding: 24 }}>
+          <PostsContainer category={category} />
+        </div>
       </div>
     );
   }
 }
 
-const mapStateToProps = state => ({
-  mediaItems: state.media.items,
-  mediaLoading: state.media.itemLoading,
-  mediaError: state.media.error,
-});
-
-export default connect(mapStateToProps, { fetchMediaItem, fetchMediaItemStart })(Media);
+export default Media;

@@ -7,10 +7,10 @@ import Topnav from './components/Navigation/Topnav';
 const Wrapper = props => (
   <Layout>
     <Layout.Header style={{ position: 'fixed', width: '100%', zIndex: 1050 }}>
-      <Topnav />
+      <Topnav history={props.history} />
     </Layout.Header>
     <Layout.Content style={{
-     margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280,
+     background: '#fff', minHeight: 280,
    }}
     >
       {renderRoutes(props.route.routes)}
@@ -19,6 +19,7 @@ const Wrapper = props => (
 
 Wrapper.propTypes = {
   route: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
 };
 
 export default Wrapper;

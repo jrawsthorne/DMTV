@@ -1,0 +1,40 @@
+.MediaHeader {
+  display: flex;
+  margin: 0 auto;
+  max-width: 1011px;
+  padding: 30px 0;
+  align-items: flex-start;
+  flex-direction: row;
+  &__poster {
+    margin-right: 30px;
+    img {
+      width: 200px;
+      height: 300px;
+    }
+  }
+  &__info {
+    color: white!important;
+    display: flex;
+    flex-direction: column;
+    &__title {
+      font-size: 2em;
+    }
+  }
+  &__link {
+    margin-top: 10px;
+    a {
+      color: white;
+      text-decoration: underline;
+    }
+  }
+}
+
+.MediaItem {
+  &__background {
+    background-size: cover!important;
+    background-position: 50% 50%!important;
+    background-repeat: no-repeat!important;
+    height: 360px;
+    width: 100%;
+  }
+}

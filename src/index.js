@@ -1,31 +1,40 @@
 import React from 'react';
-import { render } from 'react-dom';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-// import { Layout } from 'antd';
-// import createBrowserHistory from 'history/createBrowserHistory';
-// import { history } from './history';
-import store from './store';
+import { createStore, applyMiddleware } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import { Switch } from 'react-router-dom';
+import { renderRoutes } from 'react-router-config';
+import createHistory from 'history/createBrowserHistory';
+import thunk from 'redux-thunk';
+import { ConnectedRouter } from 'react-router-redux';
+import theMovieDBAPI from './apis/theMovieDBAPI';
+import steemAPI from './apis/steemAPI';
+import rootReducer from './reducers';
 import './styles/base.less';
-import registerServiceWorker from './registerServiceWorker';
 
-// import Topnav from './components/Navigation/Topnav';
-// import MediaPage from './components/pages/MediaPage';
-import HomePage from './components/pages/HomePage';
-import Media from './components/Media/Media';
+import routes from './common/routes';
 
-// const history = createBrowserHistory();
+const initialState = {};
+const history = createHistory();
+const middleware = [
+  thunk.withExtraArgument({
+    theMovieDBAPI,
+    steemAPI,
+  }),
+];
 
-render(
+const store = createStore(
+  rootReducer,
+  initialState,
+  composeWithDevTools(applyMiddleware(...middleware)),
+);
+
+ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route path="/:reviewType/:id" component={Media} />
-      </Switch>
-    </BrowserRouter>
+    <ConnectedRouter history={history}>
+      <Switch>{renderRoutes(routes)}</Switch>
+    </ConnectedRouter>
   </Provider>
   , document.getElementById('root'),
 );
-
-registerServiceWorker();

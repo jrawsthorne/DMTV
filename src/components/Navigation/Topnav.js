@@ -23,6 +23,13 @@ class Topnav extends React.Component {
     };
   }
 
+  componentWillReceiveProps() {
+    this.setState({
+      suggestions: [],
+      searchBarValue: '',
+    });
+  }
+
   hideAutoCompleteDropdown = () => {
     this.setState({
       suggestions: [],
@@ -56,7 +63,7 @@ class Topnav extends React.Component {
             if (mediaItem.media_type === 'tv') { temp.media_type = 'show'; }
             const date = mediaItem.release_date ?
               mediaItem.release_date : mediaItem.first_air_date;
-            temp.year = new Date(date).getFullYear();
+            temp.year = date && new Date(date).getFullYear();
             return temp;
           });
           this.setState({
@@ -67,16 +74,17 @@ class Topnav extends React.Component {
     } else {
       this.setState({
         suggestions: [],
+        searchBarValue: '',
       });
     }
   }
 
-  handleSelectOnAutoCompleteDropdown = (value) => {
+  handleSelectOnAutoCompleteDropdown = (value, option) => {
     this.setState({
       suggestions: [],
       searchBarValue: '',
     });
-    this.props.history.push(value);
+    this.props.history.push(option.props.url);
   }
 
   hideAutoCompleteDropdown = () => {
@@ -96,9 +104,9 @@ class Topnav extends React.Component {
     const { suggestions, searchBarValue } = this.state;
 
     const dropdownOptions = _.map(suggestions, option => (
-      <AutoComplete.Option key={`option-${option.id}`} value={`/${option.media_type}/${option.id}`} className="Topnav__search-autocomplete">
+      <AutoComplete.Option key="HEllo" url={`/${option.media_type}/${option.id}`} value={`${option.id}`} className="Topnav__search-autocomplete">
         <img alt="result" width="45px" src={option.img == null ? noImageFound : `https://image.tmdb.org/t/p/w45/${option.img}`} />
-        {option.title} ({option.year})
+        {option.title} {option.year && `(${option.year})`}
       </AutoComplete.Option>
     ));
 
