@@ -1,20 +1,6 @@
 import theMovieDBAPI from '../apis/theMovieDBAPI';
 import steemAPI from '../apis/steemAPI';
 
-export const getDiscussionsByTrending = query =>
-  new Promise((resolve, reject) => {
-    steemAPI.getDiscussionsByTrending(query, (err, result) => {
-      const posts = [];
-      result.forEach((post) => {
-        if (JSON.parse(post.json_metadata).tags.find(tag => tag.includes('-review'))) {
-          posts.push(post);
-        }
-      });
-      if (err !== null) return reject(Error(err));
-      return resolve(posts);
-    });
-  });
-
 export const getDiscussionsFromAPI = (sortBy, query) =>
   new Promise((resolve, reject) => {
     switch (sortBy) {
@@ -22,11 +8,13 @@ export const getDiscussionsFromAPI = (sortBy, query) =>
         return new Promise(() => {
           steemAPI.getDiscussionsByTrending(query, (err, result) => {
             const posts = [];
-            result.forEach((post) => {
-              if (JSON.parse(post.json_metadata).tags.find(tag => tag.includes('-review'))) {
-                posts.push(post);
-              }
-            });
+            if (result) {
+              result.forEach((post) => {
+                if (JSON.parse(post.json_metadata).tags.find(tag => tag.includes('-review'))) {
+                  posts.push(post);
+                }
+              });
+            }
             if (err !== null) return reject(Error(err));
             return resolve(posts);
           });
@@ -35,11 +23,13 @@ export const getDiscussionsFromAPI = (sortBy, query) =>
         return new Promise(() => {
           steemAPI.getDiscussionsByCreated(query, (err, result) => {
             const posts = [];
-            result.forEach((post) => {
-              if (JSON.parse(post.json_metadata).tags.find(tag => tag.includes('-review'))) {
-                posts.push(post);
-              }
-            });
+            if (result) {
+              result.forEach((post) => {
+                if (JSON.parse(post.json_metadata).tags.find(tag => tag.includes('-review'))) {
+                  posts.push(post);
+                }
+              });
+            }
             if (err !== null) return reject(Error(err));
             return resolve(posts);
           });
@@ -48,11 +38,13 @@ export const getDiscussionsFromAPI = (sortBy, query) =>
         return new Promise(() => {
           steemAPI.getDiscussionsByHot(query, (err, result) => {
             const posts = [];
-            result.forEach((post) => {
-              if (JSON.parse(post.json_metadata).tags.find(tag => tag.includes('-review'))) {
-                posts.push(post);
-              }
-            });
+            if (result) {
+              result.forEach((post) => {
+                if (JSON.parse(post.json_metadata).tags.find(tag => tag.includes('-review'))) {
+                  posts.push(post);
+                }
+              });
+            }
             if (err !== null) return reject(Error(err));
             return resolve(posts);
           });
@@ -61,11 +53,13 @@ export const getDiscussionsFromAPI = (sortBy, query) =>
         return new Promise(() => {
           steemAPI.getDiscussionsByPromoted(query, (err, result) => {
             const posts = [];
-            result.forEach((post) => {
-              if (JSON.parse(post.json_metadata).tags.find(tag => tag.includes('-review'))) {
-                posts.push(post);
-              }
-            });
+            if (result) {
+              result.forEach((post) => {
+                if (JSON.parse(post.json_metadata).tags.find(tag => tag.includes('-review'))) {
+                  posts.push(post);
+                }
+              });
+            }
             if (err !== null) return reject(Error(err));
             return resolve(posts);
           });

@@ -37,8 +37,6 @@ class PostsContainer extends React.Component {
             && <Spin indicator={loadingIcon} />}
         </h1>
         <div className="posts">
-          {!_.isEmpty(postsError.FETCH_POSTS_ERROR) && <p>{postsError.FETCH_POSTS_ERROR}</p>}
-          {!_.isEmpty(mediaError.FETCH_MEDIA_ERROR) && <p>{mediaError.FETCH_MEDIA_ERROR}</p>}
           {!postsLoading
           && !mediaLoading
           && _.isEmpty(posts) && <p>No posts</p>}

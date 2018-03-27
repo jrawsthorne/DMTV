@@ -2,7 +2,7 @@ import { FETCH_MEDIA_END, FETCH_MEDIA_START, FETCH_MEDIA_ERROR, FETCH_MEDIA_ITEM
 
 const initialState = {
   items: [],
-  loading: true,
+  loading: false,
   error: {},
   itemLoading: false,
 };
