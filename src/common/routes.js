@@ -1,7 +1,10 @@
 import Wrapper from '../Wrapper';
 import HomePage from '../components/pages/HomePage';
-import MediaPage from '../components/pages/MediaPage';
 import Error404Page from '../components/pages/Error404Page';
+import ShowPage from '../components/pages/ShowPage';
+import MoviePage from '../components/pages/MoviePage';
+import EpisodePage from '../components/pages/EpisodePage';
+import SeasonPage from '../components/pages/SeasonPage';
 
 const routes = [
   {
@@ -13,14 +16,24 @@ const routes = [
         component: HomePage,
       },
       {
-        path: '/:reviewType/:id',
+        path: '/show/:id',
         exact: true,
-        component: MediaPage,
+        component: ShowPage,
       },
       {
-        path: '/:reviewType/:id/:seasonNum/:episodeNum',
+        path: '/movie/:id/',
         exact: true,
-        component: MediaPage,
+        component: MoviePage,
+      },
+      {
+        path: '/show/:id/:seasonNum/:episodeNum',
+        exact: true,
+        component: EpisodePage,
+      },
+      {
+        path: '/show/:id/:seasonNum',
+        exact: true,
+        component: SeasonPage,
       },
       {
         path: '*',
