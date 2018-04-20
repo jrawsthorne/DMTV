@@ -1,16 +1,8 @@
 import _ from 'lodash';
 
 const initialState = {
-  items: {
-    episodes: {},
-    movies: {},
-    shows: {},
-  },
-  itemStates: {
-    episodes: {},
-    movies: {},
-    shows: {},
-  },
+  items: {},
+  itemStates: {},
   loaded: false,
   failed: false,
   fetching: false,
@@ -25,7 +17,7 @@ export default function (state = initialState, action) {
         itemStates: {
           ...state.itemStates,
           [action.meta.type]: {
-            ...state.itemStates[action.meta.type],
+            ..._.get(state, `itemStates[${action.meta.type}]`),
             [action.meta.id]: {
               loaded: false,
               failed: false,
@@ -41,14 +33,14 @@ export default function (state = initialState, action) {
         items: {
           ...state.items,
           [action.meta.type]: {
-            ...state.items[action.meta.type],
+            ..._.get(state, `items[${action.meta.type}]`),
             [action.meta.id]: action.payload,
           },
         },
         itemStates: {
           ...state.itemStates,
           [action.meta.type]: {
-            ...state.itemStates[action.meta.type],
+            ..._.get(state, `itemStates[${action.meta.type}]`),
             [action.meta.id]: {
               loaded: true,
               failed: false,
@@ -64,7 +56,7 @@ export default function (state = initialState, action) {
         itemStates: {
           ...state.itemStates,
           [action.meta.type]: {
-            ...state.itemStates[action.meta.type],
+            ..._.get(state, `itemStates[${action.meta.type}]`),
             [action.meta.id]: {
               loaded: true,
               failed: true,
@@ -79,9 +71,9 @@ export default function (state = initialState, action) {
         itemStates: {
           ...state.itemStates,
           shows: {
-            ...state.itemStates.shows,
+            ..._.get(state, 'itemStates.shows'),
             [action.meta.id]: {
-              ...state.itemStates.shows[action.meta.id],
+              ..._.get(state, `itemStates.shows[${action.meta.id}]`),
               seasons: {
                 ..._.get(state, `itemStates.shows[${action.meta.id}].seasons`),
                 [action.meta.seasonNum]: {
@@ -100,13 +92,13 @@ export default function (state = initialState, action) {
         items: {
           ...state.items,
           shows: {
-            ...state.items.shows,
+            ..._.get(state, 'items.shows'),
             [action.meta.id]: {
-              ...state.items.shows[action.meta.id],
+              ..._.get(state, `items.shows[${action.meta.id}]`),
               seasons: {
-                ...state.items.shows[action.meta.id].seasons,
+                ..._.get(state, `items.shows[${action.meta.id}].seasons`),
                 [action.meta.seasonNum]: {
-                  ...state.items.shows[action.meta.id].seasons[action.meta.seasonNum],
+                  ..._.get(state, `items.shows[${action.meta.id}].seasons[${action.meta.seasonNum}]`),
                   episodes: action.payload,
                 },
               },
@@ -116,9 +108,9 @@ export default function (state = initialState, action) {
         itemStates: {
           ...state.itemStates,
           shows: {
-            ...state.itemStates.shows,
+            ..._.get(state, 'itemStates.shows'),
             [action.meta.id]: {
-              ...state.itemStates.shows[action.meta.id],
+              ..._.get(state, `itemStates.shows[${action.meta.id}]`),
               seasons: {
                 ..._.get(state, `itemStates.shows[${action.meta.id}].seasons`),
                 [action.meta.seasonNum]: {
@@ -137,9 +129,9 @@ export default function (state = initialState, action) {
         itemStates: {
           ...state.itemStates,
           shows: {
-            ...state.itemStates.shows,
+            ..._.get(state, 'itemStates.shows'),
             [action.meta.id]: {
-              ...state.itemStates.shows[action.meta.id],
+              ..._.get(state, `itemStates.shows[${action.meta.id}]`),
               seasons: {
                 ..._.get(state, `itemStates.shows[${action.meta.id}].seasons`),
                 [action.meta.seasonNum]: {
@@ -158,9 +150,9 @@ export default function (state = initialState, action) {
         itemStates: {
           ...state.itemStates,
           shows: {
-            ...state.itemStates.shows,
+            ..._.get(state, 'itemStates.shows'),
             [action.meta.id]: {
-              ...state.itemStates.shows[action.meta.id],
+              ..._.get(state, `itemStates.shows[${action.meta.id}]`),
               loaded: true,
               failed: true,
               fetching: false,
@@ -182,16 +174,16 @@ export default function (state = initialState, action) {
         items: {
           ...state.items,
           shows: {
-            ...state.items.shows,
+            ..._.get(state, 'items.shows'),
             [action.meta.id]: action.payload,
           },
         },
         itemStates: {
           ...state.itemStates,
           shows: {
-            ...state.itemStates.shows,
+            ..._.get(state, 'itemStates.shows'),
             [action.meta.id]: {
-              ...state.itemStates.shows[action.meta.id],
+              ..._.get(state, `itemStates.shows[${action.meta.id}]`),
               loaded: true,
               failed: false,
               fetching: false,
