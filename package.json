@@ -1,6 +1,6 @@
 {
   "name": "review",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Blockchain based TV and movie review app",
   "scripts": {
     "start": "webpack-dev-server --progress --colors --config ./webpack.config.js",
@@ -46,12 +46,9 @@
     "history": "^4.7.2",
     "lodash": "^4.17.5",
     "moviedb-promise": "^1.2.1",
-    "node-vibrant": "^3.0.0",
     "prop-types": "^15.6.1",
     "react": "^16.2.0",
-    "react-autosuggest": "^9.3.4",
     "react-dom": "^16.2.0",
-    "react-dotdotdot": "^1.2.3",
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",
     "react-router-config": "^1.0.0-beta.4",
@@ -61,7 +58,6 @@
     "redux-devtools-extension": "^2.13.2",
     "redux-promise-middleware": "^5.0.0",
     "redux-thunk": "^2.2.0",
-    "remarkable": "^1.7.1",
     "sc2-sdk": "^1.0.2",
     "steem": "^0.7.1",
     "webpack": "^3.11.0"
