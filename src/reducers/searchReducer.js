@@ -3,7 +3,6 @@ const initialState = {
   loaded: false,
   failed: false,
   fetching: false,
-  searchBarValue: '',
 };
 
 export default function (state = initialState, action) {

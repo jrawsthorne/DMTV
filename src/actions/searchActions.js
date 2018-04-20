@@ -1,8 +1,8 @@
-import { getMediaItem } from '../helpers/apiHelpers';
+import theMovieDBAPI from '../apis/theMovieDBAPI';
 
 export const search = q => ({
   type: 'SEARCH',
-  payload: getMediaItem('search', { q })
+  payload: q ? theMovieDBAPI.searchMulti({ query: q })
     .then(response => response.results)
     .then(data =>
       data.filter(item => item.media_type !== 'person').map((mediaItem) => {
@@ -17,19 +17,10 @@ export const search = q => ({
           mediaItem.release_date : mediaItem.first_air_date;
         temp.year = date && new Date(date).getFullYear();
         return temp;
-      })),
+      })) : new Promise(resolve => resolve([])),
   meta: {
     globalError: 'Sorry, search failed',
   },
-});
-
-export const clearResults = () => ({
-  type: 'CLEAR_RESULTS',
-});
-
-export const setSearchBar = value => ({
-  type: 'SET_SEARCH_BAR',
-  payload: value,
 });
 
 export default search;

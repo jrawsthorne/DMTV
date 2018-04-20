@@ -1,9 +1,9 @@
-import { getMediaItem } from '../helpers/apiHelpers';
 import { arrayToObject } from '../helpers/mediaHelpers';
+import theMovieDBAPI from '../apis/theMovieDBAPI';
 
 export const fetchMovie = id => ({
   type: 'FETCH_MOVIE',
-  payload: getMediaItem('movie', { id })
+  payload: theMovieDBAPI.movieInfo(id)
     .then(movie => ({
       id: movie.id,
       poster_path: movie.poster_path,
@@ -21,7 +21,7 @@ export const fetchMovie = id => ({
 
 export const fetchShow = id => ({
   type: 'FETCH_SHOW',
-  payload: getMediaItem('show', { id })
+  payload: theMovieDBAPI.tvInfo(id)
     .then((show) => {
       const seasons = arrayToObject(show.seasons, 'season_number');
       return {
@@ -43,7 +43,7 @@ export const fetchShow = id => ({
 
 export const fetchSeason = (id, seasonNum) => ({
   type: 'FETCH_SEASON',
-  payload: getMediaItem('season', { id, seasonNum })
+  payload: theMovieDBAPI.tvSeasonInfo({ id, season_number: seasonNum })
     .then(season => arrayToObject(season.episodes, 'episode_number')),
   meta: {
     globalError: "Sorry, we couln't find that season",
@@ -54,7 +54,15 @@ export const fetchSeason = (id, seasonNum) => ({
 
 export const fetchSeasonAndShow = (id, seasonNum) => ({
   type: 'FETCH_SHOW_AND_SEASON',
-  payload: getMediaItem('seasonshow', { id, seasonNum })
+  payload: new Promise((resolve, reject) => theMovieDBAPI.tvInfo({
+    id,
+    append_to_response: `season/${seasonNum}`,
+  }).then((response) => {
+    if (response[`season/${seasonNum}`]) {
+      return resolve(response);
+    }
+    return reject(Error('Show or season not found'));
+  }))
     .then((show) => {
       const seasons = arrayToObject(show.seasons, 'season_number');
       seasons[seasonNum].episodes = arrayToObject(show[`season/${seasonNum}`].episodes, 'episode_number');
