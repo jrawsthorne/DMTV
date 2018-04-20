@@ -1,97 +1,41 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Menu, AutoComplete, Input, Icon, Layout } from 'antd';
+import { Menu, AutoComplete, Input, Icon, Layout, Spin } from 'antd';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import _ from 'lodash';
+import { search } from '../../actions/searchActions';
 
-// import SearchBar from '../SearchBar/SearchBar';
 import noImageFound from '../../images/no-image-found.jpg';
 
 import SteemConnect from '../../apis/steemConnectAPI';
-
 import './Topnav.less';
+
+const LoadingIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 
 class Topnav extends React.Component {
   static propTypes = {
     history: PropTypes.shape().isRequired,
+    search: PropTypes.func.isRequired,
+    searchResults: PropTypes.arrayOf(PropTypes.object).isRequired,
+    fetching: PropTypes.bool.isRequired,
   }
+
   constructor(props) {
     super(props);
     this.state = {
-      suggestions: [],
       searchBarValue: '',
     };
   }
 
-  componentWillReceiveProps() {
-    this.setState({
-      suggestions: [],
-      searchBarValue: '',
-    });
-  }
-
-  hideAutoCompleteDropdown = () => {
-    this.setState({
-      suggestions: [],
-    });
-  }
-
-  handleSearchForInput = () => {
-    this.hideAutoCompleteDropdown();
-    this.setState({
-      suggestions: [],
-      searchBarValue: '',
-    });
-  }
+  debouncedSearch = _.debounce(q => this.props.search(q), 300);
 
   handleAutoCompleteSearch = (value) => {
-    const trimmedValue = value.trim();
-
-    if (trimmedValue.length > 0) {
-      const url = `https://api.themoviedb.org/3/search/multi?query=${trimmedValue}&api_key=2e0e3a384f4b2319fbe441f5da30407f`;
-      fetch(url)
-        .then(response => response.json())
-        .then(json => json.results)
-        .then((data) => {
-          const results = data.filter(item => item.media_type !== 'person').map((mediaItem) => {
-            const temp = {};
-            temp.id = mediaItem.id;
-            if (mediaItem.title) { temp.title = mediaItem.title; }
-            if (mediaItem.name) { temp.title = mediaItem.name; }
-            temp.img = mediaItem.poster_path;
-            temp.media_type = mediaItem.media_type;
-            if (mediaItem.media_type === 'tv') { temp.media_type = 'show'; }
-            const date = mediaItem.release_date ?
-              mediaItem.release_date : mediaItem.first_air_date;
-            temp.year = date && new Date(date).getFullYear();
-            return temp;
-          });
-          this.setState({
-            suggestions: results,
-          });
-        })
-        .catch(error => new Error(error));
-    } else {
-      this.setState({
-        suggestions: [],
-        searchBarValue: '',
-      });
-    }
+    this.debouncedSearch(value.trim());
   }
 
   handleSelectOnAutoCompleteDropdown = (value, option) => {
-    this.setState({
-      suggestions: [],
-      searchBarValue: '',
-    });
     this.props.history.push(option.props.url);
-  }
-
-  hideAutoCompleteDropdown = () => {
-    this.setState({
-      suggestions: [],
-      searchBarValue: '',
-    });
   }
 
   handleOnChangeForAutoComplete = (value) => {
@@ -101,11 +45,14 @@ class Topnav extends React.Component {
   }
 
   render() {
-    const { suggestions, searchBarValue } = this.state;
+    const { searchBarValue } = this.state;
+    const {
+      searchResults, fetching,
+    } = this.props;
 
-    const dropdownOptions = _.map(suggestions, option => (
-      <AutoComplete.Option key="HEllo" url={`/${option.media_type}/${option.id}`} value={`${option.id}`} className="Topnav__search-autocomplete">
-        <img alt="result" width="45px" src={option.img == null ? noImageFound : `https://image.tmdb.org/t/p/w45/${option.img}`} />
+    const dropdownOptions = _.map(searchResults, option => (
+      <AutoComplete.Option key={`${option.id}`} title={option.title} url={`/${option.media_type}/${option.id}`} className="Topnav__search-autocomplete">
+        <img alt="result" width="45px" src={option.img == null ? noImageFound : `https://image.tmdb.org/t/p/w45${option.img}`} />
         {option.title} {option.year && `(${option.year})`}
       </AutoComplete.Option>
     ));
@@ -118,7 +65,7 @@ class Topnav extends React.Component {
               <Link className="Topnav__logo" to="/">
                   Review
               </Link>
-              <span className="Topnav__version">0.0.1</span>
+              <span className="Topnav__version">0.1.0</span>
             </div>
             <div className="center">
               <div className="Topnav__input-container">
@@ -130,18 +77,15 @@ class Topnav extends React.Component {
                   onSelect={this.handleSelectOnAutoCompleteDropdown}
                   defaultActiveFirstOption={false}
                   dropdownMatchSelectWidth={false}
-                  optionLabelProp="value"
                   value={searchBarValue}
+                  autoFocus
+                  optionLabelProp="title"
                 >
                   <Input
-                    ref={(ref) => {
-                    this.searchInputRef = ref;
-                  }}
-                    onPressEnter={this.handleSearchForInput}
                     placeholder="What are you looking for?"
                     autoCapitalize="off"
                     autoCorrect="off"
-                    suffix={<Icon type="search" className="certain-category-icon" />}
+                    suffix={fetching ? <Spin indicator={LoadingIcon} /> : <Icon type="search" className="certain-category-icon" />}
                   />
                 </AutoComplete>
                 <i className="iconfont icon-search" />
@@ -151,17 +95,11 @@ class Topnav extends React.Component {
               <div className="Topnav__menu-container">
                 <Menu className="Topnav__menu-container__menu" mode="horizontal">
                   <Menu.Item key="signup">
-                    <a target="_blank" rel="noopener noreferrer" href="https://signup.steemit.com/">
-                          Sign up
-                    </a>
+                    <a target="_blank" rel="noopener noreferrer" href="https://signup.steemit.com/">Sign up</a>
                   </Menu.Item>
-                  <Menu.Item key="divider" disabled>
-                      |
-                  </Menu.Item>
+                  <Menu.Item key="divider" disabled>|</Menu.Item>
                   <Menu.Item key="login">
-                    <a href={SteemConnect.getLoginURL()}>
-                        Log in
-                    </a>
+                    <a href={SteemConnect.getLoginURL()}>Log in</a>
                   </Menu.Item>
                 </Menu>
               </div>
@@ -173,4 +111,11 @@ class Topnav extends React.Component {
   }
 }
 
-export default Topnav;
+const mapStateToProps = state => ({
+  searchResults: state.search.results,
+  fetching: state.search.fetching,
+  loaded: state.search.loaded,
+  failed: state.search.failed,
+});
+
+export default connect(mapStateToProps, { search })(Topnav);
