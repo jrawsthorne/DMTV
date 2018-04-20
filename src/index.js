@@ -8,6 +8,8 @@ import { renderRoutes } from 'react-router-config';
 import createHistory from 'history/createBrowserHistory';
 import thunk from 'redux-thunk';
 import { ConnectedRouter } from 'react-router-redux';
+import promiseMiddleware from 'redux-promise-middleware';
+import errorMiddleware from './errorMiddleware';
 import theMovieDBAPI from './apis/theMovieDBAPI';
 import steemAPI from './apis/steemAPI';
 import rootReducer from './reducers';
@@ -18,6 +20,8 @@ import routes from './common/routes';
 const initialState = {};
 const history = createHistory();
 const middleware = [
+  errorMiddleware,
+  promiseMiddleware(),
   thunk.withExtraArgument({
     theMovieDBAPI,
     steemAPI,
