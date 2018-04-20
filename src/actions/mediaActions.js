@@ -54,27 +54,21 @@ export const fetchSeason = (id, seasonNum) => ({
 
 export const fetchSeasonAndShow = (id, seasonNum) => ({
   type: 'FETCH_SHOW_AND_SEASON',
-  payload: new Promise((resolve, reject) => theMovieDBAPI.tvInfo({
+  payload: theMovieDBAPI.tvInfo({
     id,
     append_to_response: `season/${seasonNum}`,
-  }).then((response) => {
-    if (response[`season/${seasonNum}`]) {
-      return resolve(response);
-    }
-    return reject(Error('Show or season not found'));
-  }))
-    .then((show) => {
-      const seasons = arrayToObject(show.seasons, 'season_number');
-      seasons[seasonNum].episodes = arrayToObject(show[`season/${seasonNum}`].episodes, 'episode_number');
-      return {
-        id: show.id,
-        poster_path: show.poster_path,
-        backdrop_path: show.backdrop_path,
-        title: show.name,
-        overview: show.overview,
-        seasons,
-      };
-    }),
+  }).then((show) => {
+    const seasons = arrayToObject(show.seasons, 'season_number');
+    seasons[seasonNum].episodes = arrayToObject(show[`season/${seasonNum}`].episodes, 'episode_number');
+    return ({
+      id: show.id,
+      poster_path: show.poster_path,
+      backdrop_path: show.backdrop_path,
+      title: show.name,
+      overview: show.overview,
+      seasons,
+    });
+  }),
   meta: {
     globalError: "Sorry, we couln't find that season",
     id,
