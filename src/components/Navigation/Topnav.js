@@ -11,7 +11,7 @@ import noImageFound from '../../images/no-image-found.jpg';
 import SteemConnect from '../../apis/steemConnectAPI';
 import './Topnav.less';
 
-const LoadingIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
+const LoadingIcon = <Icon type="loading" style={{ fontSize: 16, color: '#cccccc' }} spin />;
 
 class Topnav extends React.Component {
   static propTypes = {
@@ -85,7 +85,7 @@ class Topnav extends React.Component {
                     placeholder="What are you looking for?"
                     autoCapitalize="off"
                     autoCorrect="off"
-                    suffix={fetching ? <Spin indicator={LoadingIcon} /> : <Icon type="search" className="certain-category-icon" />}
+                    suffix={fetching ? <Spin indicator={LoadingIcon} /> : <Icon type="search" />}
                   />
                 </AutoComplete>
                 <i className="iconfont icon-search" />
