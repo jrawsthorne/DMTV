@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "description": "Blockchain based TV and movie review app",
   "scripts": {
-    "start": "webpack-dev-server --progress --colors --config ./webpack.config.js",
-    "build": "webpack -p --config ./webpack.config.js"
+    "start": "webpack-dev-server --progress --colors --config ./webpack/webpack-dev-server.js",
+    "build": "webpack -p --config ./webpack/webpack.prod.config.js"
   },
   "author": "Jake Rawsthorne",
   "babel": {
@@ -32,7 +32,6 @@
     "image-webpack-loader": "^4.2.0",
     "less": "2.7.2",
     "less-loader": "^4.0.5",
-    "postcss-flexbugs-fixes": "^3.3.0",
     "postcss-loader": "^2.1.0",
     "style-loader": "^0.20.1",
     "url-loader": "^0.6.2",
@@ -45,7 +44,9 @@
     "express": "^4.16.3",
     "history": "^4.7.2",
     "lodash": "^4.17.5",
+    "lodash-webpack-plugin": "^0.11.5",
     "moviedb-promise": "^1.2.1",
+    "postcss-flexbugs-fixes": "^3.3.0",
     "prop-types": "^15.6.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -60,6 +61,7 @@
     "redux-thunk": "^2.2.0",
     "sc2-sdk": "^1.0.2",
     "steem": "^0.7.1",
+    "uglifyjs-webpack-plugin": "^1.2.5",
     "webpack": "^3.11.0"
   }
 }
