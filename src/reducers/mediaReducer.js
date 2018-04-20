@@ -1,50 +1,216 @@
-import { FETCH_MEDIA_END, FETCH_MEDIA_START, FETCH_MEDIA_ERROR, FETCH_MEDIA_ITEM, FETCH_MEDIA_ITEM_ERROR, FETCH_MEDIA_ITEM_START } from '../actions/types';
+import _ from 'lodash';
 
 const initialState = {
-  items: [],
-  loading: false,
-  error: {},
-  itemLoading: false,
+  items: {
+    episodes: {},
+    movies: {},
+    shows: {},
+  },
+  itemStates: {
+    episodes: {},
+    movies: {},
+    shows: {},
+  },
+  loaded: false,
+  failed: false,
+  fetching: false,
 };
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case FETCH_MEDIA_START:
+    case 'FETCH_MOVIE_PENDING':
+    case 'FETCH_SHOW_PENDING':
       return {
         ...state,
-        loading: true,
+        itemStates: {
+          ...state.itemStates,
+          [action.meta.type]: {
+            ...state.itemStates[action.meta.type],
+            [action.meta.id]: {
+              loaded: false,
+              failed: false,
+              fetching: true,
+            },
+          },
+        },
       };
-    case FETCH_MEDIA_END:
+    case 'FETCH_MOVIE_FULFILLED':
+    case 'FETCH_SHOW_FULFILLED':
       return {
         ...state,
-        loading: false,
-        error: {},
+        items: {
+          ...state.items,
+          [action.meta.type]: {
+            ...state.items[action.meta.type],
+            [action.meta.id]: action.payload,
+          },
+        },
+        itemStates: {
+          ...state.itemStates,
+          [action.meta.type]: {
+            ...state.itemStates[action.meta.type],
+            [action.meta.id]: {
+              loaded: true,
+              failed: false,
+              fetching: false,
+            },
+          },
+        },
       };
-    case FETCH_MEDIA_ERROR:
+    case 'FETCH_MOVIE_REJECTED':
+    case 'FETCH_SHOW_REJECTED':
       return {
         ...state,
-        loading: false,
-        error: { ...state.error, FETCH_MEDIA_ERROR: action.payload.message },
+        itemStates: {
+          ...state.itemStates,
+          [action.meta.type]: {
+            ...state.itemStates[action.meta.type],
+            [action.meta.id]: {
+              loaded: true,
+              failed: true,
+              fetching: false,
+            },
+          },
+        },
       };
-    case FETCH_MEDIA_ITEM_START:
+    case 'FETCH_SEASON_PENDING':
       return {
         ...state,
-        itemLoading: true,
+        itemStates: {
+          ...state.itemStates,
+          shows: {
+            ...state.itemStates.shows,
+            [action.meta.id]: {
+              ...state.itemStates.shows[action.meta.id],
+              seasons: {
+                ..._.get(state, `itemStates.shows[${action.meta.id}].seasons`),
+                [action.meta.seasonNum]: {
+                  loaded: false,
+                  failed: false,
+                  fetching: true,
+                },
+              },
+            },
+          },
+        },
       };
-    case FETCH_MEDIA_ITEM:
+    case 'FETCH_SEASON_FULFILLED':
       return {
         ...state,
-        itemLoading: false,
-        items: [...state.items, action.payload],
-        error: {},
+        items: {
+          ...state.items,
+          shows: {
+            ...state.items.shows,
+            [action.meta.id]: {
+              ...state.items.shows[action.meta.id],
+              seasons: {
+                ...state.items.shows[action.meta.id].seasons,
+                [action.meta.seasonNum]: {
+                  ...state.items.shows[action.meta.id].seasons[action.meta.seasonNum],
+                  episodes: action.payload,
+                },
+              },
+            },
+          },
+        },
+        itemStates: {
+          ...state.itemStates,
+          shows: {
+            ...state.itemStates.shows,
+            [action.meta.id]: {
+              ...state.itemStates.shows[action.meta.id],
+              seasons: {
+                ..._.get(state, `itemStates.shows[${action.meta.id}].seasons`),
+                [action.meta.seasonNum]: {
+                  loaded: true,
+                  failed: false,
+                  fetching: false,
+                },
+              },
+            },
+          },
+        },
       };
-    case FETCH_MEDIA_ITEM_ERROR:
+    case 'FETCH_SEASON_REJECTED':
       return {
         ...state,
-        itemLoading: false,
-        error: { ...state.error, FETCH_MEDIA_ITEM_ERROR: action.payload.message },
+        itemStates: {
+          ...state.itemStates,
+          shows: {
+            ...state.itemStates.shows,
+            [action.meta.id]: {
+              ...state.itemStates.shows[action.meta.id],
+              seasons: {
+                ..._.get(state, `itemStates.shows[${action.meta.id}].seasons`),
+                [action.meta.seasonNum]: {
+                  loaded: true,
+                  failed: true,
+                  fetching: false,
+                },
+              },
+            },
+          },
+        },
+      };
+    case 'FETCH_SHOW_AND_SEASON_REJECTED':
+      return {
+        ...state,
+        itemStates: {
+          ...state.itemStates,
+          shows: {
+            ...state.itemStates.shows,
+            [action.meta.id]: {
+              ...state.itemStates.shows[action.meta.id],
+              loaded: true,
+              failed: true,
+              fetching: false,
+              seasons: {
+                ..._.get(state, `itemStates.shows[${action.meta.id}].seasons`),
+                [action.meta.seasonNum]: {
+                  loaded: true,
+                  failed: true,
+                  fetching: false,
+                },
+              },
+            },
+          },
+        },
+      };
+    case 'FETCH_SHOW_AND_SEASON_FULFILLED':
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          shows: {
+            ...state.items.shows,
+            [action.meta.id]: action.payload,
+          },
+        },
+        itemStates: {
+          ...state.itemStates,
+          shows: {
+            ...state.itemStates.shows,
+            [action.meta.id]: {
+              ...state.itemStates.shows[action.meta.id],
+              loaded: true,
+              failed: false,
+              fetching: false,
+              seasons: {
+                ..._.get(state, `itemStates.shows[${action.meta.id}].seasons`),
+                [action.meta.seasonNum]: {
+                  loaded: true,
+                  failed: false,
+                  fetching: false,
+                },
+              },
+            },
+          },
+        },
       };
     default:
       return state;
   }
 }
+
+export const getMediaItemState = (state, mediaType, path) => _.get(state, `itemStates[${mediaType}s][${path}]`);
+export const getMediaItem = (state, mediaType, path) => _.get(state, `items[${mediaType}s][${path}]`);
