@@ -5,9 +5,6 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { search } from '../../actions/searchActions';
-
-import noImageFound from '../../images/no-image-found.jpg';
-
 import SteemConnect from '../../apis/steemConnectAPI';
 import './Topnav.less';
 
@@ -51,8 +48,8 @@ class Topnav extends React.Component {
     } = this.props;
 
     const dropdownOptions = _.map(searchResults, option => (
-      <AutoComplete.Option key={`${option.id}`} title={option.title} url={`/${option.media_type}/${option.id}`} className="Topnav__search-autocomplete">
-        <img alt="result" width="45px" src={option.img == null ? noImageFound : `https://image.tmdb.org/t/p/w45${option.img}`} />
+      <AutoComplete.Option key={`${option.id}`} title={option.title} url={option.url} className="Topnav__search-autocomplete">
+        <img alt="result" width="45px" src={option.img} />
         {option.title} {option.year && `(${option.year})`}
       </AutoComplete.Option>
     ));
@@ -88,7 +85,6 @@ class Topnav extends React.Component {
                     suffix={fetching ? <Spin indicator={LoadingIcon} /> : <Icon type="search" />}
                   />
                 </AutoComplete>
-                <i className="iconfont icon-search" />
               </div>
             </div>
             <div className="right">
