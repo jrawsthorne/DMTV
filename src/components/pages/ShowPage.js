@@ -3,10 +3,9 @@ import PropTypes from 'prop-types';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { fetchShow } from '../../actions/mediaActions';
-import Show from '../Media/Media';
-import SeasonList from '../Media/SeasonList';
-import { getMediaItem, getMediaItemState } from '../../reducers';
+import * as actions from '../../actions/mediaActions';
+import Show from '../media/Media';
+import SeasonList from '../media/list/SeasonList';
 import { getMediaItemDetails } from '../../helpers/mediaHelpers';
 import Error404Page from '../pages/Error404Page';
 import Loading from '../misc/Loading';
@@ -16,16 +15,16 @@ class ShowPage extends React.Component {
     showSeasons: false,
   }
   componentDidMount() {
-    const { mediaItem: show, fetchShow: fetch, match: { params: { id } } } = this.props;
+    const { show, fetchShow, match: { params: { id } } } = this.props;
     if (!show) {
-      fetch(id);
+      fetchShow(id);
     }
   }
   componentWillReceiveProps(nextProps) {
-    const { mediaItem: show, fetchShow: fetch, match: { url, params: { id } } } = nextProps;
+    const { show, fetchShow, match: { url, params: { id } } } = nextProps;
     const { url: currentURL } = this.props.match;
     if (!show && url !== currentURL) {
-      fetch(id);
+      fetchShow(id);
       this.setState({
         showSeasons: false,
       });
@@ -39,12 +38,13 @@ class ShowPage extends React.Component {
     this.props.history.push(`/show/${this.props.match.params.id}/${seasonNum}`)
   render() {
     const {
-      mediaItem: show, loaded, failed, fetching,
+      show, loaded, failed, fetching,
     } = this.props;
 
     if (failed) return <Error404Page />;
     if (fetching || !loaded) return <Loading />;
     const showDetails = getMediaItemDetails(show, 'show');
+    const seasons = _.get(show, 'seasons');
     return (
       <Layout>
         <Show
@@ -53,13 +53,16 @@ class ShowPage extends React.Component {
           title={showDetails.title}
           backdropPath={showDetails.backdropPath}
         />
-        <SeasonList
+        {!_.isEmpty(seasons) ? <SeasonList
           showSeasons={this.state.showSeasons}
           handleSeasonSwitcherClick={this.handleSeasonSwitcherClick}
           seasons={show.seasons}
           handleSeasonClick={this.handleSeasonClick}
           show={show}
-        />
+        /> : (
+          'Sorry, no seasons were found for this show'
+        )}
+
       </Layout>
     );
   }
@@ -68,7 +71,7 @@ class ShowPage extends React.Component {
 ShowPage.propTypes = {
   match: PropTypes.shape().isRequired,
   fetchShow: PropTypes.func.isRequired,
-  mediaItem: PropTypes.shape(),
+  show: PropTypes.shape(),
   fetching: PropTypes.bool,
   failed: PropTypes.bool,
   loaded: PropTypes.bool,
@@ -76,7 +79,7 @@ ShowPage.propTypes = {
 };
 
 ShowPage.defaultProps = {
-  mediaItem: undefined,
+  show: undefined,
   fetching: false,
   failed: false,
   loaded: false,
@@ -85,11 +88,11 @@ ShowPage.defaultProps = {
 const mapStateToProps = (state, ownProps) => {
   const { match: { params: { id } } } = ownProps;
   return {
-    mediaItem: getMediaItem(state, 'show', id),
-    fetching: _.get(getMediaItemState(state, 'show', id), 'fetching'),
-    failed: _.get(getMediaItemState(state, 'show', id), 'failed'),
-    loaded: _.get(getMediaItemState(state, 'show', id), 'loaded'),
+    show: _.get(state.media.items, `shows[${id}]`),
+    fetching: _.get(state.media.itemStates, `shows[${id}].fetching`),
+    failed: _.get(state.media.itemStates, `shows[${id}].failed`),
+    loaded: _.get(state.media.itemStates, `shows[${id}].loaded`),
   };
 };
 
-export default connect(mapStateToProps, { fetchShow })(ShowPage);
+export default connect(mapStateToProps, { fetchShow: actions.fetchShow })(ShowPage);

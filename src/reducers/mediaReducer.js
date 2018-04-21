@@ -3,9 +3,6 @@ import _ from 'lodash';
 const initialState = {
   items: {},
   itemStates: {},
-  loaded: false,
-  failed: false,
-  fetching: false,
 };
 
 export default function (state = initialState, action) {
@@ -203,6 +200,3 @@ export default function (state = initialState, action) {
       return state;
   }
 }
-
-export const getMediaItemState = (state, mediaType, path) => _.get(state, `itemStates[${mediaType}s][${path}]`);
-export const getMediaItem = (state, mediaType, path) => _.get(state, `items[${mediaType}s][${path}]`);

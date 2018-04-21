@@ -3,31 +3,30 @@ import PropTypes from 'prop-types';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { fetchMovie } from '../../actions/mediaActions';
-import Movie from '../Media/Media';
-import { getMediaItem, getMediaItemState } from '../../reducers';
+import * as actions from '../../actions/mediaActions';
+import Movie from '../media/Media';
 import { getMediaItemDetails } from '../../helpers/mediaHelpers';
 import Error404Page from '../pages/Error404Page';
 import Loading from '../misc/Loading';
 
 class MoviePage extends React.Component {
   componentDidMount() {
-    const { mediaItem: movie, fetchMovie: fetch, match: { params: { id } } } = this.props;
+    const { movie, fetchMovie, match: { params: { id } } } = this.props;
     if (!movie) {
-      fetch(id);
+      fetchMovie(id);
     }
   }
   componentWillReceiveProps(nextProps) {
-    const { mediaItem: movie, fetchMovie: fetch, match: { url, params: { id } } } = nextProps;
+    const { movie, fetchMovie, match: { url, params: { id } } } = nextProps;
     const { url: currentURL } = this.props.match;
     if (!movie && url !== currentURL) {
-      fetch(id);
+      fetchMovie(id);
     }
   }
 
   render() {
     const {
-      mediaItem: movie, loaded, failed, fetching,
+      movie, loaded, failed, fetching,
     } = this.props;
 
     if (failed) return <Error404Page />;
@@ -49,14 +48,14 @@ class MoviePage extends React.Component {
 MoviePage.propTypes = {
   match: PropTypes.shape().isRequired,
   fetchMovie: PropTypes.func.isRequired,
-  mediaItem: PropTypes.shape(),
+  movie: PropTypes.shape(),
   fetching: PropTypes.bool,
   failed: PropTypes.bool,
   loaded: PropTypes.bool,
 };
 
 MoviePage.defaultProps = {
-  mediaItem: undefined,
+  movie: undefined,
   fetching: false,
   failed: false,
   loaded: false,
@@ -65,11 +64,11 @@ MoviePage.defaultProps = {
 const mapStateToProps = (state, ownProps) => {
   const { match: { params: { id } } } = ownProps;
   return {
-    mediaItem: getMediaItem(state, 'movie', id),
-    fetching: _.get(getMediaItemState(state, 'movie', id), 'fetching'),
-    failed: _.get(getMediaItemState(state, 'movie', id), 'failed'),
-    loaded: _.get(getMediaItemState(state, 'movie', id), 'loaded'),
+    movie: _.get(state.media.items, `movies[${id}]`),
+    fetching: _.get(state.media.itemStates, `movies[${id}].fetching`),
+    failed: _.get(state.media.itemStates, `movies[${id}].failed`),
+    loaded: _.get(state.media.itemStates, `movies[${id}].loaded`),
   };
 };
 
-export default connect(mapStateToProps, { fetchMovie })(MoviePage);
+export default connect(mapStateToProps, { fetchMovie: actions.fetchMovie })(MoviePage);
