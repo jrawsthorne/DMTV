@@ -1,11 +1,46 @@
-import React from 'react';
-import createBrowserHistory from 'history/createBrowserHistory';
-import createMemoryHistory from 'history/createMemoryHistory';
-import { Switch } from 'react-router-dom';
-import { renderRoutes } from 'react-router-config';
-import routes from './common/routes';
+import Wrapper from './components/misc/Wrapper';
+import HomePage from './components/pages/HomePage';
+import Error404Page from './components/pages/Error404Page';
+import ShowPage from './components/pages/ShowPage';
+import MoviePage from './components/pages/MoviePage';
+import EpisodePage from './components/pages/EpisodePage';
+import SeasonPage from './components/pages/SeasonPage';
 
-const history = typeof window === 'undefined' ? createMemoryHistory() : createBrowserHistory();
+const routes = [
+  {
+    component: Wrapper,
+    routes: [
+      {
+        path: '/',
+        exact: true,
+        component: HomePage,
+      },
+      {
+        path: '/show/:id',
+        exact: true,
+        component: ShowPage,
+      },
+      {
+        path: '/movie/:id/',
+        exact: true,
+        component: MoviePage,
+      },
+      {
+        path: '/show/:id/:seasonNum/:episodeNum',
+        exact: true,
+        component: EpisodePage,
+      },
+      {
+        path: '/show/:id/:seasonNum',
+        exact: true,
+        component: SeasonPage,
+      },
+      {
+        path: '*',
+        component: Error404Page,
+      },
+    ],
+  },
+];
 
-export { history };
-export default <Switch>{renderRoutes(routes)}</Switch>;
+export default routes;

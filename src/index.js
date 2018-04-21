@@ -15,7 +15,7 @@ import steemAPI from './apis/steemAPI';
 import rootReducer from './reducers';
 import './styles/base.less';
 
-import routes from './common/routes';
+import routes from './routes';
 
 const initialState = {};
 const history = createHistory();

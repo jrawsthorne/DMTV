@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, List } from 'antd';
 import './List.less';
-import noImageFound from '../../images/no-image-found.jpg';
+import noImageFound from '../../../images/no-image-found.jpg';
 
 const EpisodeTitle = props => `${props.name} S${props.seasonNum} E${props.episodeNum}`;
 

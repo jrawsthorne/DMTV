@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
 import './Media.less';
 
-const Movie = props => (
+const Media = props => (
   <div className="MediaItem">
     <div
       className="MediaItem__background"
@@ -24,11 +23,11 @@ const Movie = props => (
   </div>
 );
 
-Movie.propTypes = {
+Media.propTypes = {
   title: PropTypes.string.isRequired,
   overview: PropTypes.string.isRequired,
   backdropPath: PropTypes.string.isRequired,
   poster: PropTypes.string.isRequired,
 };
 
-export default withRouter(Movie);
+export default Media;

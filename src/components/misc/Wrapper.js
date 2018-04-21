@@ -2,17 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { renderRoutes } from 'react-router-config';
 import { Layout } from 'antd';
-import Topnav from './components/Navigation/Topnav';
+import Topnav from '../navigation/Topnav';
 
 const Wrapper = props => (
   <Layout>
-    <Layout.Header style={{ position: 'fixed', width: '100%', zIndex: 1050 }}>
-      <Topnav history={props.history} />
-    </Layout.Header>
-    <Layout.Content style={{
-     background: '#fff', minHeight: 280,
-   }}
-    >
+    <Topnav history={props.history} />
+    <Layout.Content>
       {renderRoutes(props.route.routes)}
     </Layout.Content>
   </Layout>);
