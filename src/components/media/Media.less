@@ -44,19 +44,23 @@
 }
 
 .prev-icon {
-  color: #fff;
-  font-size: 50px;
-  position: absolute;
-  top: 50%;
-  transform: translate(0, -50%);
   left: -100px;
 }
 
 .next-icon {
-  color: #fff;
-  font-size: 50px;
-  position: absolute;
-  top: 50%;
-  transform: translate(0, -50%);
   right: -100px;
+}
+
+.prev-next {
+  transition: opacity .3s;
+  i {
+    color: #fff;
+    font-size: 50px;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+  &:hover {
+    opacity: 0.5
+  }
 }

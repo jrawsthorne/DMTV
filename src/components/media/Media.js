@@ -12,7 +12,7 @@ const Media = props => (
     >
       <div className="MediaHeader" style={{ position: 'relative' }}>
         {props.prev &&
-          <Link to={props.prev} >
+          <Link className="prev-next" to={props.prev} >
             <Icon
               type="left"
               className="prev-icon"
@@ -28,7 +28,7 @@ const Media = props => (
           <div className="MediaHeader__info__overview">{props.overview}</div>
         </div>
         {props.next &&
-          <Link to={props.next} >
+          <Link className="prev-next" to={props.next} >
             <Icon
               type="right"
               className="next-icon"
