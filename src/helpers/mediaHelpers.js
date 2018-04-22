@@ -22,6 +22,15 @@ export const getSeasonDetails = (show, seasonNum) => ({
   posterPath: (!_.isEmpty(_.get(show, `seasons[${seasonNum}].poster_path`)) && `https://image.tmdb.org/t/p/w200${show.seasons[seasonNum].poster_path}`) || showDetails(show).posterPath,
 });
 
+export const EpisodeTitle = props => `${props.name} S${props.seasonNum} E${props.episodeNum}`;
+
+export const getEpisodeDetails = (show, seasonNum, episodeNum) => ({
+  title: `${_.get(show, `seasons[${seasonNum}].episodes[${episodeNum}].name`)} S${seasonNum} E${episodeNum}`,
+  overview: `${_.get(show, `seasons[${seasonNum}].episodes[${episodeNum}].overview`)}` || 'No overview',
+  backdropPath: (show.backdrop_path && `https://image.tmdb.org/t/p/w1280${show.backdrop_path}`) || '',
+  posterPath: (_.get(show, `seasons[${seasonNum}].episodes[${episodeNum}].still_path`) && `https://image.tmdb.org/t/p/w300${_.get(show, `seasons[${seasonNum}].episodes[${episodeNum}].still_path`)}`) || (show.backdrop_path && `https://image.tmdb.org/t/p/w300${show.backdrop_path}`) || noImageFound,
+});
+
 export const getMediaItemDetails = (mediaItem, type) => {
   switch (type) {
     case 'movie':

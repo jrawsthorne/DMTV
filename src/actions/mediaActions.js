@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { arrayToObject } from '../helpers/mediaHelpers';
 import theMovieDBAPI from '../apis/theMovieDBAPI';
 
@@ -50,7 +51,7 @@ export const fetchSeason = (id, seasonNum) => ({
 });
 
 export const fetchSeasonAndShow = (id, seasonNum) => ({
-  type: 'FETCH_SHOW_AND_SEASON',
+  type: 'FETCH_SEASON_AND_SHOW',
   payload: theMovieDBAPI.tvInfo({
     id,
     append_to_response: `season/${seasonNum}`,
@@ -77,5 +78,54 @@ export const fetchSeasonAndShow = (id, seasonNum) => ({
     globalError: "Sorry, we couln't find that season",
     id,
     seasonNum,
+  },
+});
+
+export const fetchEpisode = (id, seasonNum, episodeNum) => ({
+  type: 'FETCH_EPISODE',
+  payload: theMovieDBAPI.tvSeasonInfo({ id, season_number: seasonNum })
+    .then((season) => {
+      if (!_.get(season, 'episodes').find(episode => episode.episode_number === parseInt(episodeNum, 10))) {
+        throw new Error('Season found, episode not found');
+      }
+      return arrayToObject(season.episodes, 'episode_number');
+    }),
+  meta: {
+    globalError: "Sorry, we couln't find that episode",
+    id,
+    seasonNum,
+    episodeNum,
+  },
+});
+
+export const fetchEpisodeAndShow = (id, seasonNum, episodeNum) => ({
+  type: 'FETCH_EPISODE_AND_SHOW',
+  payload: theMovieDBAPI.tvInfo({
+    id,
+    append_to_response: `season/${seasonNum}`,
+  }).then((show) => {
+    if (!_.get(show, `[season/${seasonNum}].episodes`).find(episode => episode.episode_number === parseInt(episodeNum, 10))) {
+      throw new Error('Show found, episode not found');
+    }
+    return ({
+      id: show.id,
+      poster_path: show.poster_path,
+      backdrop_path: show.backdrop_path,
+      title: show.name,
+      overview: show.overview,
+      seasons: {
+        ...arrayToObject(show.seasons, 'season_number'),
+        [seasonNum]: {
+          ...arrayToObject(show.seasons, 'season_number')[seasonNum],
+          episodes: arrayToObject(show[`season/${seasonNum}`].episodes, 'episode_number'),
+        },
+      },
+    });
+  }),
+  meta: {
+    globalError: "Sorry, we couln't find that episode",
+    id,
+    seasonNum,
+    episodeNum,
   },
 });
