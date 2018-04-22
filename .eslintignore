@@ -5,4 +5,4 @@ node_modules/
 public/
 server.js
 
-webpack.config.js
+webpack/
