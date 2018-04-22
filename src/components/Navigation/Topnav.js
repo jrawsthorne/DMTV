@@ -81,6 +81,7 @@ class Topnav extends React.Component {
                   <Input
                     placeholder="What are you looking for?"
                     autoCapitalize="off"
+                    spellcheck="false"
                     autoCorrect="off"
                     suffix={fetching ? <Spin indicator={LoadingIcon} /> : <Icon type="search" />}
                   />
