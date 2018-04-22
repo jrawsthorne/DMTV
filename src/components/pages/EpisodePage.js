@@ -49,8 +49,6 @@ class EpisodePage extends React.Component {
     this.setState({
       showEpisodes: !this.state.showEpisodes,
     })
-  handleEpisodeClick = episodeNum =>
-    this.props.history.push(`/show/${this.props.match.params.id}/${this.props.match.params.seasonNum}/${episodeNum}`)
   render() {
     const {
       match: { params: { seasonNum, episodeNum } }, show, loaded, failed, fetching,
@@ -60,6 +58,8 @@ class EpisodePage extends React.Component {
     if (fetching || !loaded) return <Loading />;
     const episodeDetails = getEpisodeDetails(show, seasonNum, episodeNum);
     const episodes = _.get(show, `seasons[${seasonNum}].episodes`);
+    const prevEpisode = _.get(show, `seasons[${seasonNum}].episodes[${episodeNum - 1}]`) && `/show/${show.id}/season/${seasonNum}/episode/${episodeNum - 1}`;
+    const nextEpisode = _.get(show, `seasons[${seasonNum}].episodes[${parseInt(episodeNum, 10) + 1}]`) && `/show/${show.id}/season/${seasonNum}/episode/${parseInt(episodeNum, 10) + 1}`;
     return (
       <Layout>
         <Season
@@ -67,13 +67,14 @@ class EpisodePage extends React.Component {
           overview={episodeDetails.overview}
           title={episodeDetails.title}
           backdropPath={episodeDetails.backdropPath}
+          next={nextEpisode}
+          prev={prevEpisode}
         />
         {!_.isEmpty(episodes) ? <EpisodeList
           showEpisodes={this.state.showEpisodes}
           handleEpisodeListClick={this.handleEpisodeListClick}
           episodes={episodes}
           show={show}
-          handleEpisodeClick={this.handleEpisodeClick}
         /> : (
           'Sorry, no episodes were found for this season'
         )}
@@ -90,7 +91,6 @@ EpisodePage.propTypes = {
   fetching: PropTypes.bool,
   failed: PropTypes.bool,
   loaded: PropTypes.bool,
-  history: PropTypes.shape().isRequired,
 };
 
 EpisodePage.defaultProps = {

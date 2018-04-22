@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, List } from 'antd';
+import { Link } from 'react-router-dom';
 import './List.less';
 import noImageFound from '../../../images/no-image-found.jpg';
 
@@ -21,23 +22,24 @@ const EpisodeList = props => (
 );
 
 const EpisodeListItem = props => (
-  <List.Item onClick={() => props.handleEpisodeClick(props.episode.episode_number)} className="List__item__list__item">
-    <List.Item.Meta
-      avatar={<img alt="episode" width="92px" src={(props.episode.still_path && `https://image.tmdb.org/t/p/w92${props.episode.still_path}`) || (props.show.backdrop_path && `https://image.tmdb.org/t/p/w92${props.show.backdrop_path}`) || noImageFound} />}
-      title={<EpisodeTitle
-        name={props.episode.name}
-        episodeNum={props.episode.episode_number}
-        seasonNum={props.episode.season_number}
-      />}
-      description={props.episode.overview || 'No overview'}
-    />
+  <List.Item className="List__item__list__item">
+    <Link to={`/show/${props.show.id}/season/${props.episode.season_number}/episode/${props.episode.episode_number}`}>
+      <List.Item.Meta
+        avatar={<img alt="episode" width="92px" src={(props.episode.still_path && `https://image.tmdb.org/t/p/w92${props.episode.still_path}`) || (props.show.backdrop_path && `https://image.tmdb.org/t/p/w92${props.show.backdrop_path}`) || noImageFound} />}
+        title={<EpisodeTitle
+          name={props.episode.name}
+          episodeNum={props.episode.episode_number}
+          seasonNum={props.episode.season_number}
+        />}
+        description={props.episode.overview || 'No overview'}
+      />
+    </Link>
   </List.Item>
 );
 
 EpisodeListItem.propTypes = {
   episode: PropTypes.shape().isRequired,
   show: PropTypes.shape().isRequired,
-  handleEpisodeClick: PropTypes.func.isRequired,
 };
 
 EpisodeList.propTypes = {

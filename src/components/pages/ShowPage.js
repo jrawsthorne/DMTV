@@ -30,12 +30,10 @@ class ShowPage extends React.Component {
       });
     }
   }
-  handleSeasonSwitcherClick = () =>
+  handleSeasonListClick = () =>
     this.setState({
       showSeasons: !this.state.showSeasons,
     })
-  handleSeasonClick = seasonNum =>
-    this.props.history.push(`/show/${this.props.match.params.id}/${seasonNum}`)
   render() {
     const {
       show, loaded, failed, fetching,
@@ -55,9 +53,8 @@ class ShowPage extends React.Component {
         />
         {!_.isEmpty(seasons) ? <SeasonList
           showSeasons={this.state.showSeasons}
-          handleSeasonSwitcherClick={this.handleSeasonSwitcherClick}
+          handleSeasonListClick={this.handleSeasonListClick}
           seasons={show.seasons}
-          handleSeasonClick={this.handleSeasonClick}
           show={show}
         /> : (
           'Sorry, no seasons were found for this show'
@@ -75,7 +72,6 @@ ShowPage.propTypes = {
   fetching: PropTypes.bool,
   failed: PropTypes.bool,
   loaded: PropTypes.bool,
-  history: PropTypes.shape().isRequired,
 };
 
 ShowPage.defaultProps = {
