@@ -26,12 +26,12 @@ const routes = [
         component: MoviePage,
       },
       {
-        path: '/show/:id/:seasonNum/:episodeNum',
+        path: '/show/:id/season/:seasonNum/episode/:episodeNum',
         exact: true,
         component: EpisodePage,
       },
       {
-        path: '/show/:id/:seasonNum',
+        path: '/show/:id/season/:seasonNum',
         exact: true,
         component: SeasonPage,
       },
