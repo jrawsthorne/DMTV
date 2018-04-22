@@ -20,3 +20,5 @@ yarn start
 ```
 yarn build
 ```
+
+#### Shout out to [Busy](https://github.com/busyorg/busy) for inspiration and some styling
