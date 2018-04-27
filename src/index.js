@@ -19,6 +19,7 @@ import routes from './routes';
 
 const initialState = {};
 const history = createHistory();
+// create middleware
 const middleware = [
   errorMiddleware,
   promiseMiddleware(),
@@ -28,6 +29,7 @@ const middleware = [
   }),
 ];
 
+// create store
 const store = createStore(
   rootReducer,
   initialState,

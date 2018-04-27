@@ -22,9 +22,11 @@ class EpisodePage extends React.Component {
       match: { params: { id, seasonNum, episodeNum } },
     } = this.props;
     const episodeLoaded = _.get(show, `seasons[${seasonNum}].episodes[${episodeNum}]`);
+    // fetch episode and show if show not found
     if (!show) {
       fetchEpisodeAndShow(id, seasonNum, episodeNum, show);
     } else if (!episodeLoaded) {
+      // just fetch episode if show found but not episode
       fetchEpisode(id, seasonNum, episodeNum);
     }
   }
@@ -36,6 +38,7 @@ class EpisodePage extends React.Component {
     } = nextProps;
     const episodeLoaded = _.get(show, `seasons[${seasonNum}].episodes[${episodeNum}]`);
     const { url: currentURL } = this.props.match;
+    // just fetch episode if show found but not episode and changing pages
     if (!episodeLoaded && url !== currentURL) {
       fetchEpisode(id, seasonNum, seasonNum);
     }

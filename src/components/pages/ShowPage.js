@@ -16,6 +16,7 @@ class ShowPage extends React.Component {
   }
   componentDidMount() {
     const { show, fetchShow, match: { params: { id } } } = this.props;
+    // fetch show if not found
     if (!show) {
       fetchShow(id);
     }
@@ -23,6 +24,7 @@ class ShowPage extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { show, fetchShow, match: { url, params: { id } } } = nextProps;
     const { url: currentURL } = this.props.match;
+    // fetch show if not found and changing pages
     if (!show && url !== currentURL) {
       fetchShow(id);
       this.setState({

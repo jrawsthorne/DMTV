@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { arrayToObject } from '../helpers/mediaHelpers';
 import theMovieDBAPI from '../apis/theMovieDBAPI';
 
+// fetch movie details and return object containing id, poster, backdrop, title, overview and year
 export const fetchMovie = id => ({
   type: 'FETCH_MOVIE',
   payload: theMovieDBAPI.movieInfo(id)
@@ -20,6 +21,10 @@ export const fetchMovie = id => ({
   },
 });
 
+/*
+fetch show details
+return object containing id, poster, backdrop, title, overview, year and seasons
+*/
 export const fetchShow = id => ({
   type: 'FETCH_SHOW',
   payload: theMovieDBAPI.tvInfo(id)
@@ -39,6 +44,7 @@ export const fetchShow = id => ({
   },
 });
 
+// fetch season details and return object with keys for each episode number
 export const fetchSeason = (id, seasonNum) => ({
   type: 'FETCH_SEASON',
   payload: theMovieDBAPI.tvSeasonInfo({ id, season_number: seasonNum })
@@ -50,6 +56,11 @@ export const fetchSeason = (id, seasonNum) => ({
   },
 });
 
+/*
+fetch show details
+return object containing id, poster, backdrop, title, overview, year, seasons
+and episodes for specified season
+*/
 export const fetchSeasonAndShow = (id, seasonNum) => ({
   type: 'FETCH_SEASON_AND_SHOW',
   payload: theMovieDBAPI.tvInfo({
@@ -81,10 +92,12 @@ export const fetchSeasonAndShow = (id, seasonNum) => ({
   },
 });
 
+// fetch details for season and return episodes for specified season
 export const fetchEpisode = (id, seasonNum, episodeNum) => ({
   type: 'FETCH_EPISODE',
   payload: theMovieDBAPI.tvSeasonInfo({ id, season_number: seasonNum })
     .then((season) => {
+      // if episode not found in episodes object throw error
       if (!_.get(season, 'episodes').find(episode => episode.episode_number === parseInt(episodeNum, 10))) {
         throw new Error('Season found, episode not found');
       }
@@ -98,12 +111,18 @@ export const fetchEpisode = (id, seasonNum, episodeNum) => ({
   },
 });
 
+/*
+fetch show details
+return object containing id, poster, backdrop, title, overview, year, seasons
+and episodes for specified season
+*/
 export const fetchEpisodeAndShow = (id, seasonNum, episodeNum) => ({
   type: 'FETCH_EPISODE_AND_SHOW',
   payload: theMovieDBAPI.tvInfo({
     id,
     append_to_response: `season/${seasonNum}`,
   }).then((show) => {
+    // if episode not found in episodes object throw error
     if (!_.get(show, `[season/${seasonNum}].episodes`).find(episode => episode.episode_number === parseInt(episodeNum, 10))) {
       throw new Error('Show found, episode not found');
     }

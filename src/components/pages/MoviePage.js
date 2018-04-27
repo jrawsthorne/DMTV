@@ -12,6 +12,7 @@ import Loading from '../misc/Loading';
 class MoviePage extends React.Component {
   componentDidMount() {
     const { movie, fetchMovie, match: { params: { id } } } = this.props;
+    // fetch movie if not found
     if (!movie) {
       fetchMovie(id);
     }
@@ -19,6 +20,7 @@ class MoviePage extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { movie, fetchMovie, match: { url, params: { id } } } = nextProps;
     const { url: currentURL } = this.props.match;
+    // fetch movie if not found and changing pages
     if (!movie && url !== currentURL) {
       fetchMovie(id);
     }
