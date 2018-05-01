@@ -1,3 +1,4 @@
+import Cookie from 'js-cookie';
 import steemConnectAPI from '../apis/steemConnectAPI';
 
 export const login = () => ({
@@ -7,5 +8,13 @@ export const login = () => ({
     globalError: 'Login failed',
   },
 });
+
+export const logout = () => (dispatch) => {
+  steemConnectAPI.revokeToken();
+  Cookie.remove('access_token');
+  dispatch({
+    type: 'LOGOUT',
+  });
+};
 
 export default login;
