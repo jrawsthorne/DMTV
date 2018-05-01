@@ -43,6 +43,11 @@ class Topnav extends React.Component {
     });
   }
 
+  handleLoginClick = () => {
+    const next = window.location.pathname.length > 1 ? window.location.pathname : '';
+    window.location.href = steemConnectAPI.getLoginURL(next);
+  }
+
   menuLoggedOut = () => {
     if (this.props.loggingIn) {
       return (
@@ -58,7 +63,8 @@ class Topnav extends React.Component {
         </Menu.Item>
         <Menu.Item key="divider" disabled>|</Menu.Item>
         <Menu.Item key="login">
-          <a href={steemConnectAPI.getLoginURL()}>Log in</a>
+          {/* eslint-disable-next-line */}
+          <a onClick={() => this.handleLoginClick()}>Log in</a>
         </Menu.Item>
       </Menu>
     );
