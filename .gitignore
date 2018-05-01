@@ -26,3 +26,4 @@ $RECYCLE.BIN/
 
 public/bundle.js
 yarn-error.log
+.env

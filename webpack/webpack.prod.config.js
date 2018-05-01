@@ -4,6 +4,7 @@ const webpack = require('webpack');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const path = require('path');
+require('dotenv').config()
 
 module.exports = {
   entry: [
@@ -57,6 +58,9 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
+      'process.env.STEEMCONNECT_REDIRECT_URL': JSON.stringify(
+        process.env.STEEMCONNECT_REDIRECT_URL || 'http://localhost:3000/callback',
+      ),
     }),
     new UglifyJsPlugin(),
     new LodashModuleReplacementPlugin({

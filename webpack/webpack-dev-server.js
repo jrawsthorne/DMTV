@@ -1,5 +1,7 @@
 const autoprefixer = require('autoprefixer');
 const postcssFlexbugs = require('postcss-flexbugs-fixes');
+const webpack = require('webpack');
+require('dotenv').config()
 
 module.exports = {
   entry: [
@@ -58,10 +60,23 @@ module.exports = {
     publicPath: '/',
     filename: 'bundle.js',
   },
+  plugins: [
+    new webpack.DefinePlugin({
+        'process.env': {
+          NODE_ENV: JSON.stringify('development'),
+          STEEMCONNECT_REDIRECT_URL: JSON.stringify(
+            process.env.STEEMCONNECT_REDIRECT_URL || 'http://localhost:3000/callback',
+          ),
+        },
+      }),
+  ],
   devServer: {
     port: 3000,
     historyApiFallback: {
       disableDotRule: true,
+    },
+    proxy: {
+      '/callback': 'http://localhost:3001',
     },
     contentBase: './public',
   },

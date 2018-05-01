@@ -5,7 +5,7 @@ const initialState = {
   itemStates: {},
 };
 
-export default function (state = initialState, action) {
+export default (state = initialState, action) => {
   switch (action.type) {
     case 'FETCH_MOVIE_PENDING':
     case 'FETCH_SHOW_PENDING':
@@ -245,4 +245,4 @@ export default function (state = initialState, action) {
     default:
       return state;
   }
-}
+};

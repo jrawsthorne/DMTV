@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { search } from '../../actions/searchActions';
-import SteemConnect from '../../apis/steemConnectAPI';
+import steemConnectAPI from '../../apis/steemConnectAPI';
 import './Topnav.less';
 
 const LoadingIcon = <Icon type="loading" style={{ fontSize: 16, color: '#cccccc' }} spin />;
@@ -16,6 +16,7 @@ class Topnav extends React.Component {
     search: PropTypes.func.isRequired,
     searchResults: PropTypes.arrayOf(PropTypes.object).isRequired,
     fetching: PropTypes.bool.isRequired,
+    username: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -44,7 +45,7 @@ class Topnav extends React.Component {
   render() {
     const { searchBarValue } = this.state;
     const {
-      searchResults, fetching,
+      searchResults, fetching, username,
     } = this.props;
 
     const dropdownOptions = _.map(searchResults, option => (
@@ -95,9 +96,15 @@ class Topnav extends React.Component {
                     <a target="_blank" rel="noopener noreferrer" href="https://signup.steemit.com/">Sign up</a>
                   </Menu.Item>
                   <Menu.Item key="divider" disabled>|</Menu.Item>
-                  <Menu.Item key="login">
-                    <a href={SteemConnect.getLoginURL()}>Log in</a>
-                  </Menu.Item>
+                  {_.isEmpty(username) ? (
+                    <Menu.Item key="login">
+                      <a href={steemConnectAPI.getLoginURL()}>Log in</a>
+                    </Menu.Item>) : (
+                      <Menu.Item key="username">
+                        {username}
+                      </Menu.Item>
+                  )
+                }
                 </Menu>
               </div>
             </div>

@@ -12,7 +12,7 @@ yarn
 ```
 ### Dev server
 ```
-yarn start
+yarn dev-server
 ```
 
 ### Build app

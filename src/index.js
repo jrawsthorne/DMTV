@@ -7,15 +7,22 @@ import { Switch } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import createHistory from 'history/createBrowserHistory';
 import thunk from 'redux-thunk';
+import Cookie from 'js-cookie';
 import { ConnectedRouter } from 'react-router-redux';
 import promiseMiddleware from 'redux-promise-middleware';
 import errorMiddleware from './errorMiddleware';
 import theMovieDBAPI from './apis/theMovieDBAPI';
+import steemConnectAPI from './apis/steemConnectAPI';
 import steemAPI from './apis/steemAPI';
 import rootReducer from './reducers';
 import './styles/base.less';
 
 import routes from './routes';
+
+const accessToken = Cookie.get('access_token');
+if (accessToken) {
+  steemConnectAPI.setAccessToken(accessToken);
+}
 
 const initialState = {};
 const history = createHistory();
