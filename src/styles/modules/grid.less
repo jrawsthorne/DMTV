@@ -1,1 +1,24 @@
 @import './topnav-layout.less';
+
+.posterLayout {
+	display: flex;
+  flex-wrap: wrap;
+  &__poster {
+    width: 100%;
+    padding: 10px;
+    @media (min-width: 576px) {
+      width: 50%;
+    }
+    @media (min-width: 768px) {
+      width: calc(100% / 3);
+    }
+    @media (min-width: 992px) {
+      width: 25%;
+    }
+  }
+}
+
+.posterContainer {
+  margin-left: -10px;
+  margin-right: -10px;
+}
