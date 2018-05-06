@@ -1,13 +1,14 @@
 import _ from 'lodash';
 import theMovieDBAPI from '../apis/theMovieDBAPI';
 import noImageFound from '../images/no-image-found.jpg';
+import { SEARCH } from './types';
 
 /*
 search using query, q
 return array of objects containing id, title, img, year and url
 */
 export const search = q => ({
-  type: 'SEARCH',
+  type: SEARCH,
   payload: q ? theMovieDBAPI.searchMulti({ query: q })
     .then(response => response.results)
     .then(data =>

@@ -1,3 +1,5 @@
+import { LOGIN_PENDING, LOGIN_FULFILLED, LOGIN_REJECTED, LOGOUT } from '../actions/types';
+
 const initialState = {
   isAuthenticated: false,
   loaded: false,
@@ -8,7 +10,7 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case 'LOGIN_PENDING':
+    case LOGIN_PENDING:
       return {
         ...state,
         isAuthenticated: false,
@@ -17,7 +19,7 @@ export default (state = initialState, action) => {
         fetching: true,
         user: {},
       };
-    case 'LOGIN_FULFILLED':
+    case LOGIN_FULFILLED:
       return {
         ...state,
         isAuthenticated: true,
@@ -26,7 +28,7 @@ export default (state = initialState, action) => {
         fetching: false,
         user: action.payload.account,
       };
-    case 'LOGIN_REJECTED':
+    case LOGIN_REJECTED:
       return {
         isAuthenticated: false,
         loaded: true,
@@ -34,7 +36,7 @@ export default (state = initialState, action) => {
         fetching: false,
         user: {},
       };
-    case 'LOGOUT':
+    case LOGOUT:
       return {
         ...state,
         isAuthenticated: false,

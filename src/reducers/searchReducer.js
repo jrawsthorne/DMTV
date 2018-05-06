@@ -1,3 +1,5 @@
+import { SEARCH_PENDING, SEARCH_FULFILLED, SEARCH_REJECTED } from '../actions/types';
+
 const initialState = {
   results: [],
   loaded: false,
@@ -7,14 +9,14 @@ const initialState = {
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case 'SEARCH_PENDING':
+    case SEARCH_PENDING:
       return {
         ...state,
         loaded: false,
         failed: false,
         fetching: true,
       };
-    case 'SEARCH_FULFILLED':
+    case SEARCH_FULFILLED:
       return {
         ...state,
         results: action.payload,
@@ -22,7 +24,7 @@ export default function (state = initialState, action) {
         failed: false,
         fetching: false,
       };
-    case 'SEARCH_REJECTED':
+    case SEARCH_REJECTED:
       return {
         ...state,
         loaded: true,
