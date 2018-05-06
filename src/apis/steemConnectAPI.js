@@ -1,4 +1,4 @@
-import sc2 from 'sc2-sdk';
+const sc2 = require('sc2-sdk');
 
 const api = sc2.Initialize({
   app: 'review.app',
@@ -6,4 +6,4 @@ const api = sc2.Initialize({
   callbackURL: process.env.STEEMCONNECT_REDIRECT_URL,
 });
 
-export default api;
+module.exports = api;
