@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Menu, AutoComplete, Input, Icon, Layout, Spin } from 'antd';
+import { Menu, AutoComplete, Input, Icon, Layout, Spin, Avatar } from 'antd';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -74,7 +74,7 @@ class Topnav extends React.Component {
     (
       <Menu className="Topnav__menu-container__menu" mode="horizontal">
         <Menu.Item key="username">
-          {this.props.username}
+          <Avatar size="large" src={`https://steemitimages.com/u/${this.props.username}/avatar/small`} />
         </Menu.Item>
         <Menu.Item key="divider" disabled>|</Menu.Item>
         <Menu.Item key="logout">
