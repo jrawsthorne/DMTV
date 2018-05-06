@@ -2,7 +2,6 @@ const merge = require('webpack-merge');
 const PATHS = require('./paths');
 const loaders = require('./loaders');
 const plugins = require('./plugins');
-require('dotenv').config();
 
 const common = {
   entry: PATHS.src,

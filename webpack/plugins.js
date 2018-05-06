@@ -5,6 +5,7 @@ const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const PATHS = require('./paths');
+require('dotenv').config();
 
 exports.environmentVariables = new webpack.DefinePlugin({
   'process.env': {
