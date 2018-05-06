@@ -3,6 +3,5 @@ node_modules/
 
 # Build files
 public/
-server.js
-
-webpack/
+src/vendor
+src/registerServiceWorker.js

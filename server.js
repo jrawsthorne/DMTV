@@ -1,21 +1,32 @@
 const express = require('express');
-
-const app = express();
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const dotenv = require('dotenv');
 const path = require('path');
+
+const posts = require('./src/apis/routes/posts');
+
+dotenv.config();
+const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(cookieParser());
+
+mongoose.connect(process.env.MONGO_URI);
 
 app.use(express.static('public'));
 
-// viewed at http://localhost:3000
+app.use('/api/posts', posts);
 
 app.get('/callback', (req, res) => {
-  console.log(process.env);
   const { access_token: accessToken, expires_in: expiresIn, state } = req.query;
   const next = state && state[0] === '/' ? state : '/';
   if (accessToken && expiresIn) {
     res.cookie('access_token', accessToken, { maxAge: expiresIn * 1000 });
     res.redirect(next);
   } else {
-    res.status(401).send({ error: 'access_token or expires_in Missing' });
+    res.redirect('/');
   }
 });
 

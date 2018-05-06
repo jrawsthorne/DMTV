@@ -13,4 +13,6 @@ app.get('/callback', (req, res) => {
   }
 });
 
+app.get('/*', (req, res) => res.status(401).send({ error: 'Route not found' }));
+
 app.listen(3001);

@@ -24,6 +24,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-public/bundle.js
+public
 yarn-error.log
 .env
