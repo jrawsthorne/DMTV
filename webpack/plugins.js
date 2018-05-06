@@ -26,6 +26,10 @@ exports.extractCss = new MiniCssExtractPlugin({
   chunkFilename: '[id].[hash].css',
 });
 
+exports.extractCssDev = new MiniCssExtractPlugin({
+  filename: 'style.css',
+});
+
 exports.html = new HtmlWebpackPlugin({
   title: 'Review',
   filename: 'index.html',

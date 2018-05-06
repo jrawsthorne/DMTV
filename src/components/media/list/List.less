@@ -4,10 +4,18 @@
     border: none;
     border-radius: 0;
   }
+  .showEpisodes {
+    display: block;
+  }
   &__item__list {
-    max-width: 1011px;
+    display: none;
+    max-width: 1010px;
     margin: 0 auto;
     &__item {
+      padding: 20px;
+      @media (min-width: 1060px) {
+        padding: 12px 0;
+      }
       .ant-list-item-meta-avatar {
         min-width: 92px;
       }

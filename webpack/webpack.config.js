@@ -17,7 +17,6 @@ const common = {
   },
   plugins: [
     plugins.environmentVariables,
-    plugins.extractCss,
     plugins.html,
   ],
 };
@@ -36,6 +35,7 @@ if (process.env.NODE_ENV === 'production') {
       },
       plugins: [
         plugins.clean,
+        plugins.extractCss,
         plugins.lodash,
         plugins.sw,
       ],
@@ -62,6 +62,9 @@ if (process.env.NODE_ENV === 'production') {
         filename: 'review-[name].[hash].js',
         publicPath: '/',
       },
+      plugins: [
+        plugins.extractCssDev,
+      ],
     },
     loaders.devServer({
       host: 'localhost',

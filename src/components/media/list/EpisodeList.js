@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, List } from 'antd';
 import { Link } from 'react-router-dom';
+import classNames from 'classnames';
 import './List.less';
 import noImageFound from '../../../images/no-image-found.jpg';
 
@@ -12,9 +13,9 @@ const EpisodeList = props => (
     <Button onClick={props.handleEpisodeListClick} type="primary" className="List__open__items">
       {props.showEpisodes ? 'Hide' : 'Show'} episodes
     </Button>
-    {props.showEpisodes && <List
+    {<List
       itemLayout="horizontal"
-      className="List__item__list"
+      className={classNames('List__item__list', { showEpisodes: props.showEpisodes })}
       dataSource={Object.values(props.episodes)}
       renderItem={episode => <EpisodeListItem episode={episode} {...props} />}
     />}

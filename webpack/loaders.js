@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 exports.css = {
   test: /\.css|.less$/,
   use: [
+    'css-hot-loader',
     MiniCssExtractPlugin.loader,
     'css-loader',
     {
