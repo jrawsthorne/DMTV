@@ -15,7 +15,7 @@ const EpisodeList = props => (
     </Button>
     {<List
       itemLayout="horizontal"
-      className={classNames('List__item__list', { showEpisodes: props.showEpisodes })}
+      className={classNames('List__item__list', { showList: props.showEpisodes })}
       dataSource={Object.values(props.episodes)}
       renderItem={episode => <EpisodeListItem episode={episode} {...props} />}
     />}
