@@ -10,12 +10,14 @@ import thunk from 'redux-thunk';
 import Cookie from 'js-cookie';
 import { ConnectedRouter } from 'react-router-redux';
 import promiseMiddleware from 'redux-promise-middleware';
+import { mountResponsive } from './vendor/responsive';
 import errorMiddleware from './errorMiddleware';
 import theMovieDBAPI from './apis/theMovieDBAPI';
 import steemConnectAPI from './apis/steemConnectAPI';
 import steemAPI from './apis/steemAPI';
 import rootReducer from './reducers';
 import './styles/base.less';
+import registerServiceWorker from './registerServiceWorker';
 
 import routes from './routes';
 
@@ -42,6 +44,7 @@ const store = createStore(
   initialState,
   composeWithDevTools(applyMiddleware(...middleware)),
 );
+mountResponsive(store);
 
 ReactDOM.render(
   <Provider store={store}>
@@ -51,3 +54,5 @@ ReactDOM.render(
   </Provider>
   , document.getElementById('root'),
 );
+
+registerServiceWorker();
