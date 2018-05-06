@@ -1,39 +1,38 @@
 import Wrapper from './components/misc/Wrapper';
 import HomePage from './components/pages/HomePage';
 import Error404Page from './components/pages/Error404Page';
-import ShowPage from './components/pages/ShowPage';
-import MoviePage from './components/pages/MoviePage';
-import EpisodePage from './components/pages/EpisodePage';
-import SeasonPage from './components/pages/SeasonPage';
+import MediaPage from './components/pages/MediaPage';
+import PostPage from './components/pages/PostPage';
+// import MediaPage from './components/pages/MediaPage';
 
 const routes = [
   {
     component: Wrapper,
     routes: [
       {
-        path: '/',
+        path: '/:mediaType(movies|shows|episodes)?',
         exact: true,
         component: HomePage,
       },
       {
-        path: '/show/:id',
+        path: '/:mediaType(movie|show)/:id',
         exact: true,
-        component: ShowPage,
+        component: MediaPage,
       },
       {
-        path: '/movie/:id/',
+        path: '/:mediaType(show)/:id/season/:seasonNum',
         exact: true,
-        component: MoviePage,
+        component: MediaPage,
       },
       {
-        path: '/show/:id/season/:seasonNum/episode/:episodeNum',
+        path: '/:mediaType(show)/:id/season/:seasonNum/episode/:episodeNum',
         exact: true,
-        component: EpisodePage,
+        component: MediaPage,
       },
       {
-        path: '/show/:id/season/:seasonNum',
+        path: '/@:author/:permlink',
         exact: true,
-        component: SeasonPage,
+        component: PostPage,
       },
       {
         path: '*',
