@@ -24,18 +24,6 @@ export default (state = initialState, action) => {
         loaded: true,
         failed: false,
         fetching: false,
-        items: {
-          ...state.items,
-          ...action.payload,
-        },
-        itemStates: {
-          ...state.itemStates,
-          ..._.mapValues(action.payload, () => ({
-            loaded: true,
-            failed: false,
-            fetching: false,
-          })),
-        },
       };
     case types.FETCH_POSTS_REJECTED:
       return {

@@ -99,8 +99,6 @@ class PostsContainer extends React.Component {
         isXSmall,
         isSmall,
       } = this.props;
-      if (failed) return <div><p>Sory, there was an error fetching posts</p></div>;
-      if (fetching || !loaded) return <Loading />;
       const matchedPosts = this.filterPosts(
         posts,
         mediaType,
@@ -109,7 +107,12 @@ class PostsContainer extends React.Component {
         seasonNum,
         episodeNum,
       );
-      if (_.isEmpty(matchedPosts)) return <div><p>Sorry, no posts found</p></div>;
+      if (failed && _.isEmpty(matchedPosts)) {
+        return <div><p>Sory, there was an error fetching posts</p></div>;
+      }
+      if (_.isEmpty(matchedPosts) && !fetching && loaded) {
+        return <div><p>Sorry, no posts found</p></div>;
+      }
       return (
         <div className="posts">
           <div className="posterContainer">
@@ -144,6 +147,7 @@ class PostsContainer extends React.Component {
 })}
             </div>
           </div>
+          {fetching && <Loading />}
         </div>
       );
     }
