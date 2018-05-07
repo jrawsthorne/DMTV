@@ -65,10 +65,15 @@ router.post('/update-metadata', (req, res) => {
       if (!post) return res.status(404).json({ error: "Post couldn't be found" });
       if (mediaType === 'movie') {
         theMovieDBAPI.movieInfo(tmdbid)
-          .then(movie => Post.findOneAndUpdate({
-            author, permlink, postType, mediaType, tmdbid,
-          }, { posterPath: movie.poster_path, backdropPath: movie.backdrop_path }, { new: true })
-            .then(newPost => res.json(newPost)));
+          .then(movie =>
+            Post.findOneAndUpdate({
+              author,
+              permlink,
+              postType,
+              mediaType,
+              tmdbid,
+            }, { posterPath: movie.poster_path, backdropPath: movie.backdrop_path }, { new: true })
+              .then(newPost => res.json(newPost)));
       } else if (mediaType === 'episode') {
         return theMovieDBAPI.tvInfo({
           id: tmdbid,
@@ -79,7 +84,13 @@ router.post('/update-metadata', (req, res) => {
             return res.status(404).json({ error: 'Episode not found' });
           }
           return Post.findOneAndUpdate({
-            author, permlink, postType, mediaType, tmdbid, seasonNum, episodeNum,
+            author,
+            permlink,
+            postType,
+            mediaType,
+            tmdbid,
+            seasonNum,
+            episodeNum,
           }, {
             posterPath: show.poster_path,
             backdropPath: show.backdrop_path,
