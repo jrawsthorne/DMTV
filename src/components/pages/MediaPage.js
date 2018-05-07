@@ -5,35 +5,40 @@ import { getMediaType } from '../../helpers/mediaHelpers';
 import MediaContainer from '../media/MediaContainer';
 import PostsContainer from '../post/PostsContainer';
 
-const MediaPage = (props) => {
-  const {
-    match: {
-      params: {
-        id, mediaType, seasonNum, episodeNum,
+class MediaPage extends React.Component {
+  componentDidMount() {
+    window.scrollTo(0, 0);
+  }
+  render() {
+    const {
+      match: {
+        params: {
+          id, mediaType, seasonNum, episodeNum,
+        },
       },
-    },
-  } = props;
-  const type = getMediaType({ mediaType, seasonNum, episodeNum });
-  return (
-    <Layout>
-      <MediaContainer
-        mediaType={type}
-        tmdbid={id}
-        seasonNum={seasonNum}
-        episodeNum={episodeNum}
-      />
-      <Layout className="main-content">
-        <h2>Latest Reviews</h2>
-        <PostsContainer
-          tmdbid={id}
+    } = this.props;
+    const type = getMediaType({ mediaType, seasonNum, episodeNum });
+    return (
+      <Layout>
+        <MediaContainer
           mediaType={type}
+          tmdbid={id}
           seasonNum={seasonNum}
           episodeNum={episodeNum}
         />
+        <Layout className="main-content">
+          <h2>Latest Reviews</h2>
+          <PostsContainer
+            tmdbid={id}
+            mediaType={type}
+            seasonNum={seasonNum}
+            episodeNum={episodeNum}
+          />
+        </Layout>
       </Layout>
-    </Layout>
-  );
-};
+    );
+  }
+}
 
 MediaPage.propTypes = {
   match: PropTypes.shape().isRequired,
