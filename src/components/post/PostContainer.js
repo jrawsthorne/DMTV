@@ -17,7 +17,7 @@ class PostContainer extends React.Component {
       failed: PropTypes.bool,
       author: PropTypes.string.isRequired,
       permlink: PropTypes.string.isRequired,
-      onLoad: PropTypes.func.isRequired,
+      onLoad: PropTypes.func,
       noLoading: PropTypes.bool.isRequired,
     };
     componentDidMount() {
@@ -60,6 +60,7 @@ PostContainer.defaultProps = {
   fetching: false,
   failed: false,
   loaded: false,
+  onLoad: () => {},
 };
 
 const mapStateToProps = (state, ownProps) => {

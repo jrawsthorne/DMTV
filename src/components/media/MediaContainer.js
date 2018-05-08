@@ -142,7 +142,7 @@ MediaContainer.propTypes = {
   loaded: PropTypes.bool,
   noLoading: PropTypes.bool,
   match: PropTypes.shape().isRequired,
-  onLoad: PropTypes.func.isRequired,
+  onLoad: PropTypes.func,
 };
 
 MediaContainer.defaultProps = {
@@ -153,6 +153,7 @@ MediaContainer.defaultProps = {
   loaded: false,
   failed: false,
   noLoading: false,
+  onLoad: () => {},
 };
 
 const mapStateToProps = (state, ownProps) => {
