@@ -11,6 +11,7 @@ exports.environmentVariables = new webpack.DefinePlugin({
   'process.env': {
     NODE_ENV: JSON.stringify(process.env.NODE_ENV),
     STEEMCONNECT_REDIRECT_URL: JSON.stringify(process.env.STEEMCONNECT_REDIRECT_URL || 'http://localhost:3000/callback'),
+    API_URL: JSON.stringify(process.env.API_URL) || 'http://localhost:3000/api',
   },
 });
 

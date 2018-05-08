@@ -27,7 +27,7 @@ const getPostData = (steemPost, post) => ({
 // fetch post from db and return steem and db info
 export const fetchPost = (author, permlink) => ({
   type: FETCH_POST,
-  payload: axios.get(`/api/posts/@${author}/${permlink}`)
+  payload: axios.get(`${process.env.API_URL}/posts/@${author}/${permlink}`)
     .then(res => res.data)
     .then(post =>
       steemAPI.getContentAsync(post.author, post.permlink)
@@ -50,7 +50,7 @@ export const fetchPosts = (posts, {
 }) => (dispatch) => {
   dispatch({
     type: FETCH_POSTS,
-    payload: axios.get('/api/posts', {
+    payload: axios.get(`${process.env.API_URL}/posts`, {
       params: {
         postType: postType || 'all',
         mediaType: mediaType || undefined,
