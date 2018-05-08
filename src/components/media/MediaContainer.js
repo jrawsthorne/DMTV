@@ -29,6 +29,8 @@ class MediaContainer extends React.Component {
       mediaItem,
       fetching,
       loaded,
+      failed,
+      onLoad,
     } = this.props;
     if (!mediaItem || (!fetching && !loaded)) {
       if (mediaType === 'movie') fetchMovie(tmdbid);
@@ -36,6 +38,7 @@ class MediaContainer extends React.Component {
       if (mediaType === 'season') fetchSeason(tmdbid, seasonNum);
       if (mediaType === 'episode') fetchEpisode(tmdbid, seasonNum, episodeNum);
     }
+    onLoad({ fetching, loaded, failed });
   }
   componentWillReceiveProps(nextProps) {
     const {
@@ -50,6 +53,8 @@ class MediaContainer extends React.Component {
       mediaItem,
       fetching,
       loaded,
+      onLoad,
+      failed,
       match: { url },
     } = nextProps;
     const { url: currentURL } = this.props.match;
@@ -59,6 +64,7 @@ class MediaContainer extends React.Component {
       if (mediaType === 'season') fetchSeason(tmdbid, seasonNum);
       if (mediaType === 'episode') fetchEpisode(tmdbid, seasonNum, episodeNum);
     }
+    onLoad({ fetching, loaded, failed });
     if (url !== currentURL) {
       this.setState({
         showList: false,
@@ -136,6 +142,7 @@ MediaContainer.propTypes = {
   loaded: PropTypes.bool,
   noLoading: PropTypes.bool,
   match: PropTypes.shape().isRequired,
+  onLoad: PropTypes.func.isRequired,
 };
 
 MediaContainer.defaultProps = {

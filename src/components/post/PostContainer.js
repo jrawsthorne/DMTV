@@ -17,29 +17,40 @@ class PostContainer extends React.Component {
       failed: PropTypes.bool,
       author: PropTypes.string.isRequired,
       permlink: PropTypes.string.isRequired,
+      onLoad: PropTypes.func.isRequired,
+      noLoading: PropTypes.bool.isRequired,
     };
     componentDidMount() {
-      if (!this.props.loaded) {
+      const {
+        fetching, loaded, failed, author, permlink, onLoad, post,
+      } = this.props;
+      if (!loaded) {
         this.props.fetchPost(
-          this.props.author,
-          this.props.permlink,
+          author,
+          permlink,
         );
+      } else {
+        onLoad(post, { fetching, loaded, failed });
       }
     }
     componentWillReceiveProps(nextProps) {
-      if (!nextProps.loaded && !nextProps.fetching) {
+      const {
+        fetching, loaded, failed, author, permlink, onLoad, post,
+      } = nextProps;
+      if (!loaded && !fetching) {
         this.props.fetchPost(
-          nextProps.author,
-          nextProps.permlink,
+          author,
+          permlink,
         );
       }
+      onLoad(post, { fetching, loaded, failed });
     }
     render() {
       const {
-        loaded, failed, fetching, post,
+        loaded, failed, fetching, post, noLoading,
       } = this.props;
-      if (failed) return 'Error loading metadata';
-      if (fetching || !loaded) return <Loading />;
+      if (failed) return 'Sorry, there was an error fetching the post';
+      if (fetching || !loaded) return noLoading ? '' : <Loading />;
       return <Post body={post.body} title={post.title} />;
     }
 }
