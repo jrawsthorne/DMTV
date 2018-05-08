@@ -26,10 +26,13 @@ router.get('/', (req, res) => {
   if (seasonNum) query.seasonNum = seasonNum;
   if (episodeNum) query.episodeNum = episodeNum;
   if (rating) query.rating = rating;
+  if (episodeNum && !seasonNum) {
+    return res.status(404).json('Posts not found, please specify a season number as well');
+  }
   if (postType !== 'all') {
     query.postType = postType;
   }
-  Post.count(query)
+  return Post.count(query)
     .then((count) => {
       Post.find(query).limit(limit)
         .then(posts => res.json({

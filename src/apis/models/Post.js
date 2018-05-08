@@ -9,7 +9,6 @@ const schema = new mongoose.Schema(
     permlink: {
       type: String,
       required: true,
-      unique: true,
     },
     postType: {
       type: String,
@@ -54,4 +53,5 @@ const schema = new mongoose.Schema(
   },
 );
 
+schema.index({ author: 1, permlink: 1 }, { unique: true });
 module.exports = mongoose.model('posts', schema);
