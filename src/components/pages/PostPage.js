@@ -44,10 +44,10 @@ class PostPage extends React.Component {
       return (
         <Layout>
           {(postStatus.fetching
-            || !postStatus.loaded
-            || (!postStatus.failed && !mediaStatus.loaded)
-            || (!postStatus.failed && mediaStatus.fetching)) && <Loading />}
-          {!_.isEmpty(post) &&
+              || !postStatus.loaded
+              || (!postStatus.failed && !mediaStatus.loaded)
+              || (!postStatus.failed && mediaStatus.fetching)) && <Loading />}
+          {postStatus.loaded && !postStatus.failed &&
             <MediaContainer
               noLoading
               onLoad={this.onMediaLoad}

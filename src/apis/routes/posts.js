@@ -18,10 +18,11 @@ router.get('/@:author/:permlink', (req, res) => {
 
 router.get('/', (req, res) => {
   const {
-    postType = 'all', mediaType, tmdbid, seasonNum, episodeNum, rating, limit = 20,
+    postType = 'all', mediaType, type, tmdbid, seasonNum, episodeNum, rating, limit = 20,
   } = req.query;
   const query = {};
   if (mediaType) query.mediaType = mediaType;
+  if (type) query.type = type;
   if (tmdbid) query.tmdbid = tmdbid;
   if (seasonNum) query.seasonNum = seasonNum;
   if (episodeNum) query.episodeNum = episodeNum;
@@ -34,7 +35,7 @@ router.get('/', (req, res) => {
   }
   return Post.count(query)
     .then((count) => {
-      Post.find(query).limit(limit)
+      Post.find(query).limit(limit).sort({ createdAt: 1 })
         .then(posts => res.json({
           count,
           results: posts,

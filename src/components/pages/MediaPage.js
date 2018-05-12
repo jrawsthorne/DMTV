@@ -42,7 +42,7 @@ class MediaPage extends React.Component {
           <h2>Latest Reviews</h2>
           <PostsContainer
             tmdbid={id}
-            mediaType={type}
+            type={mediaType}
             seasonNum={seasonNum}
             episodeNum={episodeNum}
           />

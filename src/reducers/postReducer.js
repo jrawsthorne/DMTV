@@ -11,27 +11,29 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case types.FETCH_POSTS_PENDING:
+    case types.FETCH_POSTS_FULFILLED: {
+      const items = {
+        ...state.items,
+      };
+      const itemStates = {
+        ...state.itemStates,
+      };
+
+      _.each(action.payload.posts, (post) => {
+        items[`@${post.author}/${post.permlink}`] = post;
+        itemStates[`@${post.author}/${post.permlink}`] = {
+          fetching: false,
+          loaded: true,
+          failed: false,
+        };
+      });
+
       return {
         ...state,
-        loaded: false,
-        failed: false,
-        fetching: true,
+        items,
+        itemStates,
       };
-    case types.FETCH_POSTS_FULFILLED:
-      return {
-        ...state,
-        loaded: true,
-        failed: false,
-        fetching: false,
-      };
-    case types.FETCH_POSTS_REJECTED:
-      return {
-        ...state,
-        loaded: true,
-        failed: true,
-        fetching: false,
-      };
+    }
     case types.FETCH_POST_PENDING:
       return {
         ...state,

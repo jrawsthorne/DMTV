@@ -42,11 +42,12 @@ export const fetchPost = (author, permlink) => ({
 
 export const fetchPosts = (posts, {
   postType = 'all',
-  mediaType = null,
-  tmdbid = null,
-  seasonNum = null,
-  episodeNum = null,
-  rating = null,
+  mediaType = undefined,
+  tmdbid = undefined,
+  seasonNum = undefined,
+  episodeNum = undefined,
+  rating = undefined,
+  type = undefined,
 }) => (dispatch) => {
   dispatch({
     type: FETCH_POSTS,
@@ -54,6 +55,7 @@ export const fetchPosts = (posts, {
       params: {
         postType: postType || 'all',
         mediaType: mediaType || undefined,
+        type: type || undefined,
         tmdbid: tmdbid || undefined,
         seasonNum: seasonNum || undefined,
         episodeNum: seasonNum && episodeNum ? episodeNum : undefined,
@@ -61,12 +63,23 @@ export const fetchPosts = (posts, {
       },
     })
       .then(res =>
-        Promise.all(res.data.results.filter(post =>
-          !_.get(posts, `@${post.author}/${post.permlink}`))
-          .map(post => dispatch(fetchPost(post.author, post.permlink))
-            .then(() => Promise.resolve(null))))),
+        Promise.all(res.data.results.map(post =>
+          (!_.get(posts, `@${post.author}/${post.permlink}`) ?
+            steemAPI.getContentAsync(post.author, post.permlink)
+              .then(steemPost => getPostData(steemPost, post))
+            : _.get(posts, `@${post.author}/${post.permlink}`)
+          )))
+          .then(p => ({
+            count: res.data.count,
+            posts: p,
+          }))),
     meta: {
       globalError: 'Sorry, there was an error fetching posts',
+      mediaType: mediaType || type || 'all',
+      tmdbid,
+      seasonNum,
+      episodeNum,
+      sortBy: 'created',
     },
   });
 };

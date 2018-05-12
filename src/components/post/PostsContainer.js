@@ -12,22 +12,25 @@ import Post from './PostPreview';
 class PostsContainer extends React.Component {
     static propTypes = {
       fetchPosts: PropTypes.func.isRequired,
-      posts: PropTypes.shape().isRequired,
+      posts: PropTypes.arrayOf(PropTypes.string).isRequired,
       loaded: PropTypes.bool.isRequired,
       fetching: PropTypes.bool.isRequired,
       failed: PropTypes.bool.isRequired,
       tmdbid: PropTypes.string,
       mediaType: PropTypes.string,
+      type: PropTypes.string,
       postType: PropTypes.string,
       seasonNum: PropTypes.string,
       episodeNum: PropTypes.string,
       match: PropTypes.shape().isRequired,
       isXSmall: PropTypes.bool,
       isSmall: PropTypes.bool,
+      allPosts: PropTypes.shape().isRequired,
     };
     static defaultProps = {
       tmdbid: undefined,
       mediaType: undefined,
+      type: undefined,
       postType: undefined,
       episodeNum: undefined,
       seasonNum: undefined,
@@ -35,89 +38,54 @@ class PostsContainer extends React.Component {
       isSmall: false,
     }
     componentDidMount() {
-      this.props.fetchPosts(this.props.posts, {
-        postType: this.props.postType,
-        mediaType: this.props.mediaType,
-        tmdbid: this.props.tmdbid,
-        seasonNum: this.props.seasonNum,
-        episodeNum: this.props.episodeNum,
-      });
-    }
-    componentWillReceiveProps(nextProps) {
-      if ((!nextProps.fetching && !nextProps.loaded)
-      || (nextProps.match.url !== this.props.match.url)) {
-        this.props.fetchPosts(nextProps.posts, {
-          posts: this.props.posts,
-          postType: nextProps.postType,
-          mediaType: nextProps.mediaType,
-          tmdbid: nextProps.tmdbid,
-          seasonNum: nextProps.seasonNum,
-          episodeNum: nextProps.episodeNum,
+      if (_.isEmpty(this.props.posts) && !this.props.fetching) {
+        this.props.fetchPosts(this.props.allPosts, {
+          postType: this.props.postType,
+          mediaType: this.props.mediaType,
+          type: this.props.type,
+          tmdbid: this.props.tmdbid,
+          seasonNum: this.props.seasonNum,
+          episodeNum: this.props.episodeNum,
         });
       }
     }
-    filterPosts = (posts, mediaType, postType = 'all', tmdbid, seasonNum, episodeNum) => {
-      if (mediaType && tmdbid && postType === 'all') {
-        if (seasonNum) {
-          if (episodeNum) {
-            return _.filter(posts, post => (
-              post.tmdbid === parseInt(tmdbid, 10) &&
-              post.mediaType === mediaType &&
-              post.seasonNum === parseInt(seasonNum, 10) &&
-              post.episodeNum === parseInt(episodeNum, 10)
-            ));
-          }
-          return _.filter(posts, post => (
-            post.tmdbid === parseInt(tmdbid, 10) &&
-              post.mediaType === mediaType &&
-              post.seasonNum === parseInt(seasonNum, 10)
-          ));
+    componentWillReceiveProps(nextProps) {
+      if (_.isEmpty(nextProps.posts)) {
+        if ((!nextProps.fetching && !nextProps.loaded)
+      || (nextProps.match.url !== this.props.match.url)) {
+          nextProps.fetchPosts(nextProps.allPosts, {
+            postType: nextProps.postType,
+            mediaType: nextProps.mediaType,
+            type: nextProps.type,
+            tmdbid: nextProps.tmdbid,
+            seasonNum: nextProps.seasonNum,
+            episodeNum: nextProps.episodeNum,
+          });
         }
-        return _.filter(posts, post => (
-          post.tmdbid === parseInt(tmdbid, 10) &&
-            post.mediaType === mediaType
-        ));
-      } else if (mediaType && !tmdbid && postType === 'all') {
-        return _.filter(posts, post => (
-          post.mediaType === mediaType
-        ));
       }
-      return _.filter(posts);
     }
-
     render() {
       const {
         loaded,
         failed,
         fetching,
         posts,
-        mediaType,
-        tmdbid,
-        postType,
-        seasonNum,
-        episodeNum,
         isXSmall,
         isSmall,
+        allPosts,
       } = this.props;
-      const matchedPosts = this.filterPosts(
-        posts,
-        mediaType,
-        postType,
-        tmdbid,
-        seasonNum,
-        episodeNum,
-      );
-      if (failed && _.isEmpty(matchedPosts)) {
+      if (failed && _.isEmpty(posts)) {
         return <div><p>Sory, there was an error fetching posts</p></div>;
       }
-      if (_.isEmpty(matchedPosts) && !fetching && loaded) {
+      if (_.isEmpty(posts) && !fetching && loaded) {
         return <div><p>Sorry, no posts found</p></div>;
       }
       return (
         <div className="posts">
           <div className="posterContainer">
             <div className="posterLayout">
-              {matchedPosts.map((post) => {
+              {posts.map((postId) => {
+                const post = allPosts[postId];
                 let title = post.mediaTitle;
                 if (post.seasonNum) {
                   title += ` S${post.seasonNum}`;
@@ -153,13 +121,20 @@ class PostsContainer extends React.Component {
     }
 }
 
-const mapStateToProps = state => ({
-  posts: state.posts.items,
-  fetching: state.posts.fetching,
-  loaded: state.posts.loaded,
-  failed: state.posts.failed,
-  isXSmall: state.responsive.isXSmall,
-  isSmall: state.responsive.isSmall,
-});
+const mapStateToProps = (state, ownProps) => {
+  let key = ownProps.mediaType || ownProps.type || 'all';
+  if (ownProps.tmdbid) key += ownProps.tmdbid;
+  if (ownProps.seasonNum) key += ownProps.seasonNum;
+  if (ownProps.episodeNum) key += ownProps.episodeNum;
+  return {
+    posts: _.get(state, `feed.created.${key}.list`, []),
+    allPosts: _.get(state, 'posts.items', {}),
+    fetching: _.get(state, `feed.created.${key}.fetching`, false),
+    loaded: _.get(state, `feed.created.${key}.loaded`, false),
+    failed: _.get(state, `feed.created.${key}.failed`, false),
+    isXSmall: state.responsive.isXSmall,
+    isSmall: state.responsive.isSmall,
+  };
+};
 
 export default withRouter(connect(mapStateToProps, { fetchPosts })(PostsContainer));
