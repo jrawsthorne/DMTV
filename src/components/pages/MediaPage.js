@@ -6,9 +6,18 @@ import MediaContainer from '../media/MediaContainer';
 import PostsContainer from '../post/PostsContainer';
 
 class MediaPage extends React.Component {
+  state = {
+    mediaStatus: { failed: false, fetching: false, loaded: false },
+  }
+
   componentDidMount() {
     window.scrollTo(0, 0);
   }
+
+  onMediaLoad = mediaStatus =>
+    this.setState({
+      mediaStatus,
+    })
   render() {
     const {
       match: {
@@ -17,6 +26,7 @@ class MediaPage extends React.Component {
         },
       },
     } = this.props;
+    const { mediaStatus } = this.state;
     const type = getMediaType({ mediaType, seasonNum, episodeNum });
     return (
       <Layout>
@@ -25,7 +35,9 @@ class MediaPage extends React.Component {
           tmdbid={id}
           seasonNum={seasonNum}
           episodeNum={episodeNum}
+          onLoad={this.onMediaLoad}
         />
+        {mediaStatus.loaded && !mediaStatus.failed &&
         <Layout className="main-content">
           <h2>Latest Reviews</h2>
           <PostsContainer
@@ -34,7 +46,7 @@ class MediaPage extends React.Component {
             seasonNum={seasonNum}
             episodeNum={episodeNum}
           />
-        </Layout>
+        </Layout>}
       </Layout>
     );
   }

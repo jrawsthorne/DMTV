@@ -80,7 +80,7 @@ class MediaContainer extends React.Component {
       loaded,
       failed, fetching, mediaItem, mediaType, seasonNum, episodeNum, noLoading,
     } = this.props;
-    if (failed) return '';
+    if (failed) return <div className="main-content"><p>Sorry, there was an error loading the metadata</p></div>;
     if (fetching || !loaded) return noLoading ? '' : <Loading />;
     const {
       backdropPath, posterPath, title, overview,
