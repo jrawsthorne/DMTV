@@ -72,13 +72,13 @@ class MediaContainer extends React.Component {
     }
   }
   handleEpisodeClick = (episode) => {
-    const { id, seasonNum } = this.props.match.params;
-    this.props.history.push(`/show/${id}/season/${seasonNum}/episode/${episode}`);
+    const { tmdbid, seasonNum } = this.props;
+    this.props.history.push(`/show/${tmdbid}/season/${seasonNum}/episode/${episode}`);
     this.setState({ showEpisodes: false });
   }
   handleSeasonClick = (season) => {
-    const { id } = this.props.match.params;
-    this.props.history.push(`/show/${id}/season/${season}`);
+    const { tmdbid } = this.props;
+    this.props.history.push(`/show/${tmdbid}/season/${season}`);
     this.setState({ showSeasons: false });
   }
   handleSeasonVisibleChange = (visible) => {
