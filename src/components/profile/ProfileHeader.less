@@ -39,8 +39,17 @@
       &__name {
         font-size: 2em;
       }
-      &__about > p {
-        margin-bottom: 5px;
+      &__about {
+        p {
+          margin-bottom: 5px;
+        }
+        &__website a {
+          color: #ccc;
+          text-decoration: underline;
+          &:hover {
+            color: #eee
+          }
+        }
       }
     }
     &__link {
