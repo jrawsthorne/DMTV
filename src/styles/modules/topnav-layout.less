@@ -17,6 +17,10 @@
     width: @right-width;
     justify-content: flex-end;
     display: flex;
+    margin-right: -20px;
+    @media (min-width: 992px) {
+      margin-right: 0;
+    }
 
     li.ant-menu-item:first-child, li.ant-menu-item:last-child {
       margin: 0 20px;
