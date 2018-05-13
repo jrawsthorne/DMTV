@@ -15,28 +15,13 @@ export const remarkable = new Remarkable({
 
 // Should return text(html) if returnType is text
 // Should return Object(React Compatible) if returnType is Object
-export function getHtml(body, returnType = 'Object', options = {}) {
+export function getHtml(body) {
   let parsedBody = body.replace(/<!--([\s\S]+?)(-->|$)/g, '(html comment removed: $1)');
   // causes issues parsedBody = parsedBody.replace(/^\s+</gm, '<');
-  const htmlReadyOptions = { mutate: true, resolveIframe: returnType === 'text' };
+  const htmlReadyOptions = { mutate: true, resolveIframe: true };
   parsedBody = remarkable.render(parsedBody);
   parsedBody = htmlReady(parsedBody, htmlReadyOptions).html;
   parsedBody = sanitizeHtml(parsedBody, sanitizeConfig({}));
-  if (returnType === 'text') {
-    return parsedBody;
-  }
-
-  if (options.rewriteLinks) {
-    parsedBody = parsedBody.replace(
-      /"https?:\/\/(?:www)?steemit.com\/([A-Za-z0-9@/\-.]*)"/g,
-      (match, p1) => `"/${p1}"`,
-    );
-  }
-
-  parsedBody = parsedBody.replace(
-    /https:\/\/ipfs\.busy\.org\/ipfs\/(\w+)/g,
-    (match, p1) => `https://gateway.ipfs.io/ipfs/${p1}`,
-  );
 
   const sections = [];
 
@@ -59,7 +44,7 @@ export function getHtml(body, returnType = 'Object', options = {}) {
   return <div dangerouslySetInnerHTML={{ __html: sections.join('') }} />;
 }
 
-const Body = props => <div>{getHtml(props.body, {}, 'Object')}</div>;
+const Body = props => <div>{getHtml(props.body)}</div>;
 
 Body.propTypes = {
   body: PropTypes.string,
