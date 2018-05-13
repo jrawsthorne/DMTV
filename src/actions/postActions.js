@@ -48,6 +48,7 @@ export const fetchPosts = (posts, {
   episodeNum = undefined,
   rating = undefined,
   type = undefined,
+  author = undefined,
 }) => (dispatch) => {
   dispatch({
     type: FETCH_POSTS,
@@ -60,6 +61,7 @@ export const fetchPosts = (posts, {
         seasonNum: seasonNum || undefined,
         episodeNum: seasonNum && episodeNum ? episodeNum : undefined,
         rating: rating || undefined,
+        author: author || undefined,
       },
     })
       .then(res =>
@@ -76,7 +78,7 @@ export const fetchPosts = (posts, {
           }))),
     meta: {
       globalError: 'Sorry, there was an error fetching posts',
-      mediaType: mediaType || type || 'all',
+      mediaType: mediaType || type || author || 'all',
       tmdbid,
       seasonNum,
       episodeNum,

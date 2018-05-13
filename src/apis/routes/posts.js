@@ -18,7 +18,7 @@ router.get('/@:author/:permlink', (req, res) => {
 
 router.get('/', (req, res) => {
   const {
-    postType = 'all', mediaType, type, tmdbid, seasonNum, episodeNum, rating, limit = 20,
+    postType = 'all', mediaType, type, tmdbid, seasonNum, episodeNum, rating, author, limit = 20,
   } = req.query;
   const query = {};
   if (mediaType) query.mediaType = mediaType;
@@ -27,6 +27,7 @@ router.get('/', (req, res) => {
   if (seasonNum) query.seasonNum = seasonNum;
   if (episodeNum) query.episodeNum = episodeNum;
   if (rating) query.rating = rating;
+  if (author) query.author = author;
   if (episodeNum && !seasonNum) {
     return res.status(404).json('Posts not found, please specify a season number as well');
   }
