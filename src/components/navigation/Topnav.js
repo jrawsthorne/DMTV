@@ -74,7 +74,7 @@ class Topnav extends React.Component {
     (
       <Menu className="Topnav__menu-container__menu" mode="horizontal">
         <Menu.Item key="username">
-          <Avatar size="large" src={`https://steemitimages.com/u/${this.props.username}/avatar/small`} />
+          <Link to={`/@${this.props.username}`}><Avatar size="large" src={`https://steemitimages.com/u/${this.props.username}/avatar/small`} /></Link>
         </Menu.Item>
         <Menu.Item key="divider" disabled>|</Menu.Item>
         <Menu.Item key="logout">

@@ -67,11 +67,12 @@ export const fetchPosts = (posts, {
           (!_.get(posts, `@${post.author}/${post.permlink}`) ?
             steemAPI.getContentAsync(post.author, post.permlink)
               .then(steemPost => getPostData(steemPost, post))
+              .catch(() => Promise.resolve(null))
             : _.get(posts, `@${post.author}/${post.permlink}`)
           )))
           .then(p => ({
             count: res.data.count,
-            posts: p,
+            posts: p.filter(post => post !== null),
           }))),
     meta: {
       globalError: 'Sorry, there was an error fetching posts',

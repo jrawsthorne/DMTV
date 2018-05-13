@@ -3,7 +3,7 @@ import HomePage from './components/pages/HomePage';
 import Error404Page from './components/pages/Error404Page';
 import MediaPage from './components/pages/MediaPage';
 import PostPage from './components/pages/PostPage';
-// import MediaPage from './components/pages/MediaPage';
+import ProfilePage from './components/pages/ProfilePage';
 
 const routes = [
   {
@@ -33,6 +33,11 @@ const routes = [
         path: '/@:author/:permlink',
         exact: true,
         component: PostPage,
+      },
+      {
+        path: '/@:username',
+        exact: true,
+        component: ProfilePage,
       },
       {
         path: '*',

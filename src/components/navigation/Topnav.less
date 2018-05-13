@@ -51,19 +51,24 @@
       line-height: 55px !important;
       margin-left: @base-spacing;
 
+      .ant-menu-item {
+        border-bottom: 2px solid transparent;
+      }
+
       & > li {
         height: 55px !important;
         padding: 0 4px !important;
         display: flex;
         align-items: center;
 
-        & > .ant-avatar {
+        & > a > .ant-avatar {
           height: 36px;
           width: 36px;
           min-width: 36px;
         }
 
         & > a {
+          line-height: 36px;
           color: #94959a !important;
           font-weight: 600 !important;
         }

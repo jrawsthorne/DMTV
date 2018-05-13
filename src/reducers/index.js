@@ -5,6 +5,7 @@ import searchReducer from './searchReducer';
 import authReducer from './authReducer';
 import postReducer from './postReducer';
 import feedReducer from './feedReducer';
+import userReducer from './userReducer';
 import { responsiveReducer } from '../vendor/responsive';
 
 export default combineReducers({
@@ -15,4 +16,5 @@ export default combineReducers({
   posts: postReducer,
   responsive: responsiveReducer,
   feed: feedReducer,
+  users: userReducer,
 });
