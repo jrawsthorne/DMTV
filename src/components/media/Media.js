@@ -1,43 +1,92 @@
+/* eslint-disable
+jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from 'antd';
+import { Icon, Popover } from 'antd';
 import { Link } from 'react-router-dom';
 import './Media.less';
 
-const Media = props => (
-  <div className="MediaItem">
-    <div
-      className="MediaItem__background"
-      style={{ background: `linear-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.8)),url(${props.backdropPath})` }}
-    >
-      <div className="MediaHeader" style={{ position: 'relative' }}>
-        {props.prev &&
+const Media = (props) => {
+  const { handleEpisodeClick, handleSeasonClick } = props;
+  return (
+    <div className="MediaItem">
+      <div
+        className="MediaItem__background"
+        style={{ background: `linear-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.8)),url(${props.backdropPath})` }}
+      >
+        <div className="MediaHeader" style={{ position: 'relative' }}>
+          {props.prev &&
           <Link className="prev-next" to={props.prev} >
             <Icon
               type="left"
               className="prev-icon"
             />
           </Link>}
-        <div className="MediaHeader__poster">
-          <img alt="poster" src={props.poster} style={{ postition: 'absolute' }} />
-        </div>
-        <div className="MediaHeader__info">
-          <div className="MediaHeader__info__title">
-            {props.title}
+          <div className="MediaHeader__poster">
+            <img alt="poster" src={props.poster} style={{ postition: 'absolute' }} />
           </div>
-          <div className="MediaHeader__info__overview">{props.overview}</div>
-        </div>
-        {props.next &&
+          <div className="MediaHeader__info">
+            <div className="MediaHeader__info__title">
+              {props.title}
+            </div>
+            <div className="MediaHeader__info__overview">{props.overview}</div>
+            <p>
+              {props.seasons &&
+              <Popover
+                onVisibleChange={props.handleSeasonVisibleChange}
+                visible={props.showSeasons}
+                placement="bottom"
+                content={Object.values(props.seasons).map(season =>
+                (
+                  <p
+                    onClick={() => handleSeasonClick(season.season_number)}
+                    className="Filter__option"
+                    key={`season-${season.season_number}`}
+                  >{season.name}
+                  </p>
+                ))}
+                trigger="click"
+              >
+                <span className="Filter__dropdown" style={{ marginLeft: 0 }}>
+                Seasons <Icon type="down" style={{ fontSize: 15 }} />
+                </span>
+              </Popover>
+            }
+              {props.episodes &&
+              <Popover
+                onVisibleChange={props.handleEpisodeVisibleChange}
+                visible={props.showEpisodes}
+                placement="bottom"
+                content={Object.values(props.episodes).map(episode =>
+                (
+                  <p
+                    onClick={() => handleEpisodeClick(episode.episode_number)}
+                    className="Filter__option"
+                    key={`season-${episode.episode_number}`}
+                  >{episode.name}
+                  </p>
+                ))}
+                trigger="click"
+              >
+                <span className="Filter__dropdown">
+                Episodes <Icon type="down" style={{ fontSize: 15 }} />
+                </span>
+              </Popover>
+            }
+            </p>
+          </div>
+          {props.next &&
           <Link className="prev-next" to={props.next} >
             <Icon
               type="right"
               className="next-icon"
             />
           </Link>}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 Media.propTypes = {
   title: PropTypes.string.isRequired,
@@ -46,11 +95,21 @@ Media.propTypes = {
   poster: PropTypes.string.isRequired,
   next: PropTypes.string,
   prev: PropTypes.string,
+  episodes: PropTypes.shape(),
+  seasons: PropTypes.shape(),
+  handleEpisodeClick: PropTypes.func.isRequired,
+  handleSeasonClick: PropTypes.func.isRequired,
+  showSeasons: PropTypes.bool.isRequired,
+  showEpisodes: PropTypes.bool.isRequired,
+  handleSeasonVisibleChange: PropTypes.func.isRequired,
+  handleEpisodeVisibleChange: PropTypes.func.isRequired,
 };
 
 Media.defaultProps = {
   next: undefined,
   prev: undefined,
+  episodes: undefined,
+  seasons: undefined,
 };
 
 export default Media;

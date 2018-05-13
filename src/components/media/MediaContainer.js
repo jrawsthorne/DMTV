@@ -5,8 +5,6 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import * as actions from '../../actions/mediaActions';
 import { getMediaItemDetails, getNextPrev } from '../../helpers/mediaHelpers';
-import SeasonList from '../media/list/SeasonList';
-import EpisodeList from '../media/list/EpisodeList';
 
 import Loading from '../misc/Loading';
 
@@ -14,7 +12,8 @@ import Media from './Media';
 
 class MediaContainer extends React.Component {
   state = {
-    showList: false,
+    showSeasons: false,
+    showEpisodes: false,
   }
   componentDidMount() {
     const {
@@ -67,14 +66,27 @@ class MediaContainer extends React.Component {
     onLoad({ fetching, loaded, failed });
     if (url !== currentURL) {
       this.setState({
-        showList: false,
+        showSeasons: false,
+        showEpisodes: false,
       });
     }
   }
-  handleListClick = () =>
-    this.setState({
-      showList: !this.state.showList,
-    })
+  handleEpisodeClick = (episode) => {
+    const { id, seasonNum } = this.props.match.params;
+    this.props.history.push(`/show/${id}/season/${seasonNum}/episode/${episode}`);
+    this.setState({ showEpisodes: false });
+  }
+  handleSeasonClick = (season) => {
+    const { id } = this.props.match.params;
+    this.props.history.push(`/show/${id}/season/${season}`);
+    this.setState({ showSeasons: false });
+  }
+  handleSeasonVisibleChange = (visible) => {
+    this.setState({ showSeasons: visible });
+  }
+  handleEpisodeVisibleChange = (visible) => {
+    this.setState({ showEpisodes: visible });
+  }
   render() {
     const {
       loaded,
@@ -101,27 +113,15 @@ class MediaContainer extends React.Component {
           overview={overview}
           prev={prev}
           next={next}
+          seasons={_.get(mediaItem, 'seasons')}
+          episodes={_.get(mediaItem, `seasons[${seasonNum}].episodes`)}
+          handleEpisodeClick={this.handleEpisodeClick}
+          handleSeasonClick={this.handleSeasonClick}
+          showSeasons={this.state.showSeasons}
+          showEpisodes={this.state.showEpisodes}
+          handleSeasonVisibleChange={this.handleSeasonVisibleChange}
+          handleEpisodeVisibleChange={this.handleEpisodeVisibleChange}
         />
-        {mediaType === 'show' && (
-          !_.isEmpty(_.get(mediaItem, 'seasons')) ? <SeasonList
-            showSeasons={this.state.showList}
-            handleSeasonListClick={this.handleListClick}
-            seasons={mediaItem.seasons}
-            show={mediaItem}
-          /> : (
-            'Sorry, no seasons were found for this show'
-          ))}
-        {(mediaType === 'season' || mediaType === 'episode') && (
-          !_.isEmpty(_.get(mediaItem, `seasons[${seasonNum}].episodes`)) ? <EpisodeList
-            showEpisodes={this.state.showList}
-            handleEpisodeListClick={this.handleListClick}
-            episodes={mediaItem.seasons[seasonNum].episodes}
-            show={mediaItem}
-          /> : (
-            'Sorry, no episodes were found for this season'
-          )
-        )
-          }
       </React.Fragment>
     );
   }
@@ -142,6 +142,7 @@ MediaContainer.propTypes = {
   loaded: PropTypes.bool,
   noLoading: PropTypes.bool,
   match: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
   onLoad: PropTypes.func,
 };
 
