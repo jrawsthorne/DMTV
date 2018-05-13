@@ -6,7 +6,7 @@ import Body from '../../helpers/bodyHelpers';
 const Post = props => (
   <React.Fragment>
     <h1>{props.title}</h1>
-    <Body body={props.body} />
+    <Body body={props.body} returnType="Object" />
   </React.Fragment>
 );
 
