@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import * as actions from '../../actions/userActions';
 import PostsContainer from '../post/PostsContainer';
+import ProfileHeader from '../profile/ProfileHeader';
 
 import Loading from '../misc/Loading';
 
@@ -30,12 +31,25 @@ class ProfilePage extends React.Component {
     if (!loaded || fetching) return <Loading />;
     if (failed || !user) return <div className="main-content">Sorry, there was an error fetching that user</div>;
     const jsonMetadata = JSON.parse(user.json_metadata);
-    const { profile: { name } } = jsonMetadata;
+    const { profile } = jsonMetadata;
+    const {
+      name, cover_image: coverImage, about, website, location,
+    } = profile;
     return (
-      <Layout className="main-content">
-        <h2>Latest posts from {name || user.name}</h2>
-        <PostsContainer author={user.name} />
-      </Layout>
+      <React.Fragment>
+        <ProfileHeader
+          username={user.name}
+          coverImage={coverImage}
+          about={about}
+          name={name}
+          website={website}
+          location={location}
+        />
+        <Layout className="main-content">
+          <h2>Latest posts from {name || user.name}</h2>
+          <PostsContainer author={user.name} />
+        </Layout>
+      </React.Fragment>
     );
   }
 }

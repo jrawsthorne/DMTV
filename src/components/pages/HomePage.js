@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { Layout, Popover, Icon } from 'antd';
 import PostsContainer from '../post/PostsContainer';
-import './HomePage.less';
 
 class HomePage extends React.Component {
   state = {
