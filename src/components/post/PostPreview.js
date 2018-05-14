@@ -19,22 +19,24 @@ class PostPreview extends React.Component {
   }
   render() {
     const {
-      url, posterPath, overview, title, mediaTitle,
+      url, posterPath, overview, title, mediaTitle, author, mediaUrl,
     } = this.props;
     return (
-      <Link to={url}>
-        <Card
-          hoverable
-          style={{ width: '100%' }}
-          cover={<img onError={() => this.handleImageError()} alt="poster" height="auto" src={(this.state.imageError && noImageFound) || (posterPath && `https://image.tmdb.org/t/p/w780${posterPath}`) || noImageFound} />}
-          title={mediaTitle}
-        >
+      <Card
+        hoverable
+        style={{ width: '100%' }}
+        cover={<Link to={url}><img onError={() => this.handleImageError()} alt="poster" height="auto" src={(this.state.imageError && noImageFound) || (posterPath && `https://image.tmdb.org/t/p/w780${posterPath}`) || noImageFound} /></Link>}
+        title={<Link to={mediaUrl}>{mediaTitle}</Link>}
+      >
+        <Link to={url}>
           <Meta
             title={title}
             description={<BodyShort body={overview} />}
           />
-        </Card>
-      </Link>
+        </Link>
+        <Link to={`/@${author}`}><p style={{ marginTop: 15, marginBottom: 0 }}>By {author}</p></Link>
+      </Card>
+
     );
   }
 }
@@ -45,6 +47,8 @@ PostPreview.propTypes = {
   posterPath: PropTypes.string,
   url: PropTypes.string.isRequired,
   mediaTitle: PropTypes.string.isRequired,
+  author: PropTypes.string.isRequired,
+  mediaUrl: PropTypes.string.isRequired,
 };
 
 PostPreview.defaultProps = {

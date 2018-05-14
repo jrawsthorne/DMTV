@@ -13,6 +13,7 @@ const getPostData = (steemPost, post) => ({
   body: steemPost.body,
   postType: post.postType,
   mediaType: post.mediaType,
+  type: post.type,
   tmdbid: post.tmdbid,
   mediaTitle: post.title,
   backdropPath: post.backdropPath || undefined,

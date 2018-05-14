@@ -91,10 +91,13 @@ class PostsContainer extends React.Component {
               {posts.map((postId) => {
                 const post = allPosts[postId];
                 let title = post.mediaTitle;
+                let mediaUrl = `/${post.type}/${post.tmdbid}`;
                 if (post.seasonNum) {
                   title += ` S${post.seasonNum}`;
+                  mediaUrl += `/season/${post.seasonNum}`;
                   if (post.episodeNum) {
                     title += ` E${post.episodeNum}`;
+                    mediaUrl += `/episode/${post.episodeNum}`;
                   }
                 }
                 let poster = post.posterPath || '';
@@ -113,6 +116,7 @@ class PostsContainer extends React.Component {
                     mediaTitle={title}
                     author={post.author}
                     url={`/${post.url}`}
+                    mediaUrl={mediaUrl}
                   />
                 </div>
               );
