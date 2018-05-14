@@ -18,9 +18,16 @@ app.use(cookieParser());
 
 mongoose.connect(process.env.MONGO_URI);
 
-app.use('/api/posts', posts);
-app.use('/api/users', users);
-app.use('/api/ratings', ratings);
+let API_PREFIX;
+if (process.env.NODE_ENV === 'production') {
+  API_PREFIX = '/';
+} else {
+  API_PREFIX = '/api/';
+}
+
+app.use(`${API_PREFIX}posts`, posts);
+app.use(`${API_PREFIX}users`, users);
+app.use(`${API_PREFIX}ratings`, ratings);
 
 app.get('/*', (req, res) => res.status(401).send({ error: 'Route not found' }));
 
