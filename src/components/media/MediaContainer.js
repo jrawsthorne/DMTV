@@ -9,6 +9,7 @@ import { getMediaItemDetails, getNextPrev } from '../../helpers/mediaHelpers';
 import Loading from '../misc/Loading';
 
 import Media from './Media';
+import StarRating from './StarRating';
 
 class MediaContainer extends React.Component {
   state = {
@@ -90,7 +91,15 @@ class MediaContainer extends React.Component {
   render() {
     const {
       loaded,
-      failed, fetching, mediaItem, mediaType, seasonNum, episodeNum, noLoading,
+      failed,
+      fetching,
+      mediaItem,
+      tmdbid,
+      mediaType,
+      seasonNum,
+      episodeNum,
+      noLoading,
+      isAuthenticated,
     } = this.props;
     if (failed) return <div className="main-content"><p>Sorry, there was an error loading the metadata</p></div>;
     if (fetching || !loaded) return noLoading ? '' : <Loading />;
@@ -104,6 +113,12 @@ class MediaContainer extends React.Component {
       prev = _.get(nextPrev, 'prev');
       next = _.get(nextPrev, 'next');
     }
+    const starRating = (<StarRating
+      tmdbid={tmdbid}
+      mediaType={mediaType}
+      seasonNum={seasonNum}
+      episodeNum={episodeNum}
+    />);
     return (
       <React.Fragment>
         <Media
@@ -121,6 +136,7 @@ class MediaContainer extends React.Component {
           showEpisodes={this.state.showEpisodes}
           handleSeasonVisibleChange={this.handleSeasonVisibleChange}
           handleEpisodeVisibleChange={this.handleEpisodeVisibleChange}
+          starRating={isAuthenticated ? starRating : undefined}
         />
       </React.Fragment>
     );
@@ -144,6 +160,7 @@ MediaContainer.propTypes = {
   match: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
   onLoad: PropTypes.func,
+  isAuthenticated: PropTypes.bool.isRequired,
 };
 
 MediaContainer.defaultProps = {
@@ -180,6 +197,7 @@ const mapStateToProps = (state, ownProps) => {
     fetching,
     loaded,
     failed,
+    isAuthenticated: _.get(state, 'auth.isAuthenticated', false),
   };
 };
 

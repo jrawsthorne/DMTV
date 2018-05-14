@@ -6,6 +6,7 @@ import { Icon, Popover } from 'antd';
 import { Link } from 'react-router-dom';
 import './Media.less';
 
+
 const Media = (props) => {
   const { handleEpisodeClick, handleSeasonClick } = props;
   return (
@@ -29,8 +30,8 @@ const Media = (props) => {
             <div className="MediaHeader__info__title">
               {props.title}
             </div>
-            <div className="MediaHeader__info__overview">{props.overview}</div>
-            <p>
+            <div className="MediaHeader__info__overview"><p>{props.overview}</p></div>
+            <div className="MediaHeader__info__selectors">
               {props.seasons &&
               <Popover
                 onVisibleChange={props.handleSeasonVisibleChange}
@@ -73,7 +74,13 @@ const Media = (props) => {
                 </span>
               </Popover>
             }
-            </p>
+            </div>
+            {props.starRating && (
+              <div className="MediaHeader__info__rating">
+                <p>Your rating</p>
+                {props.starRating}
+              </div>
+            )}
           </div>
           {props.next &&
           <Link className="prev-next" to={props.next} >
@@ -103,6 +110,7 @@ Media.propTypes = {
   showEpisodes: PropTypes.bool.isRequired,
   handleSeasonVisibleChange: PropTypes.func.isRequired,
   handleEpisodeVisibleChange: PropTypes.func.isRequired,
+  starRating: PropTypes.element,
 };
 
 Media.defaultProps = {
@@ -110,6 +118,7 @@ Media.defaultProps = {
   prev: undefined,
   episodes: undefined,
   seasons: undefined,
+  starRating: undefined,
 };
 
 export default Media;

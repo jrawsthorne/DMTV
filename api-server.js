@@ -6,6 +6,8 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 
 const posts = require('./src/apis/routes/posts');
+const users = require('./src/apis/routes/users');
+const ratings = require('./src/apis/routes/ratings');
 
 dotenv.config();
 const app = express();
@@ -17,6 +19,8 @@ app.use(cookieParser());
 mongoose.connect(process.env.MONGO_URI);
 
 app.use('/api/posts', posts);
+app.use('/api/users', users);
+app.use('/api/ratings', ratings);
 
 app.get('/*', (req, res) => res.status(401).send({ error: 'Route not found' }));
 

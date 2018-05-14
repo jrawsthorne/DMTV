@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import axios from 'axios';
 import { arrayToObject } from '../helpers/mediaHelpers';
 import theMovieDBAPI from '../apis/theMovieDBAPI';
 import {
@@ -6,6 +7,7 @@ import {
   FETCH_SHOW,
   FETCH_SEASON,
   FETCH_EPISODE,
+  USER_RATE_CHANGE,
 } from './types';
 
 // fetch movie details and return object containing id, poster, backdrop, title, overview and year
@@ -121,5 +123,30 @@ export const fetchEpisode = (id, seasonNum, episodeNum) => ({
     id,
     seasonNum,
     episodeNum,
+  },
+});
+
+export const userRateChange = (
+  mediaType,
+  tmdbid,
+  seasonNum = undefined,
+  episodeNum = undefined,
+  value,
+) => ({
+  type: USER_RATE_CHANGE,
+  payload: axios.post(`${process.env.API_URL}/ratings/add`, {
+    mediaType,
+    tmdbid,
+    seasonNum: seasonNum || undefined,
+    episodeNum: episodeNum || undefined,
+    value,
+  }).then(res => res.data),
+  meta: {
+    mediaType,
+    tmdbid,
+    seasonNum: seasonNum || undefined,
+    episodeNum: episodeNum || undefined,
+    value,
+    globalError: 'Sorry, there was an error adding the rating',
   },
 });
