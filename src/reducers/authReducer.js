@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { message } from 'antd';
 import {
   LOGIN_PENDING,
   LOGIN_FULFILLED,
@@ -62,7 +63,9 @@ export default (state = initialState, action) => {
         fetching: false,
         user: {},
       };
-    case USER_RATE_CHANGE_PENDING:
+    case USER_RATE_CHANGE_PENDING: {
+      message.destroy();
+      message.loading('Rate pending', 0);
       return {
         ...state,
         user: {
@@ -75,7 +78,10 @@ export default (state = initialState, action) => {
           },
         },
       };
+    }
     case USER_RATE_CHANGE_FULFILLED: {
+      message.destroy();
+      message.success('Rated successfully');
       const {
         seasonNum, episodeNum, tmdbid, mediaType,
       } = action.meta;

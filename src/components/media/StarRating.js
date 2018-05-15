@@ -5,8 +5,6 @@ import { connect } from 'react-redux';
 import { Rate } from 'antd';
 import * as actions from '../../actions/mediaActions';
 
-import Loading from '../misc/Loading';
-
 class StarRating extends React.Component {
   state = {
     rating: 0,
@@ -20,10 +18,9 @@ class StarRating extends React.Component {
   }
   render() {
     const {
-      loaded, failed, fetching, userRating,
+      loaded, fetching, userRating,
     } = this.props;
     const { rating } = this.state;
-    if (loaded && failed) return <Loading />;
     return (<Rate
       value={(loaded && userRating) || rating}
       onChange={this.handleRateChange}
@@ -38,7 +35,6 @@ StarRating.propTypes = {
   seasonNum: PropTypes.string,
   episodeNum: PropTypes.string,
   fetching: PropTypes.bool,
-  failed: PropTypes.bool,
   loaded: PropTypes.bool,
   userRating: PropTypes.number,
   userRateChange: PropTypes.func.isRequired,
@@ -49,7 +45,6 @@ StarRating.defaultProps = {
   seasonNum: undefined,
   fetching: false,
   loaded: false,
-  failed: false,
   userRating: 0,
 };
 
@@ -79,7 +74,6 @@ const mapStateToProps = (state, ownProps) => {
   return {
     fetching: _.get(state, 'auth.user.ratings.fetching', false),
     loaded: _.get(state, 'auth.user.ratings.loaded', false),
-    failed: _.get(state, 'auth.user.ratings.failed', false),
     userRating,
   };
 };
