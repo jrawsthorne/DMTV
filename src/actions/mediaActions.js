@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import axios from 'axios';
-import Cookie from 'js-cookie';
 import { arrayToObject } from '../helpers/mediaHelpers';
 import theMovieDBAPI from '../apis/theMovieDBAPI';
 import {
@@ -141,10 +140,6 @@ export const userRateChange = (
     seasonNum: seasonNum || undefined,
     episodeNum: episodeNum || undefined,
     value,
-  }, {
-    headers: {
-      Authorization: `Bearer ${Cookie.get('token')}`,
-    },
   }).then(res => res.data),
   meta: {
     mediaType,

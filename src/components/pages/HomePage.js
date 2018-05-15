@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { Layout, Popover, Icon } from 'antd';
 import PostsContainer from '../post/PostsContainer';
 
@@ -11,10 +12,10 @@ class HomePage extends React.Component {
   };
   componentDidMount() {
     window.scrollTo(0, 0);
-    const { mediaType } = this.props.match.params;
-    if (mediaType) {
+    const { filter } = this.props.match.params;
+    if (filter) {
       this.setState({
-        currentFilter: mediaType[0].toUpperCase() + mediaType.substr(1),
+        currentFilter: filter[0].toUpperCase() + filter.substr(1),
       });
     } else {
       this.setState({
@@ -23,10 +24,10 @@ class HomePage extends React.Component {
     }
   }
   componentWillReceiveProps(nextProps) {
-    const { mediaType } = nextProps.match.params;
-    if (mediaType) {
+    const { filter } = nextProps.match.params;
+    if (filter) {
       this.setState({
-        currentFilter: mediaType[0].toUpperCase() + mediaType.substr(1),
+        currentFilter: filter[0].toUpperCase() + filter.substr(1),
       });
     } else {
       this.setState({
@@ -50,16 +51,28 @@ class HomePage extends React.Component {
   }
 
   render() {
-    const { mediaType } = this.props.match.params;
+    const { filter } = this.props.match.params;
+    const { isAuthenticated, loaded } = this.props;
     const { visible, currentFilter } = this.state;
     const filters = ['All', 'Movies', 'Shows', 'Episodes'];
+    if (isAuthenticated) filters.push('Subscriptions');
     const content = (
       /* eslint-disable
       jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */
-      <div>{filters.map(filter => <p onClick={() => this.handleFilterClick(filter)} className="Filter__option" key={filter.toLowerCase()}>{filter}</p>)}</div>
+      <div>{filters.map(f => <p onClick={() => this.handleFilterClick(f)} className="Filter__option" key={f.toLowerCase()}>{f}</p>)}</div>
       /* eslint-enable
         jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */
     );
+    let props;
+    if (filter === 'movies' || filter === 'episodes' || filter === 'shows') {
+      props = { mediaType: filter.slice(0, -1) };
+    } else if (filter === 'subscriptions') {
+      if (isAuthenticated) {
+        props = { subscriptions: true };
+      } else if (loaded) {
+        this.props.history.push('/');
+      }
+    }
     return (
       <Layout className="main-content">
         <h2>
@@ -69,7 +82,7 @@ class HomePage extends React.Component {
           </Popover>
         </h2>
         <p>These posts are real but just for testing.</p>
-        <PostsContainer mediaType={mediaType && mediaType.slice(0, -1)} />
+        {loaded && <PostsContainer {...props} />}
       </Layout>
     );
   }
@@ -78,6 +91,13 @@ class HomePage extends React.Component {
 HomePage.propTypes = {
   match: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
+  isAuthenticated: PropTypes.bool.isRequired,
+  loaded: PropTypes.bool.isRequired,
 };
 
-export default withRouter(HomePage);
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated,
+  loaded: state.auth.loaded,
+});
+
+export default withRouter(connect(mapStateToProps, {})(HomePage));

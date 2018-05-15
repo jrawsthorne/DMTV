@@ -6,8 +6,12 @@ import { LOGIN, LOGOUT } from './types';
 export const login = () => ({
   type: LOGIN,
   payload: axios.post(`${process.env.API_URL}/users/login`, { accessToken: Cookie.get('access_token') }).then((res) => {
-    Cookie.set('token', res.data.token);
+    axios.defaults.headers.common.Authorization = `Bearer ${res.data.token}`;
     return res.data.user;
+  }).catch(() => {
+    Cookie.remove('access_token');
+    Cookie.remove('token');
+    throw new Error('Login failed');
   }),
   meta: {
     globalError: 'Login failed',

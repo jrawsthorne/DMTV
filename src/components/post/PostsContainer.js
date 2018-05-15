@@ -27,6 +27,7 @@ class PostsContainer extends React.Component {
       isSmall: PropTypes.bool,
       allPosts: PropTypes.shape().isRequired,
       author: PropTypes.string,
+      subscriptions: PropTypes.bool,
     };
     static defaultProps = {
       tmdbid: undefined,
@@ -38,6 +39,7 @@ class PostsContainer extends React.Component {
       isXSmall: false,
       isSmall: false,
       author: undefined,
+      subscriptions: false,
     }
     componentDidMount() {
       if (_.isEmpty(this.props.posts) && !this.props.fetching) {
@@ -49,6 +51,7 @@ class PostsContainer extends React.Component {
           seasonNum: this.props.seasonNum,
           episodeNum: this.props.episodeNum,
           author: this.props.author,
+          subscriptions: this.props.subscriptions,
         });
       }
     }
@@ -63,7 +66,8 @@ class PostsContainer extends React.Component {
             tmdbid: nextProps.tmdbid,
             seasonNum: nextProps.seasonNum,
             episodeNum: nextProps.episodeNum,
-            author: this.props.author,
+            author: nextProps.author,
+            subscriptions: nextProps.subscriptions,
           });
         }
       }
@@ -130,7 +134,7 @@ class PostsContainer extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  let key = ownProps.mediaType || ownProps.type || ownProps.author || 'all';
+  let key = ownProps.mediaType || ownProps.type || ownProps.author || (ownProps.subscriptions && 'subscriptionsFeed') || 'all';
   if (ownProps.tmdbid) key += ownProps.tmdbid;
   if (ownProps.seasonNum) key += ownProps.seasonNum;
   if (ownProps.episodeNum) key += ownProps.episodeNum;

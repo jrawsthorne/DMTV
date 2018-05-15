@@ -10,7 +10,7 @@ const routes = [
     component: Wrapper,
     routes: [
       {
-        path: '/:mediaType(movies|shows|episodes|all)?',
+        path: '/:filter(movies|shows|episodes|all|subscriptions)?',
         exact: true,
         component: HomePage,
       },

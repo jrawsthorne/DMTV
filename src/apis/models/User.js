@@ -9,6 +9,7 @@ const schema = new Schema(
       required: true,
       unique: true,
     },
+    subscriptions: [{ type: Schema.Types.ObjectId, ref: 'subscriptions' }],
     ratings: [{ type: Schema.Types.ObjectId, ref: 'ratings' }],
   },
   {

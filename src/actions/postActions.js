@@ -41,6 +41,8 @@ export const fetchPost = (author, permlink) => ({
   },
 });
 
+// add sortby options
+
 export const fetchPosts = (posts, {
   postType = 'all',
   mediaType = undefined,
@@ -50,10 +52,17 @@ export const fetchPosts = (posts, {
   rating = undefined,
   type = undefined,
   author = undefined,
+  subscriptions = false,
 }) => (dispatch) => {
+  let query;
+  if (subscriptions) {
+    query = 'users/subscriptions';
+  } else {
+    query = 'posts';
+  }
   dispatch({
     type: FETCH_POSTS,
-    payload: axios.get(`${process.env.API_URL}/posts`, {
+    payload: axios.get(`${process.env.API_URL}/${query}`, {
       params: {
         postType: postType || 'all',
         mediaType: mediaType || undefined,
@@ -79,7 +88,7 @@ export const fetchPosts = (posts, {
           }))),
     meta: {
       globalError: 'Sorry, there was an error fetching posts',
-      mediaType: mediaType || type || author || 'all',
+      mediaType: mediaType || type || author || (subscriptions && 'subscriptionsFeed') || 'all',
       tmdbid,
       seasonNum,
       episodeNum,
