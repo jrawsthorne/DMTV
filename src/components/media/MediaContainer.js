@@ -9,7 +9,6 @@ import { getMediaItemDetails, getNextPrev } from '../../helpers/mediaHelpers';
 import Loading from '../misc/Loading';
 
 import Media from './Media';
-import StarRating from './StarRating';
 
 class MediaContainer extends React.Component {
   state = {
@@ -113,12 +112,6 @@ class MediaContainer extends React.Component {
       prev = _.get(nextPrev, 'prev');
       next = _.get(nextPrev, 'next');
     }
-    const starRating = (<StarRating
-      tmdbid={tmdbid}
-      mediaType={mediaType}
-      seasonNum={seasonNum}
-      episodeNum={episodeNum}
-    />);
     return (
       <React.Fragment>
         <Media
@@ -136,7 +129,11 @@ class MediaContainer extends React.Component {
           showEpisodes={this.state.showEpisodes}
           handleSeasonVisibleChange={this.handleSeasonVisibleChange}
           handleEpisodeVisibleChange={this.handleEpisodeVisibleChange}
-          starRating={isAuthenticated ? starRating : undefined}
+          isAuthenticated={isAuthenticated}
+          tmdbid={tmdbid}
+          mediaType={mediaType}
+          seasonNum={seasonNum}
+          episodeNum={episodeNum}
         />
       </React.Fragment>
     );

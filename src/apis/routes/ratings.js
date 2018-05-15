@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const Rating = require('../models/Rating');
+const User = require('../models/User');
 
 const router = express.Router();
 
@@ -27,26 +28,54 @@ router.post('/add', passport.authenticate('jwt', { session: false }), (req, res)
   if (value > 5 || value < 0) {
     return res.status(400).json({ error: 'Rating couldn\'t be added to the database' });
   }
-  return Rating.findOne({
-    user, mediaType, tmdbid, seasonNum, episodeNum,
-  }).then((rating) => {
-    if (rating) {
-      if (value === 0) {
-        return Rating.findOne({
-          mediaType, tmdbid, seasonNum, episodeNum,
-        }).remove().then(() => res.json({}));
+  return Rating
+    .findOne({
+      user,
+      mediaType,
+      tmdbid,
+      seasonNum,
+      episodeNum,
+    })
+    .then((rating) => {
+      if (rating) {
+        if (parseInt(value, 10) === 0) {
+          return Rating
+            .findOne({
+              user,
+              mediaType,
+              tmdbid,
+              seasonNum,
+              episodeNum,
+            })
+            .remove()
+            .then(() => {
+              User.update({ _id: user.id }, { $pull: { ratings: rating.id } })
+                .then(() => res.json({}));
+            });
+        }
+        return Rating.findOneAndUpdate({
+          user,
+          mediaType,
+          tmdbid,
+          seasonNum,
+          episodeNum,
+        }, { score: value }, { new: true })
+          .then(newRating => res.json(newRating));
       }
-      return Rating.findOneAndUpdate({
-        mediaType, tmdbid, seasonNum, episodeNum,
-      }, { score: value }, { new: true }).populate('user', 'username').then(newRating => res.json(newRating));
-    }
-    return new Rating({
-      user, mediaType, tmdbid, seasonNum, episodeNum, score: value,
-    }).save().then((newRating) => {
-      user.ratings.push(newRating);
-      user.save().then(() => res.json(newRating));
+
+      return new Rating({
+        user,
+        mediaType,
+        tmdbid,
+        seasonNum,
+        episodeNum,
+        score: value,
+      })
+        .save()
+        .then(newRating =>
+          User.update({ _id: user.id }, { $push: { ratings: { _id: newRating.id } } })
+            .then(() => res.json(newRating)));
     });
-  });
 });
 
 module.exports = router;

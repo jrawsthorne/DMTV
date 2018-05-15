@@ -16,7 +16,7 @@ router.post('/login', (req, res) => {
   steemConnectAPI.setAccessToken(accessToken);
   steemConnectAPI.me()
     .then((steemUser) => {
-      User.findOne({ username: steemUser.name }).populate({ path: 'ratings', select: 'score mediaType tmdbid seasonNum episodeNum' })
+      User.findOne({ username: steemUser.name }).populate({ path: 'ratings', select: 'score mediaType tmdbid seasonNum episodeNum' }).populate('subscriptions', 'tmdbid type')
         .then((user) => {
           if (user) {
             const token = jwt.sign({
@@ -30,6 +30,9 @@ router.post('/login', (req, res) => {
                   ...steemUser.account,
                   ratings: {
                     scores: user.ratings,
+                  },
+                  subscriptions: {
+                    items: user.subscriptions,
                   },
                 },
               },
@@ -69,17 +72,36 @@ router.get('/subscriptions', passport.authenticate('jwt', { session: false }), (
     .catch(() => res.status(404).json({ error: 'Error fetching subscriptions' }));
 });
 
-router.post('/subscriptions/add', passport.authenticate('jwt', { session: false }), (req, res) => {
-  const { type, tmdbid } = req.body;
+router.post('/subscriptions/change', passport.authenticate('jwt', { session: false }), (req, res) => {
+  const { type, tmdbid, subscribed } = req.body;
   const { user } = req;
-  const subscription = new Subscription({
-    user,
-    type,
-    tmdbid,
-  });
-  subscription.save().then((newSubscription) => {
-    user.subscriptions.push(newSubscription);
-    user.save().then(() => res.json(newSubscription));
+
+  return Subscription.findOne({
+    user, type, tmdbid,
+  }).then((subscription) => {
+    if (subscription) {
+      if (JSON.parse(subscribed) === false) {
+        return Subscription.findOne({
+          user, type, tmdbid,
+        })
+          .remove()
+          .then(() => {
+            User.update({ _id: user.id }, { $pull: { subscriptions: subscription.id } })
+              .then(() => res.json({}));
+          });
+      }
+      res.json(subscription);
+    }
+    if (JSON.parse(subscribed) === false) {
+      res.status(404).json({ error: 'Subscription not found' });
+    }
+    return new Subscription({
+      user, type, tmdbid,
+    })
+      .save()
+      .then(newSubscription =>
+        User.update({ _id: user.id }, { $push: { subscriptions: { _id: newSubscription.id } } })
+          .then(() => res.json(newSubscription)));
   });
 });
 

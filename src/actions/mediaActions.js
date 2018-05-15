@@ -8,6 +8,7 @@ import {
   FETCH_SEASON,
   FETCH_EPISODE,
   USER_RATE_CHANGE,
+  SUBSCRIBE_CHANGE,
 } from './types';
 
 // fetch movie details and return object containing id, poster, backdrop, title, overview and year
@@ -148,5 +149,21 @@ export const userRateChange = (
     episodeNum: episodeNum || undefined,
     value,
     globalError: 'Sorry, there was an error adding the rating',
+  },
+});
+
+
+export const subscribeChange = (type, tmdbid, subscribed) => ({
+  type: SUBSCRIBE_CHANGE,
+  payload: axios.post(`${process.env.API_URL}/users/subscriptions/change`, {
+    type,
+    tmdbid,
+    subscribed,
+  }).then(res => res.data),
+  meta: {
+    globalError: 'Sorry, there was an error changing your subscription',
+    type,
+    tmdbid,
+    subscribed,
   },
 });

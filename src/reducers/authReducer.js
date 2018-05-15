@@ -8,6 +8,9 @@ import {
   USER_RATE_CHANGE_FULFILLED,
   USER_RATE_CHANGE_PENDING,
   USER_RATE_CHANGE_REJECTED,
+  SUBSCRIBE_CHANGE_PENDING,
+  SUBSCRIBE_CHANGE_FULFILLED,
+  SUBSCRIBE_CHANGE_REJECTED,
 } from '../actions/types';
 
 const initialState = {
@@ -44,6 +47,12 @@ export default (state = initialState, action) => {
             failed: false,
             fetching: false,
           },
+          subscriptions: {
+            items: action.payload.account.subscriptions.items,
+            loaded: true,
+            failed: false,
+            fetching: false,
+          },
         },
       };
     case LOGIN_REJECTED:
@@ -63,6 +72,19 @@ export default (state = initialState, action) => {
         fetching: false,
         user: {},
       };
+    case SUBSCRIBE_CHANGE_PENDING:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          subscriptions: {
+            ..._.get(state, 'user.subscriptions'),
+            fetching: true,
+            loaded: false,
+            failed: false,
+          },
+        },
+      };
     case USER_RATE_CHANGE_PENDING:
       return {
         ...state,
@@ -76,6 +98,51 @@ export default (state = initialState, action) => {
           },
         },
       };
+    case SUBSCRIBE_CHANGE_FULFILLED: {
+      const { type, tmdbid, subscribed } = action.meta;
+      message.destroy();
+      if (JSON.parse(subscribed) === false) {
+        message.success('Unubscribed successfully', 0.5);
+        const currentSubscription = _.find(
+          state.user.subscriptions.items,
+          { type, tmdbid: parseInt(tmdbid, 10) },
+        );
+        const subscriptions = _.filter(
+          state.user.subscriptions.items,
+          (subscription => subscription !== currentSubscription),
+        );
+        return {
+          ...state,
+          user: {
+            ...state.user,
+            subscriptions: {
+              ...state.user.subscriptions,
+              fetching: false,
+              loaded: true,
+              failed: false,
+              items: subscriptions,
+            },
+          },
+        };
+      }
+      message.success('Subscribed successfully', 0.5);
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          subscriptions: {
+            ..._.get(state, 'user.subscriptions'),
+            fetching: false,
+            loaded: true,
+            failed: false,
+            items: [
+              ..._.get(state, 'user.subscriptions.items'),
+              action.payload,
+            ],
+          },
+        },
+      };
+    }
     case USER_RATE_CHANGE_FULFILLED: {
       const {
         seasonNum, episodeNum, tmdbid, mediaType, value,
@@ -133,6 +200,19 @@ export default (state = initialState, action) => {
           ...state.user,
           ratings: {
             ..._.get(state, 'user.ratings'),
+            fetching: false,
+            loaded: true,
+            failed: true,
+          },
+        },
+      };
+    case SUBSCRIBE_CHANGE_REJECTED:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          subscriptions: {
+            ..._.get(state, 'user.subscriptions'),
             fetching: false,
             loaded: true,
             failed: true,

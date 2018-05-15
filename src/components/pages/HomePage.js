@@ -34,6 +34,9 @@ class HomePage extends React.Component {
         currentFilter: undefined,
       });
     }
+    if (this.props.isAuthenticated && !nextProps.isAuthenticated && filter === 'subscriptions') {
+      nextProps.history.push('/');
+    }
   }
   handleFilterClick = (key) => {
     const filter = key.toLowerCase();
@@ -52,7 +55,7 @@ class HomePage extends React.Component {
 
   render() {
     const { filter } = this.props.match.params;
-    const { isAuthenticated, loaded } = this.props;
+    const { isAuthenticated } = this.props;
     const { visible, currentFilter } = this.state;
     const filters = ['All', 'Movies', 'Shows', 'Episodes'];
     if (isAuthenticated) filters.push('Subscriptions');
@@ -69,8 +72,6 @@ class HomePage extends React.Component {
     } else if (filter === 'subscriptions') {
       if (isAuthenticated) {
         props = { subscriptions: true };
-      } else if (loaded) {
-        this.props.history.push('/');
       }
     }
     return (
@@ -82,7 +83,7 @@ class HomePage extends React.Component {
           </Popover>
         </h2>
         <p>These posts are real but just for testing.</p>
-        {loaded && <PostsContainer {...props} />}
+        {(isAuthenticated || filter !== 'subscriptions') ? <PostsContainer {...props} /> : 'Not authenticated'}
       </Layout>
     );
   }
@@ -92,12 +93,10 @@ HomePage.propTypes = {
   match: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
   isAuthenticated: PropTypes.bool.isRequired,
-  loaded: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
-  loaded: state.auth.loaded,
 });
 
 export default withRouter(connect(mapStateToProps, {})(HomePage));

@@ -6,6 +6,8 @@ import { Icon, Popover } from 'antd';
 import { Link } from 'react-router-dom';
 import './Media.less';
 
+import SubscribeButton from './SubscribeButton';
+import StarRating from './StarRating';
 
 const Media = (props) => {
   const { handleEpisodeClick, handleSeasonClick } = props;
@@ -76,11 +78,24 @@ const Media = (props) => {
                 </Popover>
             }
               </div>}
-            {props.starRating && (
-              <div className="MediaHeader__info__rating">
-                <p>Your rating</p>
-                {props.starRating}
-              </div>
+            {props.isAuthenticated && (
+              <React.Fragment>
+                <div className="MediaHeader__info__rating">
+                  <p>Your rating</p>
+                  <StarRating
+                    tmdbid={props.tmdbid}
+                    mediaType={props.mediaType}
+                    seasonNum={props.seasonNum}
+                    episodeNum={props.episodeNum}
+                  />
+                </div>
+                <div className="MediaHeader__info__subscribe">
+                  <SubscribeButton
+                    tmdbid={props.tmdbid}
+                    mediaType={props.mediaType}
+                  />
+                </div>
+              </React.Fragment>
             )}
           </div>
           {props.next &&
@@ -111,7 +126,11 @@ Media.propTypes = {
   showEpisodes: PropTypes.bool.isRequired,
   handleSeasonVisibleChange: PropTypes.func.isRequired,
   handleEpisodeVisibleChange: PropTypes.func.isRequired,
-  starRating: PropTypes.element,
+  tmdbid: PropTypes.string.isRequired,
+  mediaType: PropTypes.string.isRequired,
+  seasonNum: PropTypes.string,
+  episodeNum: PropTypes.string,
+  isAuthenticated: PropTypes.bool.isRequired,
 };
 
 Media.defaultProps = {
@@ -119,7 +138,8 @@ Media.defaultProps = {
   prev: undefined,
   episodes: undefined,
   seasons: undefined,
-  starRating: undefined,
+  seasonNum: undefined,
+  episodeNum: undefined,
 };
 
 export default Media;

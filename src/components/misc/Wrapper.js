@@ -11,8 +11,6 @@ class Wrapper extends React.Component {
   componentDidMount() {
     if (steemConnectAPI.options.accessToken && !this.props.isAuthenticated) {
       this.props.login();
-    } else {
-      this.props.logout();
     }
   }
 
@@ -33,7 +31,6 @@ Wrapper.propTypes = {
   route: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
   login: PropTypes.func,
-  logout: PropTypes.func,
   username: PropTypes.string,
   isAuthenticated: PropTypes.bool.isRequired,
 };
@@ -41,7 +38,6 @@ Wrapper.propTypes = {
 Wrapper.defaultProps = {
   username: '',
   login: () => {},
-  logout: () => {},
 };
 
 const mapStateToProps = state => ({
@@ -49,4 +45,4 @@ const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
 
-export default connect(mapStateToProps, { login: actions.login, logout: actions.logout })(Wrapper);
+export default connect(mapStateToProps, { login: actions.login })(Wrapper);
