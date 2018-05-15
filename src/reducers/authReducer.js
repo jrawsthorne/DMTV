@@ -80,11 +80,15 @@ export default (state = initialState, action) => {
       };
     }
     case USER_RATE_CHANGE_FULFILLED: {
-      message.destroy();
-      message.success('Rated successfully');
       const {
-        seasonNum, episodeNum, tmdbid, mediaType,
+        seasonNum, episodeNum, tmdbid, mediaType, value,
       } = action.meta;
+      message.destroy();
+      if (value === 0) {
+        message.success('Rating removed successfully');
+      } else {
+        message.success('Rated successfully');
+      }
       if (!_.isEmpty(_.get(state, 'user.ratings.scores', []))) {
         const currentRating = state.user.ratings.scores.find((rating) => {
           if (seasonNum) {
