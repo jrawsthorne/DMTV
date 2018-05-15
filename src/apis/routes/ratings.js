@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/add', (req, res) => {
-  const accessToken = req.cookies.access_token;
+  const { accessToken } = req.body;
   if (!accessToken) res.status(400).json({ error: 'Not authenticated' });
   steemConnectAPI.setAccessToken(accessToken);
   const {

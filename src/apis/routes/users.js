@@ -4,8 +4,8 @@ const steemConnectAPI = require('../steemConnectAPI');
 
 const router = express.Router();
 
-router.get('/login', (req, res) => {
-  const accessToken = req.cookies.access_token;
+router.post('/login', (req, res) => {
+  const { accessToken } = req.body;
   if (!accessToken) res.status(400).json({ error: 'Not authenticated' });
   steemConnectAPI.setAccessToken(accessToken);
   steemConnectAPI.me()

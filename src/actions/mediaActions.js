@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import axios from 'axios';
+import Cookie from 'js-cookie';
 import { arrayToObject } from '../helpers/mediaHelpers';
 import theMovieDBAPI from '../apis/theMovieDBAPI';
 import {
@@ -135,6 +136,7 @@ export const userRateChange = (
 ) => ({
   type: USER_RATE_CHANGE,
   payload: axios.post(`${process.env.API_URL}/ratings/add`, {
+    accessToken: Cookie.get('access_token'),
     mediaType,
     tmdbid,
     seasonNum: seasonNum || undefined,

@@ -5,7 +5,7 @@ import { LOGIN, LOGOUT } from './types';
 
 export const login = () => ({
   type: LOGIN,
-  payload: axios.get(`${process.env.API_URL}/users/login`).then(res => res.data).catch(() => {
+  payload: axios.post(`${process.env.API_URL}/users/login`, { accessToken: Cookie.get('access_token') }).then(res => res.data).catch(() => {
     Cookie.remove('access_token');
   }),
   meta: {
