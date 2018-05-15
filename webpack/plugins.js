@@ -12,6 +12,7 @@ exports.environmentVariables = new webpack.DefinePlugin({
     NODE_ENV: JSON.stringify(process.env.NODE_ENV),
     STEEMCONNECT_REDIRECT_URL: JSON.stringify(process.env.STEEMCONNECT_REDIRECT_URL || 'http://localhost:3000/callback'),
     API_URL: JSON.stringify(process.env.API_URL) || 'http://localhost:3000/api',
+    STEEM_API_URL: JSON.stringify(process.env.STEEM_API_URL) || 'https://api.steemit.com',
   },
 });
 
