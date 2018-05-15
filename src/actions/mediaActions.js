@@ -136,12 +136,15 @@ export const userRateChange = (
 ) => ({
   type: USER_RATE_CHANGE,
   payload: axios.post(`${process.env.API_URL}/ratings/add`, {
-    accessToken: Cookie.get('access_token'),
     mediaType,
     tmdbid,
     seasonNum: seasonNum || undefined,
     episodeNum: episodeNum || undefined,
     value,
+  }, {
+    headers: {
+      Authorization: `Bearer ${Cookie.get('token')}`,
+    },
   }).then(res => res.data),
   meta: {
     mediaType,

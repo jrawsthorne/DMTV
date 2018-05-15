@@ -1,6 +1,8 @@
 const express = require('express');
 const User = require('../models/User');
+const Post = require('../models/Post');
 const steemConnectAPI = require('../steemConnectAPI');
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
@@ -13,17 +15,33 @@ router.post('/login', (req, res) => {
       User.findOne({ username: steemUser.name }).populate({ path: 'ratings', select: 'score mediaType tmdbid seasonNum episodeNum' })
         .then((user) => {
           if (user) {
+            const token = jwt.sign({
+              id: user.id,
+              username: user.username,
+            }, process.env.JWT_SECRET, { expiresIn: '1h' });
             res.json({
-              ...steemUser,
-              account: {
-                ...steemUser.account,
-                ratings: {
-                  scores: user.ratings,
+              user: {
+                ...steemUser,
+                account: {
+                  ...steemUser.account,
+                  ratings: {
+                    scores: user.ratings,
+                  },
                 },
               },
+              token,
             });
           } else {
-            new User({ username: steemUser.name }).save().then(() => res.json(steemUser));
+            new User({ username: steemUser.name }).save().then((newUser) => {
+              const token = jwt.sign({
+                id: newUser.id,
+                username: newUser.username,
+              }, process.env.JWT_SECRET, { expiresIn: '1h' });
+              res.json({
+                user: steemUser,
+                token,
+              });
+            });
           }
         });
     })

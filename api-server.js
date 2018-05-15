@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const passport = require('passport');
 
 const posts = require('./src/apis/routes/posts');
 const users = require('./src/apis/routes/users');
@@ -17,6 +18,9 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 mongoose.connect(process.env.MONGO_URI);
+
+app.use(passport.initialize());
+require('./src/apis/config/passport')(passport);
 
 let API_PREFIX;
 if (process.env.NODE_ENV === 'production') {

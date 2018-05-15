@@ -63,9 +63,7 @@ export default (state = initialState, action) => {
         fetching: false,
         user: {},
       };
-    case USER_RATE_CHANGE_PENDING: {
-      message.destroy();
-      message.loading('Rate pending', 0);
+    case USER_RATE_CHANGE_PENDING:
       return {
         ...state,
         user: {
@@ -78,16 +76,15 @@ export default (state = initialState, action) => {
           },
         },
       };
-    }
     case USER_RATE_CHANGE_FULFILLED: {
       const {
         seasonNum, episodeNum, tmdbid, mediaType, value,
       } = action.meta;
       message.destroy();
       if (value === 0) {
-        message.success('Rating removed successfully');
+        message.success('Rating removed successfully', 0.5);
       } else {
-        message.success('Rated successfully');
+        message.success('Rated successfully', 0.5);
       }
       if (!_.isEmpty(_.get(state, 'user.ratings.scores', []))) {
         const currentRating = state.user.ratings.scores.find((rating) => {
