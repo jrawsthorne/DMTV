@@ -53,23 +53,11 @@ const mapStateToProps = (state, ownProps) => {
     mediaType, tmdbid, seasonNum, episodeNum,
   } = ownProps;
   let userRating;
+  const query = { tmdbid: parseInt(tmdbid, 10), mediaType };
+  if (seasonNum) query.seasonNum = parseInt(seasonNum, 10);
+  if (episodeNum) query.episodeNum = parseInt(episodeNum, 10);
   if (!_.isEmpty(_.get(state.auth, 'user.ratings.scores', []))) {
-    userRating = _.get(state.auth.user.ratings.scores.find((rating) => {
-      if (seasonNum) {
-        if (episodeNum) {
-          return (
-            rating.tmdbid === parseInt(tmdbid, 10) &&
-            rating.mediaType === mediaType &&
-            rating.seasonNum === parseInt(seasonNum, 10) &&
-            rating.episodeNum === parseInt(episodeNum, 10));
-        }
-        return (
-          rating.tmdbid === parseInt(tmdbid, 10) &&
-          rating.mediaType === mediaType &&
-          rating.seasonNum === parseInt(seasonNum, 10));
-      }
-      return (rating.tmdbid === parseInt(tmdbid, 10) && rating.mediaType === mediaType);
-    }), 'score');
+    userRating = _.get(_.find(state.auth.user.ratings.scores, query), 'score');
   }
   return {
     fetching: _.get(state, 'auth.user.ratings.fetching', false),

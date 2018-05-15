@@ -87,22 +87,10 @@ export default (state = initialState, action) => {
         message.success('Rated successfully', 0.5);
       }
       if (!_.isEmpty(_.get(state, 'user.ratings.scores', []))) {
-        const currentRating = state.user.ratings.scores.find((rating) => {
-          if (seasonNum) {
-            if (episodeNum) {
-              return (
-                rating.tmdbid === parseInt(tmdbid, 10) &&
-                  rating.mediaType === mediaType &&
-                  rating.seasonNum === parseInt(seasonNum, 10) &&
-                  rating.episodeNum === parseInt(episodeNum, 10));
-            }
-            return (
-              rating.tmdbid === parseInt(tmdbid, 10) &&
-                rating.mediaType === mediaType &&
-                rating.seasonNum === parseInt(seasonNum, 10));
-          }
-          return (rating.tmdbid === parseInt(tmdbid, 10) && rating.mediaType === mediaType);
-        });
+        const query = { tmdbid: parseInt(tmdbid, 10), mediaType };
+        if (seasonNum) query.seasonNum = parseInt(seasonNum, 10);
+        if (episodeNum) query.episodeNum = parseInt(episodeNum, 10);
+        const currentRating = _.find(state.user.ratings.scores, query);
         if (currentRating) {
           const ratings = _.filter(state.user.ratings.scores, (rating => rating !== currentRating));
           if (!_.isEmpty(action.payload)) ratings.push(action.payload);
