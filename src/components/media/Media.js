@@ -31,13 +31,14 @@ const Media = (props) => {
               {props.title}
             </div>
             <div className="MediaHeader__info__overview"><p>{props.overview}</p></div>
-            <div className="MediaHeader__info__selectors">
-              {props.seasons &&
-              <Popover
-                onVisibleChange={props.handleSeasonVisibleChange}
-                visible={props.showSeasons}
-                placement="bottom"
-                content={Object.values(props.seasons).map(season =>
+            {props.seasons &&
+              <div className="MediaHeader__info__selectors">
+                {props.seasons &&
+                <Popover
+                  onVisibleChange={props.handleSeasonVisibleChange}
+                  visible={props.showSeasons}
+                  placement="bottom"
+                  content={Object.values(props.seasons).map(season =>
                 (
                   <p
                     onClick={() => handleSeasonClick(season.season_number)}
@@ -46,19 +47,19 @@ const Media = (props) => {
                   >{season.name}
                   </p>
                 ))}
-                trigger="click"
-              >
-                <span className="Filter__dropdown" style={{ marginLeft: 0 }}>
+                  trigger="click"
+                >
+                  <span className="Filter__dropdown" style={{ marginLeft: 0 }}>
                 Seasons <Icon type="down" style={{ fontSize: 15 }} />
-                </span>
-              </Popover>
+                  </span>
+                </Popover>
             }
-              {props.episodes &&
-              <Popover
-                onVisibleChange={props.handleEpisodeVisibleChange}
-                visible={props.showEpisodes}
-                placement="bottom"
-                content={Object.values(props.episodes).map(episode =>
+                {props.episodes &&
+                <Popover
+                  onVisibleChange={props.handleEpisodeVisibleChange}
+                  visible={props.showEpisodes}
+                  placement="bottom"
+                  content={Object.values(props.episodes).map(episode =>
                 (
                   <p
                     onClick={() => handleEpisodeClick(episode.episode_number)}
@@ -67,14 +68,14 @@ const Media = (props) => {
                   >{episode.name}
                   </p>
                 ))}
-                trigger="click"
-              >
-                <span className="Filter__dropdown">
+                  trigger="click"
+                >
+                  <span className="Filter__dropdown">
                 Episodes <Icon type="down" style={{ fontSize: 15 }} />
-                </span>
-              </Popover>
+                  </span>
+                </Popover>
             }
-            </div>
+              </div>}
             {props.starRating && (
               <div className="MediaHeader__info__rating">
                 <p>Your rating</p>
