@@ -160,7 +160,7 @@ MediaContainer.defaultProps = {
   loaded: false,
   failed: false,
   noLoading: false,
-  onLoad: () => {},
+  onLoad: () => { },
 };
 
 const mapStateToProps = (state, ownProps) => {

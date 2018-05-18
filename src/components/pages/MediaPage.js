@@ -38,16 +38,16 @@ class MediaPage extends React.Component {
           onLoad={this.onMediaLoad}
         />
         {mediaStatus.loaded && !mediaStatus.failed &&
-        <Layout className="main-content">
-          <Divider type="horizontal" />
-          <h2 style={{ marginBottom: 0 }}>Latest Posts</h2>
-          <PostsContainer
-            tmdbid={id}
-            type={mediaType}
-            seasonNum={seasonNum}
-            episodeNum={episodeNum}
-          />
-        </Layout>}
+          <Layout className="main-content">
+            <Divider type="horizontal" />
+            <h2 style={{ marginBottom: 0 }}>Latest Posts</h2>
+            <PostsContainer
+              tmdbid={id}
+              type={mediaType}
+              seasonNum={seasonNum}
+              episodeNum={episodeNum}
+            />
+          </Layout>}
       </Layout>
     );
   }

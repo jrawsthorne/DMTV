@@ -6,23 +6,23 @@ import { Button } from 'antd';
 import { subscribeChange } from '../../actions/mediaActions';
 
 class SubscribeButton extends React.Component {
-    handleSubscribeChange = () => {
-      const { mediaType } = this.props;
-      let type = 'show';
-      if (mediaType === 'movie') type = 'movie';
-      this.props.subscribeChange(type, this.props.tmdbid, !this.props.isSubscribed);
-    }
-    render() {
-      const {
-        loaded, fetching, isSubscribed,
-      } = this.props;
-      const buttonText = isSubscribed ? 'Unsubscribe' : 'Subscribe';
-      return (
-        <Button disabled={fetching || !loaded} onClick={this.handleSubscribeChange}>
-          {buttonText}
-        </Button>
-      );
-    }
+  handleSubscribeChange = () => {
+    const { mediaType } = this.props;
+    let type = 'show';
+    if (mediaType === 'movie') type = 'movie';
+    this.props.subscribeChange(type, this.props.tmdbid, !this.props.isSubscribed);
+  }
+  render() {
+    const {
+      loaded, fetching, isSubscribed,
+    } = this.props;
+    const buttonText = isSubscribed ? 'Unsubscribe' : 'Subscribe';
+    return (
+      <Button disabled={fetching || !loaded} onClick={this.handleSubscribeChange}>
+        {buttonText}
+      </Button>
+    );
+  }
 }
 
 SubscribeButton.propTypes = {
