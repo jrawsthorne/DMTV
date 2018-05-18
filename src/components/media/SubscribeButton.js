@@ -3,26 +3,23 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { Button } from 'antd';
-import * as actions from '../../actions/mediaActions';
+import { subscribeChange } from '../../actions/mediaActions';
 
 class SubscribeButton extends React.Component {
     handleSubscribeChange = () => {
-      let type;
       const { mediaType } = this.props;
-      if (mediaType === 'movie') {
-        type = 'movie';
-      } else if (mediaType === 'show' || mediaType === 'episode' || mediaType === 'season') {
-        type = 'show';
-      }
+      let type = 'show';
+      if (mediaType === 'movie') type = 'movie';
       this.props.subscribeChange(type, this.props.tmdbid, !this.props.isSubscribed);
     }
     render() {
       const {
         loaded, fetching, isSubscribed,
       } = this.props;
+      const buttonText = isSubscribed ? 'Unsubscribe' : 'Subscribe';
       return (
-        <Button loading={fetching || !loaded} onClick={this.handleSubscribeChange}>
-          {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
+        <Button disabled={fetching || !loaded} onClick={this.handleSubscribeChange}>
+          {buttonText}
         </Button>
       );
     }
@@ -41,19 +38,13 @@ const mapStateToProps = (state, ownProps) => {
   const {
     mediaType, tmdbid,
   } = ownProps;
-  let type;
-  if (mediaType === 'movie') {
-    type = 'movie';
-  } else if (mediaType === 'show' || mediaType === 'episode' || mediaType === 'season') {
-    type = 'show';
-  }
+  let type = 'show';
+  if (mediaType === 'movie') type = 'movie';
   return {
-    fetching: _.get(state, 'auth.user.subscriptions.fetching', false),
-    loaded: _.get(state, 'auth.user.subscriptions.loaded', false),
-    isSubscribed: !!_.find(_.get(state, 'auth.user.subscriptions.items', []), { type, tmdbid: parseInt(tmdbid, 10) }),
+    fetching: _.get(state, 'subscriptions.fetching', false),
+    loaded: _.get(state, 'subscriptions.loaded', false),
+    isSubscribed: !!_.find(_.get(state, 'subscriptions.items', []), { type, tmdbid: parseInt(tmdbid, 10) }),
   };
 };
 
-export default connect(mapStateToProps, {
-  subscribeChange: actions.subscribeChange,
-})(SubscribeButton);
+export default connect(mapStateToProps, { subscribeChange })(SubscribeButton);

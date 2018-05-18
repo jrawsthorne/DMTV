@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { Rate } from 'antd';
-import * as actions from '../../actions/mediaActions';
+import { userRateChange } from '../../actions/mediaActions';
 
 class StarRating extends React.Component {
   state = {
@@ -21,11 +21,13 @@ class StarRating extends React.Component {
       loaded, fetching, userRating,
     } = this.props;
     const { rating } = this.state;
-    return (<Rate
-      value={(loaded && userRating) || rating}
-      onChange={this.handleRateChange}
-      disabled={fetching}
-    />);
+    return (
+      <Rate
+        value={(loaded && userRating) || rating}
+        onChange={this.handleRateChange}
+        disabled={fetching}
+      />
+    );
   }
 }
 
@@ -56,16 +58,14 @@ const mapStateToProps = (state, ownProps) => {
   const query = { tmdbid: parseInt(tmdbid, 10), mediaType };
   if (seasonNum) query.seasonNum = parseInt(seasonNum, 10);
   if (episodeNum) query.episodeNum = parseInt(episodeNum, 10);
-  if (!_.isEmpty(_.get(state.auth, 'user.ratings.scores', []))) {
-    userRating = _.get(_.find(state.auth.user.ratings.scores, query), 'score');
+  if (!_.isEmpty(state.ratings.items)) {
+    userRating = _.get(_.find(state.ratings.items, query), 'score');
   }
   return {
-    fetching: _.get(state, 'auth.user.ratings.fetching', false),
-    loaded: _.get(state, 'auth.user.ratings.loaded', false),
+    fetching: _.get(state, 'ratings.fetching', false),
+    loaded: _.get(state, 'ratings.loaded', false),
     userRating,
   };
 };
 
-export default connect(mapStateToProps, {
-  userRateChange: actions.userRateChange,
-})(StarRating);
+export default connect(mapStateToProps, { userRateChange })(StarRating);

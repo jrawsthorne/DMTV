@@ -9,6 +9,7 @@ const passport = require('passport');
 const posts = require('./src/apis/routes/posts');
 const users = require('./src/apis/routes/users');
 const ratings = require('./src/apis/routes/ratings');
+const subscriptions = require('./src/apis/routes/subscriptions');
 
 dotenv.config();
 const app = express();
@@ -31,6 +32,7 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use(`${API_PREFIX}posts`, posts);
 app.use(`${API_PREFIX}users`, users);
+app.use(`${API_PREFIX}subscriptions`, subscriptions);
 app.use(`${API_PREFIX}ratings`, ratings);
 
 app.get('/*', (req, res) => res.status(401).send({ error: 'Route not found' }));

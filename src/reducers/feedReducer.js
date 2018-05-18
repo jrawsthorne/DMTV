@@ -8,7 +8,7 @@ const initialState = {
 const feedIdsList = (state = [], action) => {
   switch (action.type) {
     case types.FETCH_POSTS_FULFILLED:
-      return _.uniq([...state, ...action.payload.posts.map(post => `@${post.author}/${post.permlink}`)]);
+      return _.uniq([...action.payload.posts.map(post => `@${post.author}/${post.permlink}`)]);
     default:
       return state;
   }
@@ -74,19 +74,6 @@ const feed = (state = initialState, action) => {
         ...state,
         [action.meta.sortBy]: feedSortBy(state[action.meta.sortBy], action),
       };
-    // TODO think of better way
-    case types.SUBSCRIBE_CHANGE_FULFILLED: {
-      return {
-        ...state,
-        created: {
-          ...state.created,
-          subscriptionsFeed: {
-            ..._.get(state, 'created.subscriptionsFeed'),
-            list: [],
-          },
-        },
-      };
-    }
     default:
       return state;
   }

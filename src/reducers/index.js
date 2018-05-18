@@ -6,7 +6,8 @@ import authReducer from './authReducer';
 import postReducer from './postReducer';
 import feedReducer from './feedReducer';
 import userReducer from './userReducer';
-import { responsiveReducer } from '../vendor/responsive';
+import subscriptionsReducer from './subscriptionsReducer';
+import ratingsReducer from './ratingsReducer';
 
 export default combineReducers({
   media: movieReducer,
@@ -14,7 +15,8 @@ export default combineReducers({
   search: searchReducer,
   auth: authReducer,
   posts: postReducer,
-  responsive: responsiveReducer,
   feed: feedReducer,
   users: userReducer,
+  subscriptions: subscriptionsReducer,
+  ratings: ratingsReducer,
 });

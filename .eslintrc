@@ -8,14 +8,11 @@
   "env": {
     "es6": true,
     "browser": true,
-    "node": true,
+    "node": true
   },
   "rules": {
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "jsx-a11y/anchor-is-valid": [ "error", {
-      "components": [ "Link" ],
-      "aspects": [ "invalidHref", "preferButton" ]
-    }],
-    "react/no-did-mount-set-state": 'off'
+    "jsx-a11y/anchor-is-valid": "off",
+    "react/no-did-mount-set-state": "off"
   }
 }
