@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { Layout } from 'antd';
+import { Layout, Divider } from 'antd';
 import classNames from 'classnames';
 
 import Loading from '../misc/Loading';
@@ -51,12 +51,13 @@ class PostPage extends React.Component {
           <MediaContainer
             noLoading
             onLoad={this.onMediaLoad}
-            mediaType={post.mediaType}
-            tmdbid={`${post.tmdbid}`}
-            seasonNum={_.get(post, 'seasonNum') && post.seasonNum.toString()}
-            episodeNum={_.get(post, 'episodeNum') && post.episodeNum.toString()}
+            mediaType={post.media.mediaType}
+            tmdbid={`${post.media.tmdbid}`}
+            seasonNum={_.get(post.media, 'seasonNum') && post.media.seasonNum.toString()}
+            episodeNum={_.get(post.media, 'episodeNum') && post.media.episodeNum.toString()}
           />}
         <Layout className={classNames('main-content', 'PostPage__post', { showPost: mediaStatus.loaded || postStatus.failed })}>
+          <Divider />
           <PostContainer
             noLoading
             onLoad={this.onPostLoad}

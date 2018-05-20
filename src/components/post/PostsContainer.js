@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { fetchPosts } from '../../actions/postActions';
+import * as actions from '../../actions/postActions';
 
 import Loading from '../misc/Loading';
 
-import Post from './PostPreview';
+import PostPreviewContainer from './PostPreviewContainer';
 
 class PostsContainer extends React.Component {
   static propTypes = {
@@ -23,9 +23,6 @@ class PostsContainer extends React.Component {
     seasonNum: PropTypes.string,
     episodeNum: PropTypes.string,
     match: PropTypes.shape().isRequired,
-    isXSmall: PropTypes.bool,
-    isSmall: PropTypes.bool,
-    allPosts: PropTypes.shape().isRequired,
     author: PropTypes.string,
     subscriptions: PropTypes.bool,
   };
@@ -36,14 +33,12 @@ class PostsContainer extends React.Component {
     postType: undefined,
     episodeNum: undefined,
     seasonNum: undefined,
-    isXSmall: false,
-    isSmall: false,
     author: undefined,
     subscriptions: false,
   }
   componentDidMount() {
-    if (_.isEmpty(this.props.posts) && !this.props.fetching) {
-      this.props.fetchPosts(this.props.allPosts, {
+    if (!this.props.fetching) {
+      this.props.fetchPosts({
         postType: this.props.postType,
         mediaType: this.props.mediaType,
         type: this.props.type,
@@ -55,21 +50,35 @@ class PostsContainer extends React.Component {
       });
     }
   }
-  componentWillReceiveProps(nextProps) {
-    if (_.isEmpty(nextProps.posts)) {
-      if ((!nextProps.fetching && !nextProps.loaded)
-        || (nextProps.match.url !== this.props.match.url)) {
-        nextProps.fetchPosts(nextProps.allPosts, {
-          postType: nextProps.postType,
-          mediaType: nextProps.mediaType,
-          type: nextProps.type,
-          tmdbid: nextProps.tmdbid,
-          seasonNum: nextProps.seasonNum,
-          episodeNum: nextProps.episodeNum,
-          author: nextProps.author,
-          subscriptions: nextProps.subscriptions,
-        });
-      }
+  componentDidUpdate(prevProps) {
+    const {
+      postType,
+      mediaType,
+      type,
+      tmdbid,
+      seasonNum,
+      episodeNum,
+      author,
+      subscriptions,
+      fetchPosts,
+      match: {
+        url: currentUrl,
+      },
+      loaded,
+      fetching,
+    } = this.props;
+    const { match: { url: prevUrl } } = prevProps;
+    if (prevUrl !== currentUrl || (!loaded && !fetching)) {
+      fetchPosts({
+        postType,
+        mediaType,
+        type,
+        tmdbid,
+        seasonNum,
+        episodeNum,
+        author,
+        subscriptions,
+      });
     }
   }
   render() {
@@ -78,56 +87,17 @@ class PostsContainer extends React.Component {
       failed,
       fetching,
       posts,
-      isXSmall,
-      isSmall,
-      allPosts,
     } = this.props;
-    if (failed && _.isEmpty(posts)) {
-      return <div><p>Sory, there was an error fetching posts</p></div>;
-    }
-    if (_.isEmpty(posts) && !fetching && loaded) {
-      return <div><p>Sorry, no posts found</p></div>;
-    }
+    if (fetching || !loaded) return <Loading />;
+    if (failed) return <div><p>Sory, there was an error fetching posts</p></div>;
+    if (_.isEmpty(posts)) return <div><p>Sorry, no posts found</p></div>;
     return (
       <div className="posts">
-        <div className="posterContainer">
-          <div className="posterLayout">
-            {posts.map((postId) => {
-              const post = allPosts[postId];
-              let title = post.mediaTitle;
-              let mediaUrl = `/${post.type}/${post.tmdbid}`;
-              if (post.seasonNum) {
-                title += ` S${post.seasonNum}`;
-                mediaUrl += `/season/${post.seasonNum}`;
-                if (post.episodeNum) {
-                  title += ` E${post.episodeNum}`;
-                  mediaUrl += `/episode/${post.episodeNum}`;
-                }
-              }
-              let poster = post.posterPath || '';
-              if (isXSmall && !isSmall) {
-                // make image for no backdrop path
-                poster = post.episodePath || post.backdropPath || '';
-              }
-              return (
-                <div key={post.id} className="posterLayout__poster">
-                  <Post
-                    overview={post.body}
-                    id={post.id}
-                    title={post.title}
-                    permlink={post.permlink}
-                    posterPath={poster}
-                    mediaTitle={title}
-                    author={post.author}
-                    url={`/${post.url}`}
-                    mediaUrl={mediaUrl}
-                  />
-                </div>
-              );
-            })}
+        <div className="postsContainer">
+          <div className="postsLayout">
+            {posts.map(postId => <PostPreviewContainer key={postId} postId={postId} />)}
           </div>
         </div>
-        {fetching && <Loading />}
       </div>
     );
   }
@@ -140,13 +110,12 @@ const mapStateToProps = (state, ownProps) => {
   if (ownProps.episodeNum) key += ownProps.episodeNum;
   return {
     posts: _.get(state, `feed.created.${key}.list`, []),
-    allPosts: _.get(state, 'posts.items', {}),
     fetching: _.get(state, `feed.created.${key}.fetching`, false),
     loaded: _.get(state, `feed.created.${key}.loaded`, false),
     failed: _.get(state, `feed.created.${key}.failed`, false),
-    isXSmall: state.responsive.isXSmall,
-    isSmall: state.responsive.isSmall,
   };
 };
 
-export default withRouter(connect(mapStateToProps, { fetchPosts })(PostsContainer));
+export default withRouter(connect(mapStateToProps, {
+  fetchPosts: actions.fetchPosts,
+})(PostsContainer));

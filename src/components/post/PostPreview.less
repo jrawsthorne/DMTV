@@ -1,0 +1,27 @@
+.postsLayout {
+	display: flex;
+  flex-wrap: wrap;
+  &__post {
+    width: 100%;
+    padding: 10px;
+    @media (min-width: 768px) {
+      width: 50%;
+    }
+    .PostPreviewBackdrop {
+      height: 200px;
+      background-size: cover;
+    }
+    .PostPreviewBody {
+      background: #fff;
+      padding: 20px;
+      margin-top: -25px;
+      width: 95%;
+      float: right;
+    }
+  }
+}
+
+.postsContainer {
+  margin-left: -10px;
+  margin-right: -10px;
+}

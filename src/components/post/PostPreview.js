@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Card } from 'antd';
+import { Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import BodyShort from './BodyShort';
 
 import noImageFound from '../../images/no-image-found.jpg';
-
-const { Meta } = Card;
+import './PostPreview.less';
 
 class PostPreview extends React.Component {
   state = {
@@ -19,24 +18,41 @@ class PostPreview extends React.Component {
   }
   render() {
     const {
-      url, posterPath, overview, title, mediaTitle, author, mediaUrl,
+      url,
+      posterPath,
+      overview,
+      title,
+      mediaTitle,
+      mediaUrl,
+      post,
     } = this.props;
+    let imageSource;
+    if (this.state.imageError || !posterPath) {
+      imageSource = noImageFound;
+    } else {
+      imageSource = `https://image.tmdb.org/t/p/w780${posterPath}`;
+    }
+    const options = {
+      year: 'numeric', month: 'long', day: 'numeric',
+    };
+    let created = new Date(post.created);
+    created = created.toLocaleDateString('en-GB', options);
     return (
-      <Card
-        hoverable
-        style={{ width: '100%' }}
-        cover={<Link to={url}><img onError={() => this.handleImageError()} alt="poster" height="auto" src={(this.state.imageError && noImageFound) || (posterPath && `https://image.tmdb.org/t/p/w780${posterPath}`) || noImageFound} /></Link>}
-        title={<Link to={mediaUrl}>{mediaTitle}</Link>}
-      >
+      <React.Fragment>
         <Link to={url}>
-          <Meta
-            title={title}
-            description={<BodyShort body={overview} />}
-          />
+          <div className="PostPreviewBackdrop" style={{ backgroundImage: `url(${imageSource})` }} />
         </Link>
-        <Link to={`/@${author}`}><p style={{ marginTop: 15, marginBottom: 0 }}>By {author}</p></Link>
-      </Card>
-
+        <div className="PostPreviewBody">
+          <h2 style={{ marginBottom: 0 }}>
+            <Link to={mediaUrl}>{mediaTitle}</Link>
+          </h2>
+          <p style={{ marginBottom: '1em' }}>
+            <Icon style={{ fontSize: 12, marginRight: 5 }} type="clock-circle-o" /> {created}
+          </p>
+          <h3><Link to={url}>{title}</Link></h3>
+          <BodyShort body={overview} />
+        </div>
+      </React.Fragment>
     );
   }
 }
@@ -47,8 +63,8 @@ PostPreview.propTypes = {
   posterPath: PropTypes.string,
   url: PropTypes.string.isRequired,
   mediaTitle: PropTypes.string.isRequired,
-  author: PropTypes.string.isRequired,
   mediaUrl: PropTypes.string.isRequired,
+  post: PropTypes.shape().isRequired,
 };
 
 PostPreview.defaultProps = {
