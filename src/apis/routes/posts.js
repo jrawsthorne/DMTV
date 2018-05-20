@@ -1,47 +1,92 @@
 const express = require('express');
 const Post = require('../models/Post');
 const theMovieDBAPI = require('../theMovieDBAPI');
+const steemAPI = require('../steemAPI');
 const _ = require('lodash');
 
 const router = express.Router();
 
 router.get('/@:author/:permlink', (req, res) => {
   const { author, permlink } = req.params;
-  Post.findOne({ author, permlink })
-    .then((post) => {
-      if (!post) {
-        return res.status(404).json({ error: "Post couldn't be found" });
-      }
-      return res.json(post);
-    });
+
+  // find the post
+  Post.findOne({ author, permlink }).then((post) => {
+    if (!post) {
+      // return error if the post isn't found
+      res.status(404).json({ error: "Post couldn't be found" });
+    }
+    // return the post
+    res.json(post);
+  });
 });
 
 router.get('/', (req, res) => {
   const {
-    postType = 'all', mediaType, type, tmdbid, seasonNum, episodeNum, rating, author, limit = 20,
+    postType = 'all', sortBy = 'created', mediaType, type, tmdbid, seasonNum, episodeNum, rating, author, limit = 20,
   } = req.query;
-  const query = {};
-  if (mediaType) query.mediaType = mediaType;
-  if (type) query.type = type;
-  if (tmdbid) query.tmdbid = tmdbid;
-  if (seasonNum) query.seasonNum = seasonNum;
-  if (episodeNum) query.episodeNum = episodeNum;
-  if (rating) query.rating = rating;
-  if (author) query.author = author;
   if (episodeNum && !seasonNum) {
-    return res.status(404).json('Posts not found, please specify a season number as well');
+    // return error if episode but no season specified
+    res.status(404).json('Posts not found, please specify a season number as well');
   }
-  if (postType !== 'all') {
-    query.postType = postType;
-  }
-  return Post.count(query)
-    .then((count) => {
-      Post.find(query).limit(limit).sort({ createdAt: 1 })
-        .then(posts => res.json({
-          count,
-          results: posts,
-        }));
+  // need to query steem if sortBy not created
+  if (sortBy !== 'created') {
+    // api requires upper case sort
+    const uppercaseSortBy = sortBy.charAt(0).toUpperCase() + sortBy.slice(1);
+    let tag;
+    if (mediaType) {
+      // add mediaType to tag if present (will be changed when name)
+      tag = `review.app-${mediaType}-reviews`;
+    } else {
+      // general tag for all posts (will be changed when name)
+      tag = 'review.app-reviews';
+    }
+    // query the steem api for posts matching sort
+    steemAPI[`getDiscussionsBy${uppercaseSortBy}Async`]({
+      tag, limit, truncate_body: 1,
+    }).then((steemPosts) => {
+      if (steemPosts.length > 0) {
+        // construct query that matches all returned posts
+        const query = {
+          $or: steemPosts.map(post => ({
+            author: post.author,
+            permlink: post.permlink,
+          })),
+        };
+        // find posts
+        Post.find(query).then((posts) => {
+          // return posts
+          res.json(posts);
+        });
+      } else {
+        // return empty array if no matching steem posts
+        res.json([]);
+      }
     });
+  } else {
+    const query = {};
+    // construct query
+    if (mediaType) query.mediaType = mediaType;
+    if (type) query.type = type;
+    if (tmdbid) query.tmdbid = tmdbid;
+    if (seasonNum) query.seasonNum = seasonNum;
+    if (episodeNum) query.episodeNum = episodeNum;
+    if (rating) query.rating = rating;
+    if (author) query.author = author;
+    if (postType !== 'all') {
+      query.postType = postType;
+    }
+    // find the total number of posts and return the newest 20
+    Promise.all([
+      Post.count(query),
+      Post.find(query).sort({ createdAt: -1 }).limit(limit),
+    ]).then((data) => {
+      // return the total count and an array of posts
+      res.json({
+        count: data[0],
+        results: data[1],
+      });
+    });
+  }
 });
 
 // TODO: Add season and show updates
@@ -88,20 +133,24 @@ router.post('/update-metadata', (req, res) => {
           if (!_.get(show, `[season/${seasonNum}].episodes`) || !_.get(show, `[season/${seasonNum}].episodes`).find(episode => episode.episode_number === parseInt(episodeNum, 10))) {
             return res.status(404).json({ error: 'Episode not found' });
           }
-          return Post.findOneAndUpdate({
-            author,
-            permlink,
-            postType,
-            mediaType,
-            tmdbid,
-            seasonNum,
-            episodeNum,
-          }, {
-            posterPath: show.poster_path,
-            backdropPath: show.backdrop_path,
-            seasonPath: _.get(show, `[season/${seasonNum}].poster_path`),
-            episodePath: _.get(show[`season/${seasonNum}`].episodes.find(episode => episode.episode_number === parseInt(episodeNum, 10)), 'still_path'),
-          }, { new: true })
+          return Post.findOneAndUpdate(
+            {
+              author,
+              permlink,
+              postType,
+              mediaType,
+              tmdbid,
+              seasonNum,
+              episodeNum,
+            },
+            {
+              posterPath: show.poster_path,
+              backdropPath: show.backdrop_path,
+              seasonPath: _.get(show, `[season/${seasonNum}].poster_path`),
+              episodePath: _.get(show[`season/${seasonNum}`].episodes.find(episode => episode.episode_number === parseInt(episodeNum, 10)), 'still_path'),
+            },
+            { new: true },
+          )
             .then(newPost => res.json(newPost));
         })
           .catch(err => res.json({ error: err.toString().replace('Error: ', '') }));
