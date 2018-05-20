@@ -94,6 +94,7 @@ router.get('/', (req, res) => {
 router.post('/update-metadata', (req, res) => {
   const { testing_token: testingToken } = req.cookies;
   if (!testingToken || testingToken !== process.env.TESTING_TOKEN) {
+    // return error if no testing token
     return res.status(400).json({ error: 'Not authenticated' });
   }
   const {
@@ -106,57 +107,72 @@ router.post('/update-metadata', (req, res) => {
     episodeNum,
   } = req.body;
   if (!author || !permlink || !postType || !mediaType || !tmdbid || (mediaType === 'season' && !seasonNum) || (mediaType === 'episode' && (!seasonNum || !episodeNum))) {
+    // return error if wrong paramaters given
     return res.status(400).json({ error: 'Post couldn\'t be updated' });
   }
-  return Post.findOne({
+
+  // find the post
+  Post.findOne({
     author, permlink, postType, mediaType, tmdbid, seasonNum, episodeNum,
-  })
-    .then((post) => {
-      if (!post) return res.status(404).json({ error: "Post couldn't be found" });
-      if (mediaType === 'movie') {
-        theMovieDBAPI.movieInfo(tmdbid)
-          .then(movie =>
-            Post.findOneAndUpdate({
-              author,
-              permlink,
-              postType,
-              mediaType,
-              tmdbid,
-            }, { posterPath: movie.poster_path, backdropPath: movie.backdrop_path }, { new: true })
-              .then(newPost => res.json(newPost)));
-      } else if (mediaType === 'episode') {
-        return theMovieDBAPI.tvInfo({
-          id: tmdbid,
-          append_to_response: `season/${seasonNum}`,
-        }).then((show) => {
-          // if episode not found in episodes object throw error
-          if (!_.get(show, `[season/${seasonNum}].episodes`) || !_.get(show, `[season/${seasonNum}].episodes`).find(episode => episode.episode_number === parseInt(episodeNum, 10))) {
-            return res.status(404).json({ error: 'Episode not found' });
-          }
-          return Post.findOneAndUpdate(
-            {
-              author,
-              permlink,
-              postType,
-              mediaType,
-              tmdbid,
-              seasonNum,
-              episodeNum,
-            },
-            {
-              posterPath: show.poster_path,
-              backdropPath: show.backdrop_path,
-              seasonPath: _.get(show, `[season/${seasonNum}].poster_path`),
-              episodePath: _.get(show[`season/${seasonNum}`].episodes.find(episode => episode.episode_number === parseInt(episodeNum, 10)), 'still_path'),
-            },
-            { new: true },
-          )
-            .then(newPost => res.json(newPost));
-        })
-          .catch(err => res.json({ error: err.toString().replace('Error: ', '') }));
-      }
-      return post;
-    });
+  }).then((post) => {
+    // return error if post not found
+    if (!post) res.status(404).json({ error: "Post couldn't be found" });
+    if (mediaType === 'movie') {
+      // find the movie
+      theMovieDBAPI.movieInfo(tmdbid).then((movie) => {
+        // find the post and update it with new metadata
+        Post.findOneAndUpdate({
+          author,
+          permlink,
+          postType,
+          mediaType,
+          tmdbid,
+        }, { posterPath: movie.poster_path, backdropPath: movie.backdrop_path }, { new: true })
+          .then((newPost) => {
+            // return the new post
+            res.json(newPost);
+          });
+      });
+    } else if (mediaType === 'episode') {
+      theMovieDBAPI.tvInfo({
+        id: tmdbid,
+        append_to_response: `season/${seasonNum}`,
+      }).then((show) => {
+        // if episode not found in episodes object throw error
+        if (!_.get(show, `[season/${seasonNum}].episodes`) || !_.get(show, `[season/${seasonNum}].episodes`).find(episode => episode.episode_number === parseInt(episodeNum, 10))) {
+          res.status(404).json({ error: 'Episode not found' });
+        }
+        Post.findOneAndUpdate(
+          {
+            author,
+            permlink,
+            postType,
+            mediaType,
+            tmdbid,
+            seasonNum,
+            episodeNum,
+          },
+          {
+            posterPath: show.poster_path,
+            backdropPath: show.backdrop_path,
+            seasonPath: _.get(show, `[season/${seasonNum}].poster_path`),
+            episodePath: _.get(show[`season/${seasonNum}`].episodes.find(episode => episode.episode_number === parseInt(episodeNum, 10)), 'still_path'),
+          },
+          { new: true },
+        )
+          .then((newPost) => {
+            // return the new post
+            res.json(newPost);
+          });
+      })
+        .catch(() => res.status(400).json({
+          error: 'There was an error updating the post',
+        }));
+    } else {
+      // just return the original post
+      res.json(post);
+    }
+  });
 });
 
 // add an existing post to the database
@@ -164,7 +180,8 @@ router.post('/update-metadata', (req, res) => {
 router.post('/add', (req, res) => {
   const { testing_token: testingToken } = req.cookies;
   if (!testingToken || testingToken !== process.env.TESTING_TOKEN) {
-    return res.status(400).json({ error: 'Not authenticated' });
+    // return error if no testing token
+    res.status(400).json({ error: 'Not authenticated' });
   }
   const {
     author,
@@ -198,9 +215,15 @@ router.post('/add', (req, res) => {
     rating: rating || undefined,
   });
 
-  return newPost.save()
-    .then(post => res.json(post))
-    .catch(() => res.status(400).json({ error: 'Post couldn\'t be added to the database' }));
+  // add the post
+  newPost.save().then((post) => {
+    // return the new post
+    res.json(post);
+  })
+    .catch(() => {
+      // return error if fails
+      res.status(400).json({ error: 'Post couldn\'t be added to the database' });
+    });
 });
 
 module.exports = router;
