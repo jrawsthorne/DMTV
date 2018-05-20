@@ -5,6 +5,8 @@ import { getMediaType } from '../../helpers/mediaHelpers';
 import MediaContainer from '../media/MediaContainer';
 import PostsContainer from '../post/PostsContainer';
 
+import './MediaPage.less';
+
 class MediaPage extends React.Component {
   state = {
     mediaStatus: { failed: false, fetching: false, loaded: false },
@@ -38,7 +40,7 @@ class MediaPage extends React.Component {
           onLoad={this.onMediaLoad}
         />
         {mediaStatus.loaded && !mediaStatus.failed &&
-          <Layout className="main-content">
+          <Layout className="main-content MediaPage">
             <Divider type="horizontal" />
             <h2 style={{ marginBottom: 0 }}>Latest Posts</h2>
             <PostsContainer
