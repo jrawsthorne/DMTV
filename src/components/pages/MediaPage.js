@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Layout } from 'antd';
+import { Layout, Divider } from 'antd';
 import { getMediaType } from '../../helpers/mediaHelpers';
 import MediaContainer from '../media/MediaContainer';
 import PostsContainer from '../post/PostsContainer';
@@ -38,15 +38,16 @@ class MediaPage extends React.Component {
           onLoad={this.onMediaLoad}
         />
         {mediaStatus.loaded && !mediaStatus.failed &&
-        <Layout className="main-content">
-          <h2>Latest Reviews</h2>
-          <PostsContainer
-            tmdbid={id}
-            type={mediaType}
-            seasonNum={seasonNum}
-            episodeNum={episodeNum}
-          />
-        </Layout>}
+          <Layout className="main-content">
+            <Divider type="horizontal" />
+            <h2 style={{ marginBottom: 0 }}>Latest Posts</h2>
+            <PostsContainer
+              tmdbid={id}
+              type={mediaType}
+              seasonNum={seasonNum}
+              episodeNum={episodeNum}
+            />
+          </Layout>}
       </Layout>
     );
   }

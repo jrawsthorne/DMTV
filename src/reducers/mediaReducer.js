@@ -191,6 +191,20 @@ export default (state = initialState, action) => {
           },
         },
       };
+    case types.FETCH_SIMILAR_MOVIES_FULFILLED:
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          [action.meta.type]: {
+            ..._.get(state, `items[${action.meta.type}]`),
+            [action.meta.id]: {
+              ..._.get(state, `items[${action.meta.type}][${action.meta.id}]`),
+              similar: action.payload,
+            },
+          },
+        },
+      };
     default:
       return state;
   }

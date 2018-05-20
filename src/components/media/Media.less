@@ -1,10 +1,12 @@
 .MediaHeader {
+  position: relative;
   display: flex;
   margin: 0 auto;
+  margin-top: -200px;
   max-width: 1011px;
   padding: 24px 20px;
   @media (min-width: 1050px) {
-    padding: 30px 0;
+    padding: 30px 0 0 0;
   }
   align-items: flex-start;
   flex-direction: row;
@@ -17,35 +19,38 @@
     img {
       min-width: 200px;
       width: 200px;
-    }
-    ::selection {
-      background: none;
+      height: 300px;
+      margin-bottom: 1em;
     }
   }
   &__info {
+    margin-top: 200px;
     ::selection {
       background: #ccc;
     }
-    color: white!important;
-    display: flex;
-    flex-direction: column;
+    color: #444;
+    width: 100%;
     &__title {
       font-size: 2em;
+      margin-bottom: 0.2em;
     }
-    &__rating {
-      & > p {
-        display: inline;
-        margin-right: 10px;
+    &__rating, &__subscribe, &__overview, &__actors, &__genres, &__links {
+      margin-bottom: 1em;
+    }
+    &__actors > p, &__genres > p {
+      margin-bottom: 0;
+    }
+    &__seasons, &__episodes {
+      display: inline;
+      h4 {
+        margin-bottom: 1em;
       }
-      & > * {
-        vertical-align: middle;
-      }
     }
-    &__selectors {
-      margin-bottom: 10px;
+    &__links a:not(:first-child) {
+      margin-left: 10px
     }
-    &__subscribe {
-      margin-top: 10px
+    &__episodes {
+      margin-left: 1em;
     }
   }
   &__link {
@@ -58,7 +63,8 @@
 }
 
 .MediaItem {
-  &__background {
+  &__backdrop {
+    height: 250px;
     background-size: cover!important;
     background-position: 50% 50%!important;
     background-repeat: no-repeat!important;
@@ -84,7 +90,7 @@
 .prev-next {
   transition: opacity .3s;
   i {
-    color: #fff;
+    color: #444;
     font-size: 50px;
     position: absolute;
     top: 50%;

@@ -10,7 +10,11 @@ import Topnav from '../navigation/Topnav';
 class Wrapper extends React.Component {
   componentDidMount() {
     if (steemConnectAPI.options.accessToken && !this.props.isAuthenticated) {
-      this.props.login();
+      this.props.login()
+        .then(() => {
+          this.props.fetchUserRatings();
+          this.props.fetchUserSubscriptions();
+        });
     }
   }
 
@@ -30,14 +34,15 @@ class Wrapper extends React.Component {
 Wrapper.propTypes = {
   route: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
-  login: PropTypes.func,
+  login: PropTypes.func.isRequired,
   username: PropTypes.string,
   isAuthenticated: PropTypes.bool.isRequired,
+  fetchUserRatings: PropTypes.func.isRequired,
+  fetchUserSubscriptions: PropTypes.func.isRequired,
 };
 
 Wrapper.defaultProps = {
   username: '',
-  login: () => {},
 };
 
 const mapStateToProps = state => ({
@@ -45,4 +50,8 @@ const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
 
-export default connect(mapStateToProps, { login: actions.login })(Wrapper);
+export default connect(mapStateToProps, {
+  login: actions.login,
+  fetchUserRatings: actions.fetchUserRatings,
+  fetchUserSubscriptions: actions.fetchUserSubscriptions,
+})(Wrapper);

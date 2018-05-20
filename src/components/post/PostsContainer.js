@@ -10,105 +10,105 @@ import Loading from '../misc/Loading';
 import Post from './PostPreview';
 
 class PostsContainer extends React.Component {
-    static propTypes = {
-      fetchPosts: PropTypes.func.isRequired,
-      posts: PropTypes.arrayOf(PropTypes.string).isRequired,
-      loaded: PropTypes.bool.isRequired,
-      fetching: PropTypes.bool.isRequired,
-      failed: PropTypes.bool.isRequired,
-      tmdbid: PropTypes.string,
-      mediaType: PropTypes.string,
-      type: PropTypes.string,
-      postType: PropTypes.string,
-      seasonNum: PropTypes.string,
-      episodeNum: PropTypes.string,
-      match: PropTypes.shape().isRequired,
-      isXSmall: PropTypes.bool,
-      isSmall: PropTypes.bool,
-      allPosts: PropTypes.shape().isRequired,
-      author: PropTypes.string,
-      subscriptions: PropTypes.bool,
-    };
-    static defaultProps = {
-      tmdbid: undefined,
-      mediaType: undefined,
-      type: undefined,
-      postType: undefined,
-      episodeNum: undefined,
-      seasonNum: undefined,
-      isXSmall: false,
-      isSmall: false,
-      author: undefined,
-      subscriptions: false,
+  static propTypes = {
+    fetchPosts: PropTypes.func.isRequired,
+    posts: PropTypes.arrayOf(PropTypes.string).isRequired,
+    loaded: PropTypes.bool.isRequired,
+    fetching: PropTypes.bool.isRequired,
+    failed: PropTypes.bool.isRequired,
+    tmdbid: PropTypes.string,
+    mediaType: PropTypes.string,
+    type: PropTypes.string,
+    postType: PropTypes.string,
+    seasonNum: PropTypes.string,
+    episodeNum: PropTypes.string,
+    match: PropTypes.shape().isRequired,
+    isXSmall: PropTypes.bool,
+    isSmall: PropTypes.bool,
+    allPosts: PropTypes.shape().isRequired,
+    author: PropTypes.string,
+    subscriptions: PropTypes.bool,
+  };
+  static defaultProps = {
+    tmdbid: undefined,
+    mediaType: undefined,
+    type: undefined,
+    postType: undefined,
+    episodeNum: undefined,
+    seasonNum: undefined,
+    isXSmall: false,
+    isSmall: false,
+    author: undefined,
+    subscriptions: false,
+  }
+  componentDidMount() {
+    if (_.isEmpty(this.props.posts) && !this.props.fetching) {
+      this.props.fetchPosts(this.props.allPosts, {
+        postType: this.props.postType,
+        mediaType: this.props.mediaType,
+        type: this.props.type,
+        tmdbid: this.props.tmdbid,
+        seasonNum: this.props.seasonNum,
+        episodeNum: this.props.episodeNum,
+        author: this.props.author,
+        subscriptions: this.props.subscriptions,
+      });
     }
-    componentDidMount() {
-      if (_.isEmpty(this.props.posts) && !this.props.fetching) {
-        this.props.fetchPosts(this.props.allPosts, {
-          postType: this.props.postType,
-          mediaType: this.props.mediaType,
-          type: this.props.type,
-          tmdbid: this.props.tmdbid,
-          seasonNum: this.props.seasonNum,
-          episodeNum: this.props.episodeNum,
-          author: this.props.author,
-          subscriptions: this.props.subscriptions,
+  }
+  componentWillReceiveProps(nextProps) {
+    if (_.isEmpty(nextProps.posts)) {
+      if ((!nextProps.fetching && !nextProps.loaded)
+        || (nextProps.match.url !== this.props.match.url)) {
+        nextProps.fetchPosts(nextProps.allPosts, {
+          postType: nextProps.postType,
+          mediaType: nextProps.mediaType,
+          type: nextProps.type,
+          tmdbid: nextProps.tmdbid,
+          seasonNum: nextProps.seasonNum,
+          episodeNum: nextProps.episodeNum,
+          author: nextProps.author,
+          subscriptions: nextProps.subscriptions,
         });
       }
     }
-    componentWillReceiveProps(nextProps) {
-      if (_.isEmpty(nextProps.posts)) {
-        if ((!nextProps.fetching && !nextProps.loaded)
-      || (nextProps.match.url !== this.props.match.url)) {
-          nextProps.fetchPosts(nextProps.allPosts, {
-            postType: nextProps.postType,
-            mediaType: nextProps.mediaType,
-            type: nextProps.type,
-            tmdbid: nextProps.tmdbid,
-            seasonNum: nextProps.seasonNum,
-            episodeNum: nextProps.episodeNum,
-            author: nextProps.author,
-            subscriptions: nextProps.subscriptions,
-          });
-        }
-      }
+  }
+  render() {
+    const {
+      loaded,
+      failed,
+      fetching,
+      posts,
+      isXSmall,
+      isSmall,
+      allPosts,
+    } = this.props;
+    if (failed && _.isEmpty(posts)) {
+      return <div><p>Sory, there was an error fetching posts</p></div>;
     }
-    render() {
-      const {
-        loaded,
-        failed,
-        fetching,
-        posts,
-        isXSmall,
-        isSmall,
-        allPosts,
-      } = this.props;
-      if (failed && _.isEmpty(posts)) {
-        return <div><p>Sory, there was an error fetching posts</p></div>;
-      }
-      if (_.isEmpty(posts) && !fetching && loaded) {
-        return <div><p>Sorry, no posts found</p></div>;
-      }
-      return (
-        <div className="posts">
-          <div className="posterContainer">
-            <div className="posterLayout">
-              {posts.map((postId) => {
-                const post = allPosts[postId];
-                let title = post.mediaTitle;
-                let mediaUrl = `/${post.type}/${post.tmdbid}`;
-                if (post.seasonNum) {
-                  title += ` S${post.seasonNum}`;
-                  mediaUrl += `/season/${post.seasonNum}`;
-                  if (post.episodeNum) {
-                    title += ` E${post.episodeNum}`;
-                    mediaUrl += `/episode/${post.episodeNum}`;
-                  }
+    if (_.isEmpty(posts) && !fetching && loaded) {
+      return <div><p>Sorry, no posts found</p></div>;
+    }
+    return (
+      <div className="posts">
+        <div className="posterContainer">
+          <div className="posterLayout">
+            {posts.map((postId) => {
+              const post = allPosts[postId];
+              let title = post.mediaTitle;
+              let mediaUrl = `/${post.type}/${post.tmdbid}`;
+              if (post.seasonNum) {
+                title += ` S${post.seasonNum}`;
+                mediaUrl += `/season/${post.seasonNum}`;
+                if (post.episodeNum) {
+                  title += ` E${post.episodeNum}`;
+                  mediaUrl += `/episode/${post.episodeNum}`;
                 }
-                let poster = post.posterPath || '';
-                if (isXSmall && !isSmall) {
-                  // make image for no backdrop path
-                  poster = post.episodePath || post.backdropPath || '';
-                }
+              }
+              let poster = post.posterPath || '';
+              if (isXSmall && !isSmall) {
+                // make image for no backdrop path
+                poster = post.episodePath || post.backdropPath || '';
+              }
               return (
                 <div key={post.id} className="posterLayout__poster">
                   <Post
@@ -124,13 +124,13 @@ class PostsContainer extends React.Component {
                   />
                 </div>
               );
-})}
-            </div>
+            })}
           </div>
-          {fetching && <Loading />}
         </div>
-      );
-    }
+        {fetching && <Loading />}
+      </div>
+    );
+  }
 }
 
 const mapStateToProps = (state, ownProps) => {
