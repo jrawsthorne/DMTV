@@ -9,50 +9,50 @@ import Loading from '../misc/Loading';
 import Post from '../post/Post';
 
 class PostContainer extends React.Component {
-    static propTypes = {
-      fetchPost: PropTypes.func.isRequired,
-      post: PropTypes.shape(),
-      loaded: PropTypes.bool,
-      fetching: PropTypes.bool,
-      failed: PropTypes.bool,
-      author: PropTypes.string.isRequired,
-      permlink: PropTypes.string.isRequired,
-      onLoad: PropTypes.func,
-      noLoading: PropTypes.bool.isRequired,
-    };
-    componentDidMount() {
-      const {
-        fetching, loaded, failed, author, permlink, onLoad, post,
-      } = this.props;
-      if (!loaded) {
-        this.props.fetchPost(
-          author,
-          permlink,
-        );
-      } else {
-        onLoad(post, { fetching, loaded, failed });
-      }
-    }
-    componentWillReceiveProps(nextProps) {
-      const {
-        fetching, loaded, failed, author, permlink, onLoad, post,
-      } = nextProps;
-      if (!loaded && !fetching) {
-        this.props.fetchPost(
-          author,
-          permlink,
-        );
-      }
+  static propTypes = {
+    fetchPost: PropTypes.func.isRequired,
+    post: PropTypes.shape(),
+    loaded: PropTypes.bool,
+    fetching: PropTypes.bool,
+    failed: PropTypes.bool,
+    author: PropTypes.string.isRequired,
+    permlink: PropTypes.string.isRequired,
+    onLoad: PropTypes.func,
+    noLoading: PropTypes.bool.isRequired,
+  };
+  componentDidMount() {
+    const {
+      fetching, loaded, failed, author, permlink, onLoad, post,
+    } = this.props;
+    if (!loaded) {
+      this.props.fetchPost(
+        author,
+        permlink,
+      );
+    } else {
       onLoad(post, { fetching, loaded, failed });
     }
-    render() {
-      const {
-        loaded, failed, fetching, post, noLoading,
-      } = this.props;
-      if (failed) return 'Sorry, there was an error fetching the post';
-      if (fetching || !loaded) return noLoading ? '' : <Loading />;
-      return <Post body={post.body} title={post.title} />;
+  }
+  componentWillReceiveProps(nextProps) {
+    const {
+      fetching, loaded, failed, author, permlink, onLoad, post,
+    } = nextProps;
+    if (!loaded && !fetching) {
+      this.props.fetchPost(
+        author,
+        permlink,
+      );
     }
+    onLoad(post, { fetching, loaded, failed });
+  }
+  render() {
+    const {
+      loaded, failed, fetching, post, noLoading,
+    } = this.props;
+    if (failed) return 'Sorry, there was an error fetching the post';
+    if (fetching || !loaded) return noLoading ? '' : <Loading />;
+    return <Post body={post.body} title={post.title} />;
+  }
 }
 
 PostContainer.defaultProps = {
@@ -60,7 +60,7 @@ PostContainer.defaultProps = {
   fetching: false,
   failed: false,
   loaded: false,
-  onLoad: () => {},
+  onLoad: () => { },
 };
 
 const mapStateToProps = (state, ownProps) => {
