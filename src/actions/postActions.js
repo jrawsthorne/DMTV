@@ -5,24 +5,21 @@ import { FETCH_POSTS, FETCH_POST } from './types';
 
 // return only data we need
 const getPostData = (steemPost, post) => ({
-  id: steemPost.id,
-  title: steemPost.title,
-  author: steemPost.author,
+  ...steemPost,
   url: `@${steemPost.author}/${steemPost.permlink}`,
-  permlink: steemPost.permlink,
-  body: steemPost.body,
   postType: post.postType,
-  mediaType: post.mediaType,
-  type: post.type,
-  tmdbid: post.tmdbid,
-  mediaTitle: post.title,
-  backdropPath: post.backdropPath || undefined,
-  posterPath: post.posterPath || undefined,
-  episodePath: post.episodePath || undefined,
-  seasonPath: post.seasonPath || undefined,
-  seasonNum: post.seasonNum || undefined,
-  episodeNum: post.episodeNum || undefined,
-  rating: post.rating || undefined,
+  media: {
+    title: post.title,
+    mediaType: post.mediaType,
+    backdropPath: post.backdropPath || undefined,
+    posterPath: post.posterPath || undefined,
+    episodePath: post.episodePath || undefined,
+    seasonPath: post.seasonPath || undefined,
+    seasonNum: post.seasonNum || undefined,
+    episodeNum: post.episodeNum || undefined,
+    type: post.type,
+    tmdbid: post.tmdbid,
+  },
 });
 
 // fetch post from db and return steem and db info
@@ -43,7 +40,7 @@ export const fetchPost = (author, permlink) => ({
 
 // add sortby options
 
-export const fetchPosts = (posts, {
+export const fetchPosts = ({
   postType = 'all',
   mediaType = undefined,
   tmdbid = undefined,
@@ -53,13 +50,14 @@ export const fetchPosts = (posts, {
   type = undefined,
   author = undefined,
   subscriptions = false,
-}) => (dispatch) => {
+}) => (dispatch, getState) => {
   let query;
   if (subscriptions) {
-    query = 'users/subscriptions';
+    query = 'subscriptions';
   } else {
     query = 'posts';
   }
+  const posts = getState().posts.items;
   dispatch({
     type: FETCH_POSTS,
     payload: axios.get(`${process.env.API_URL}/${query}`, {

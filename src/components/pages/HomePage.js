@@ -6,6 +6,12 @@ import { Layout, Popover, Icon } from 'antd';
 import PostsContainer from '../post/PostsContainer';
 
 class HomePage extends React.Component {
+  static getDerivedStateFromProps(nextProps) {
+    const { filter } = nextProps.match.params;
+    return {
+      currentFilter: filter ? filter[0].toUpperCase() + filter.substr(1) : undefined,
+    };
+  }
   state = {
     visible: false,
     currentFilter: undefined,
@@ -23,19 +29,12 @@ class HomePage extends React.Component {
       });
     }
   }
-  componentWillReceiveProps(nextProps) {
-    const { filter } = nextProps.match.params;
-    if (filter) {
-      this.setState({
-        currentFilter: filter[0].toUpperCase() + filter.substr(1),
-      });
-    } else {
-      this.setState({
-        currentFilter: undefined,
-      });
-    }
-    if (this.props.isAuthenticated && !nextProps.isAuthenticated && filter === 'subscriptions') {
-      nextProps.history.push('/');
+  componentDidUpdate(prevProps) {
+    const { isAuthenticated, history: { push } } = this.props;
+    const { isAuthenticated: wasAuthenticated } = prevProps;
+    const { currentFilter } = this.state;
+    if (wasAuthenticated && !isAuthenticated && currentFilter === 'Subscriptions') {
+      push('/');
     }
   }
   handleFilterClick = (key) => {
@@ -60,11 +59,13 @@ class HomePage extends React.Component {
     const filters = ['All', 'Movies', 'Shows', 'Episodes'];
     if (isAuthenticated) filters.push('Subscriptions');
     const content = (
-      /* eslint-disable
-      jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */
-      <div>{filters.map(f => <p onClick={() => this.handleFilterClick(f)} className="Filter__option" key={f.toLowerCase()}>{f}</p>)}</div>
-      /* eslint-enable
-        jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */
+      <div>
+        {filters.map(f => (
+          <p role="presentation" onClick={() => this.handleFilterClick(f)} onKeyPress={() => this.handleFilterClick(f)} className="Filter__option" key={f.toLowerCase()}>
+            {f}
+          </p>
+        ))}
+      </div>
     );
     let props;
     if (filter === 'movies' || filter === 'episodes' || filter === 'shows') {
@@ -79,10 +80,9 @@ class HomePage extends React.Component {
         <h2>
           Latest
           <Popover onVisibleChange={this.handleVisibleChange} visible={visible} placement="bottom" content={content} trigger="click">
-            <span className="Filter__dropdown">{currentFilter && currentFilter} <Icon type="down" style={{ fontSize: 15 }} /></span>
+            <span style={{ marginLeft: 5 }} className="Filter__dropdown"> {currentFilter && currentFilter} <Icon type="down" style={{ fontSize: 15 }} /></span>
           </Popover>
         </h2>
-        <p>These posts are real but just for testing.</p>
         {(isAuthenticated || filter !== 'subscriptions') ? <PostsContainer {...props} /> : 'Not authenticated'}
       </Layout>
     );
