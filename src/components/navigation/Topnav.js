@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { search } from '../../actions/searchActions';
 import { logout } from '../../actions/authActions';
-import steemConnectAPI from '../../apis/steemConnectAPI';
+import LoginLink from '../misc/LoginLink';
 import './Topnav.less';
 
 class Topnav extends React.Component {
@@ -43,11 +43,6 @@ class Topnav extends React.Component {
     });
   }
 
-  handleLoginClick = () => {
-    const next = window.location.pathname.length > 1 ? window.location.pathname : '';
-    window.location.href = steemConnectAPI.getLoginURL(next);
-  }
-
   menuLoggedOut = () => {
     if (this.props.loggingIn) {
       return (
@@ -63,8 +58,7 @@ class Topnav extends React.Component {
         </Menu.Item>
         <Menu.Item key="divider" disabled>|</Menu.Item>
         <Menu.Item key="login">
-          {/* eslint-disable-next-line */}
-          <a onClick={() => this.handleLoginClick()}>Log in</a>
+          <LoginLink />
         </Menu.Item>
       </Menu>
     );
@@ -84,67 +78,67 @@ class Topnav extends React.Component {
       </Menu>
     )
 
-    menuRight = () => (
-      _.isEmpty(this.props.username) ? this.menuLoggedOut() : this.menuLoggedIn()
-    );
+  menuRight = () => (
+    _.isEmpty(this.props.username) ? this.menuLoggedOut() : this.menuLoggedIn()
+  );
 
-    render() {
-      const { searchBarValue } = this.state;
-      const {
-        searchResults, fetching,
-      } = this.props;
+  render() {
+    const { searchBarValue } = this.state;
+    const {
+      searchResults, fetching,
+    } = this.props;
 
-      const dropdownOptions = _.map(searchResults, option => (
-        <AutoComplete.Option key={`${option.id}`} title={option.title} url={option.url} className="Topnav__search-autocomplete">
-          <img alt="result" width="45px" src={option.img} />
-          {option.title} {option.year && `(${option.year})`}
-        </AutoComplete.Option>
-      ));
+    const dropdownOptions = _.map(searchResults, option => (
+      <AutoComplete.Option key={`${option.id}`} title={option.title} url={option.url} className="Topnav__search-autocomplete">
+        <img alt="" width="45px" src={option.img} />
+        {option.title} {option.year && `(${option.year})`}
+      </AutoComplete.Option>
+    ));
 
-      return (
-        <Layout.Header style={{ position: 'fixed', width: '100%', zIndex: 1050 }}>
-          <div className="Topnav">
-            <div className="topnav-layout">
-              <div className="left">
-                <Link className="Topnav__logo" to="/">
-                  Review
+    return (
+      <Layout.Header style={{ position: 'fixed', width: '100%', zIndex: 1050 }}>
+        <div className="Topnav">
+          <div className="topnav-layout">
+            <div className="left">
+              <Link className="Topnav__logo" to="/">
+                Review
                 </Link>
-                <span className="Topnav__version">0.1.0</span>
+              <span className="Topnav__version">0.1.0</span>
+            </div>
+            <div className="center">
+              <div className="Topnav__input-container">
+                <AutoComplete
+                  dropdownClassName="Topnav__search-dropdown-container"
+                  dataSource={dropdownOptions}
+                  onSearch={this.handleAutoCompleteSearch}
+                  onChange={this.handleOnChangeForAutoComplete}
+                  onSelect={this.handleSelectOnAutoCompleteDropdown}
+                  defaultActiveFirstOption={false}
+                  dropdownMatchSelectWidth={false}
+                  value={searchBarValue}
+                  autoFocus
+                  optionLabelProp="title"
+                >
+                  <Input
+                    placeholder="What are you looking for?"
+                    autoCapitalize="off"
+                    spellCheck="false"
+                    autoCorrect="off"
+                    suffix={fetching ? <Spin indicator={<Icon type="loading" style={{ fontSize: 16, color: '#cccccc' }} spin />} /> : <Icon type="search" />}
+                  />
+                </AutoComplete>
               </div>
-              <div className="center">
-                <div className="Topnav__input-container">
-                  <AutoComplete
-                    dropdownClassName="Topnav__search-dropdown-container"
-                    dataSource={dropdownOptions}
-                    onSearch={this.handleAutoCompleteSearch}
-                    onChange={this.handleOnChangeForAutoComplete}
-                    onSelect={this.handleSelectOnAutoCompleteDropdown}
-                    defaultActiveFirstOption={false}
-                    dropdownMatchSelectWidth={false}
-                    value={searchBarValue}
-                    autoFocus
-                    optionLabelProp="title"
-                  >
-                    <Input
-                      placeholder="What are you looking for?"
-                      autoCapitalize="off"
-                      spellCheck="false"
-                      autoCorrect="off"
-                      suffix={fetching ? <Spin indicator={<Icon type="loading" style={{ fontSize: 16, color: '#cccccc' }} spin />} /> : <Icon type="search" />}
-                    />
-                  </AutoComplete>
-                </div>
-              </div>
-              <div className="right">
-                <div className="Topnav__menu-container">
-                  {this.menuRight()}
-                </div>
+            </div>
+            <div className="right">
+              <div className="Topnav__menu-container">
+                {this.menuRight()}
               </div>
             </div>
           </div>
-        </Layout.Header>
-      );
-    }
+        </div>
+      </Layout.Header>
+    );
+  }
 }
 
 const mapStateToProps = state => ({
