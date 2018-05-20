@@ -10,15 +10,6 @@
     "node": true
   },
   "rules": {
-    "react/jsx-filename-extension": [
-      1,
-      {
-        "extensions": [
-          ".js",
-          ".jsx"
-        ]
-      }
-    ],
     "jsx-a11y/anchor-is-valid": "off",
     "react/no-did-mount-set-state": "off"
   }
