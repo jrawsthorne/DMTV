@@ -65,7 +65,7 @@ const Media = props => (
         <div className="MediaHeader__info__title">
           {props.title}
         </div>
-        {(props.mediaType === 'season' || props.mediaType === 'episode') &&
+        {(props.mediaType === 'season' || props.mediaType === 'episode') ?
           <div className="MediaHeader__info__links">
             <Link to={`/show/${props.tmdbid}`} >
               <Icon type="arrow-left" /> {props.mediaItem.title}
@@ -76,6 +76,12 @@ const Media = props => (
               </Link>
             )}
           </div>
+        : props.isPostPage &&
+        <div className="MediaHeader__info__links">
+          <Link to={`/${props.mediaType}/${props.tmdbid}`} >
+            <Icon type="arrow-left" /> {props.mediaItem.title}
+          </Link>
+        </div>
         }
         <Row gutter={32} type="flex">
           <Col xs={24} sm={24} lg={14}>
@@ -130,6 +136,7 @@ Media.propTypes = {
   actors: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   genres: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   mediaItem: PropTypes.shape().isRequired,
+  isPostPage: PropTypes.bool.isRequired,
 };
 
 Media.defaultProps = {

@@ -12,10 +12,6 @@ import Media from './Media';
 import Similar from './Similar';
 
 class MediaContainer extends React.Component {
-  state = {
-    showSeasons: false,
-    showEpisodes: false,
-  }
   componentDidMount() {
     const {
       mediaType,
@@ -57,9 +53,7 @@ class MediaContainer extends React.Component {
       loaded,
       onLoad,
       failed,
-      match: { url },
     } = nextProps;
-    const { url: currentURL } = this.props.match;
     if ((!mediaItem && !loaded && !fetching) || (!loaded && !fetching)) {
       if (mediaType === 'movie') fetchMovie(tmdbid).then(() => fetchSimilarMovies());
       if (mediaType === 'show') fetchShow(tmdbid);
@@ -67,12 +61,6 @@ class MediaContainer extends React.Component {
       if (mediaType === 'episode') fetchEpisode(tmdbid, seasonNum, episodeNum);
     }
     onLoad({ fetching, loaded, failed });
-    if (url !== currentURL) {
-      this.setState({
-        showSeasons: false,
-        showEpisodes: false,
-      });
-    }
   }
   render() {
     const {
@@ -86,6 +74,9 @@ class MediaContainer extends React.Component {
       episodeNum,
       noLoading,
       isAuthenticated,
+      match: {
+        path,
+      },
     } = this.props;
     if (failed) return <div className="main-content"><p>Sorry, there was an error loading the metadata</p></div>;
     if (fetching || !loaded) return noLoading ? '' : <Loading />;
@@ -110,12 +101,6 @@ class MediaContainer extends React.Component {
           next={next}
           seasons={_.get(mediaItem, 'seasons')}
           episodes={_.get(mediaItem, `seasons[${seasonNum}].episodes`)}
-          handleEpisodeClick={this.handleEpisodeClick}
-          handleSeasonClick={this.handleSeasonClick}
-          showSeasons={this.state.showSeasons}
-          showEpisodes={this.state.showEpisodes}
-          handleSeasonVisibleChange={this.handleSeasonVisibleChange}
-          handleEpisodeVisibleChange={this.handleEpisodeVisibleChange}
           isAuthenticated={isAuthenticated}
           tmdbid={tmdbid}
           mediaType={mediaType}
@@ -125,6 +110,7 @@ class MediaContainer extends React.Component {
           genres={mediaItem.genres}
           company={mediaItem.company}
           mediaItem={mediaItem}
+          isPostPage={path === '/@:author/:permlink'}
         />
         {mediaItem.similar && <Similar list={mediaItem.similar} type="movie" />}
       </React.Fragment>
