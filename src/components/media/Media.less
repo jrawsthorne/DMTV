@@ -2,19 +2,12 @@
   position: relative;
   display: flex;
   margin: 0 auto;
-  margin-top: -200px;
   max-width: 1011px;
-  padding: 24px 20px;
-  @media (min-width: 1050px) {
-    padding: 30px 0 0 0;
-  }
+  padding: 0;
   align-items: flex-start;
   flex-direction: row;
   &__poster {
     display: none;
-    @media (min-width: 768px) {
-      display: block;
-    }
     margin-right: 30px;
     img {
       min-width: 200px;
@@ -22,13 +15,20 @@
       height: 300px;
       margin-bottom: 1em;
     }
+    @media (min-width: 768px) {
+      display: block;
+    }
   }
   &__info {
-    margin-top: 200px;
+    background-size: cover!important;
+    background-position: 50% 50%!important;
+    background-repeat: no-repeat!important;
+    margin: 0;
+    padding: 24px 20px;
+    color: #fff;
     ::selection {
       background: #ccc;
     }
-    color: #444;
     width: 100%;
     &__title {
       font-size: 2em;
@@ -36,6 +36,18 @@
     }
     &__rating, &__subscribe, &__overview, &__actors, &__genres, &__links {
       margin-bottom: 1em;
+      h4, a {
+        color: #fff;
+        @media (min-width: 768px) {
+          color: #444;
+        }
+      }
+    }
+    &__rating {
+      margin-bottom: 0;
+      @media (min-width: 768px) {
+        margin-bottom: 1em;
+      }
     }
     &__actors > p, &__genres > p {
       margin-bottom: 0;
@@ -44,6 +56,10 @@
       display: inline;
       h4 {
         margin-bottom: 1em;
+        color: #fff;
+        @media (min-width: 768px) {
+          color: #444;
+        }
       }
     }
     &__links a:not(:first-child) {
@@ -52,6 +68,21 @@
     &__episodes {
       margin-left: 1em;
     }
+    &__actors, &__genres {
+      display: none;
+    }
+    @media (min-width: 768px) {
+      background: none!important;
+      margin-top: 200px;
+      padding: 0;
+      color: #444!important;
+      &__actors, &__genres {
+        display: block;
+      }
+      & .MediaHeader__info__subscribe, & .MediaHeader__info__rating {
+        display: none!important;
+      }
+    }
   }
   &__link {
     margin-top: 10px;
@@ -59,6 +90,13 @@
       color: white;
       text-decoration: underline;
     }
+  }
+  @media (min-width: 768px) {
+    padding: 24px 20px;
+    margin-top: -200px;
+  }
+  @media (min-width: 1050px) {
+    padding: 30px 0 0 0;
   }
 }
 
@@ -69,6 +107,10 @@
     background-position: 50% 50%!important;
     background-repeat: no-repeat!important;
     width: 100%;
+    display: none;
+    @media (min-width: 768px) {
+      display: block;
+    }
   }
 }
 

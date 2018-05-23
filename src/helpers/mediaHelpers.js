@@ -16,10 +16,10 @@ const showDetails = show => ({
 });
 
 export const seasonDetails = (show, seasonNum) => ({
-  title: (seasonNum !== '0' && _.get(show, `seasons[${seasonNum}].air_date`) && `Season ${seasonNum} (${new Date(_.get(show, `seasons[${seasonNum}].air_date`)).getFullYear()})`) || `Season ${seasonNum}`,
+  title: (seasonNum !== '0' && _.get(show, `seasons[${seasonNum}].air_date`) && `Season ${seasonNum} (${new Date(_.get(show, `seasons[${seasonNum}].air_date`)).getFullYear()})`) || _.get(show, `seasons[${seasonNum}].name`),
   overview: _.get(show, `seasons[${seasonNum}].overview`) || 'No overview',
   backdropPath: (show.backdrop_path && `https://image.tmdb.org/t/p/original${show.backdrop_path}`) || '',
-  posterPath: (!_.isEmpty(_.get(show, `seasons[${seasonNum}].poster_path`)) && `https://image.tmdb.org/t/p/original${show.seasons[seasonNum].poster_path}`) || showDetails(show).posterPath,
+  posterPath: (!_.isEmpty(_.get(show, `seasons[${seasonNum}].poster_path`)) && `https://image.tmdb.org/t/p/original${show.seasons[seasonNum].poster_path}`) || showDetails(show).posterPath || noImageFound,
 });
 
 export const EpisodeTitle = props => `${props.name} S${props.seasonNum} E${props.episodeNum}`;
@@ -27,7 +27,7 @@ export const EpisodeTitle = props => `${props.name} S${props.seasonNum} E${props
 export const episodeDetails = (show, seasonNum, episodeNum) => ({
   title: `${_.get(show, `seasons[${seasonNum}].episodes[${episodeNum}].name`)} S${seasonNum} E${episodeNum}`,
   overview: `${_.get(show, `seasons[${seasonNum}].episodes[${episodeNum}].overview`)}` || 'No overview',
-  posterPath: (show.poster_path && `https://image.tmdb.org/t/p/original${show.poster_path}`) || noImageFound,
+  posterPath: (!_.isEmpty(_.get(show, `seasons[${seasonNum}].poster_path`)) && `https://image.tmdb.org/t/p/original${show.seasons[seasonNum].poster_path}`) || showDetails(show).posterPath || noImageFound,
   backdropPath: (_.get(show, `seasons[${seasonNum}].episodes[${episodeNum}].still_path`) && `https://image.tmdb.org/t/p/original${_.get(show, `seasons[${seasonNum}].episodes[${episodeNum}].still_path`)}`) || (show.backdrop_path && `https://image.tmdb.org/t/p/original${show.backdrop_path}`) || '',
 });
 

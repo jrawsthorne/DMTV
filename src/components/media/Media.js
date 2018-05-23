@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Icon, Row, Col } from 'antd';
 import Loadable from 'react-loadable';
 import { Link } from 'react-router-dom';
+import MediaQuery from 'react-responsive';
 import './Media.less';
 import BodyShort from '../post/BodyShort';
 
@@ -23,66 +24,121 @@ const SelectorPopover = Loadable({
   loading: (() => null),
 });
 
+const AuthActions = ({
+  tmdbid, mediaType, seasonNum, episodeNum, isAuthenticated,
+}) => {
+  if (isAuthenticated) {
+    return (
+      <React.Fragment>
+        <div className="MediaHeader__info__subscribe">
+          <SubscribeButton
+            tmdbid={tmdbid}
+            mediaType={mediaType}
+          />
+        </div>
+        <div className="MediaHeader__info__rating">
+          <h4>Rating</h4>
+          <StarRating
+            tmdbid={tmdbid}
+            mediaType={mediaType}
+            seasonNum={seasonNum}
+            episodeNum={episodeNum}
+          />
+        </div>
+      </React.Fragment>
+    );
+  }
+  return (
+    <React.Fragment>
+      <div className="MediaHeader__info__rating">
+        <h4>Rating</h4>
+        <LoginLink linkText="Log in to rate" />
+      </div>
+    </React.Fragment>);
+};
+
+const Genres = ({ genres }) => (
+  <div className="MediaHeader__info__genres">
+    <h4>Genres</h4>
+    <p>{genres.map(genre => genre.name).join(', ')}</p>
+    {genres.length === 0 && <p>No genres found</p>}
+  </div>
+);
+
+const Actors = ({ actors }) => (
+  <div className="MediaHeader__info__actors">
+    <h4>Actors</h4>
+    {actors.map(actor => (
+      <p key={actor.credit_id}>{actor.name} as {actor.character}</p>
+    ))}
+    {actors.length === 0 && <p>No actors found</p>}
+  </div>
+);
+
+const Switcher = ({ link, direction }) => {
+  if (link) {
+    return (
+      <Link className="prev-next" to={link} >
+        <Icon
+          type={direction === 'left' ? 'left' : 'right'}
+          className={`${direction === 'left' ? 'prev' : 'next'}-icon`}
+        />
+      </Link>
+    );
+  }
+  return null;
+};
+
+const Links = ({
+  mediaType, tmdbid, seasonNum, mediaItem, isPostPage,
+}) => {
+  if (mediaType === 'season' || mediaType === 'episode') {
+    return (
+      <div className="MediaHeader__info__links">
+        <Link to={`/show/${tmdbid}`} >
+          <Icon type="arrow-left" /> {mediaItem.title}
+        </Link>
+        {mediaType === 'episode' && (
+          <Link to={`/show/${tmdbid}/season/${seasonNum}`} >
+            <Icon type="arrow-left" /> {mediaItem.seasons[seasonNum].name}
+          </Link>
+        )}
+      </div>
+    );
+  } else if (isPostPage) {
+    return (
+      <div className="MediaHeader__info__links">
+        <Link to={`/${mediaType}/${tmdbid}`} >
+          <Icon type="arrow-left" /> {mediaItem.title}
+        </Link>
+      </div>
+    );
+  }
+  return null;
+};
+
+const backgroundImage = (backdropPath, opacity) => ({
+  background: `linear-gradient(rgba(0,0,0,${opacity}),rgba(0,0,0,${opacity})),url(${backdropPath})`,
+});
+
 const Media = props => (
   <div className="MediaItem">
-    <div className="MediaItem__backdrop" style={{ background: `linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url(${props.backdropPath})` }} />
+    <MediaQuery query="(min-width: 768px)">
+      <div className="MediaItem__backdrop" style={backgroundImage(props.backdropPath, 0.5)} />
+    </MediaQuery>
     <div className="MediaHeader">
-      {props.prev &&
-        <Link className="prev-next" to={props.prev} >
-          <Icon
-            type="left"
-            className="prev-icon"
-          />
-        </Link>}
-      <div className="MediaHeader__poster">
-        <img alt="" src={props.poster} />
-        {props.isAuthenticated ?
-          <React.Fragment>
-            <div className="MediaHeader__info__subscribe">
-              <SubscribeButton
-                tmdbid={props.tmdbid}
-                mediaType={props.mediaType}
-              />
-            </div>
-            <div className="MediaHeader__info__rating">
-              <h4>Rating</h4>
-              <StarRating
-                tmdbid={props.tmdbid}
-                mediaType={props.mediaType}
-                seasonNum={props.seasonNum}
-                episodeNum={props.episodeNum}
-              />
-            </div>
-          </React.Fragment>
-          :
-          <React.Fragment>
-            <h4>Rating</h4>
-            <LoginLink linkText="Log in to rate" />
-          </React.Fragment>
-        }
-      </div>
-      <div className="MediaHeader__info">
+      <Switcher link={props.prev} direction="left" />
+      <MediaQuery query="(min-width: 768px)">
+        <div className="MediaHeader__poster">
+          <img alt="" src={props.poster} />
+          <AuthActions {...props} />
+        </div>
+      </MediaQuery>
+      <div className="MediaHeader__info" style={backgroundImage(props.backdropPath, 0.8)}>
         <div className="MediaHeader__info__title">
           {props.title}
         </div>
-        {(props.mediaType === 'season' || props.mediaType === 'episode') ?
-          <div className="MediaHeader__info__links">
-            <Link to={`/show/${props.tmdbid}`} >
-              <Icon type="arrow-left" /> {props.mediaItem.title}
-            </Link>
-            {props.mediaType === 'episode' && (
-              <Link to={`/show/${props.tmdbid}/season/${props.seasonNum}`} >
-                <Icon type="arrow-left" /> {props.mediaItem.seasons[props.seasonNum].name}
-              </Link>
-            )}
-          </div>
-        : props.isPostPage &&
-        <div className="MediaHeader__info__links">
-          <Link to={`/${props.mediaType}/${props.tmdbid}`} >
-            <Icon type="arrow-left" /> {props.mediaItem.title}
-          </Link>
-        </div>
-        }
+        <Links {...props} />
         <Row gutter={32} type="flex">
           <Col xs={24} sm={24} lg={14}>
             <div className="MediaHeader__info__overview">
@@ -91,30 +147,17 @@ const Media = props => (
             </div>
             <SelectorPopover type="season" list={props.seasons} tmdbid={props.tmdbid} seasonNum={props.seasonNum} />
             <SelectorPopover type="episode" list={props.episodes} tmdbid={props.tmdbid} seasonNum={props.seasonNum} />
+            <MediaQuery query="(max-width: 768px)">
+              <AuthActions {...props} />
+            </MediaQuery>
           </Col>
           <Col xs={24} sm={24} lg={10}>
-            <div className="MediaHeader__info__actors">
-              <h4>Actors</h4>
-              {props.actors.map(actor => (
-                <p key={actor.credit_id}>{actor.name} as {actor.character}</p>
-              ))}
-              {props.actors.length === 0 && <p>No actors found</p>}
-            </div>
-            <div className="MediaHeader__info__genres">
-              <h4>Genres</h4>
-              <p>{props.genres.map(genre => genre.name).join(', ')}</p>
-              {props.genres.length === 0 && <p>No genres found</p>}
-            </div>
+            <Actors actors={props.actors} />
+            <Genres genres={props.genres} />
           </Col>
         </Row>
       </div>
-      {props.next &&
-        <Link className="prev-next" to={props.next} >
-          <Icon
-            type="right"
-            className="next-icon"
-          />
-        </Link>}
+      <Switcher link={props.next} direction="right" />
     </div>
   </div>
 );
@@ -146,6 +189,48 @@ Media.defaultProps = {
   seasons: undefined,
   seasonNum: undefined,
   episodeNum: undefined,
+};
+
+AuthActions.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired,
+  tmdbid: PropTypes.string.isRequired,
+  mediaType: PropTypes.string.isRequired,
+  seasonNum: PropTypes.string,
+  episodeNum: PropTypes.string,
+};
+
+AuthActions.defaultProps = {
+  seasonNum: undefined,
+  episodeNum: undefined,
+};
+
+Genres.propTypes = {
+  genres: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+};
+
+Actors.propTypes = {
+  actors: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+};
+
+Switcher.propTypes = {
+  direction: PropTypes.string.isRequired,
+  link: PropTypes.string,
+};
+
+Switcher.defaultProps = {
+  link: undefined,
+};
+
+Links.propTypes = {
+  tmdbid: PropTypes.string.isRequired,
+  mediaType: PropTypes.string.isRequired,
+  seasonNum: PropTypes.string,
+  mediaItem: PropTypes.shape().isRequired,
+  isPostPage: PropTypes.bool.isRequired,
+};
+
+Links.defaultProps = {
+  seasonNum: undefined,
 };
 
 export default Media;

@@ -1,7 +1,15 @@
 .PostPage__post {
   display: none;
-  padding-top: 0!important;
   &.showPost {
     display: block;
+  }
+  @media (min-width: 768px) {
+    padding-top: 0!important;
+  }
+  & > .ant-divider {
+    display: none;
+    @media (min-width: 768px) {
+      display: block;
+    }
   }
 }
