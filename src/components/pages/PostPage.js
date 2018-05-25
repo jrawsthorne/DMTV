@@ -9,6 +9,7 @@ import './PostPage.less';
 
 import MediaContainer from '../media/MediaContainer';
 import PostContainer from '../post/PostContainer';
+import Similar from '../media/Similar';
 
 class PostPage extends React.Component {
   static propTypes = {
@@ -40,7 +41,9 @@ class PostPage extends React.Component {
     const {
       match: { params: { author, permlink } },
     } = this.props;
-    const { post, mediaStatus, postStatus } = this.state;
+    const {
+      post, mediaStatus, postStatus,
+    } = this.state;
     return (
       <Layout>
         {(postStatus.fetching
@@ -64,6 +67,8 @@ class PostPage extends React.Component {
             author={author}
             permlink={permlink}
           />
+          <Divider type="horizontal" />
+          <Similar author={author} permlink={permlink} />
         </Layout>
       </Layout>
     );

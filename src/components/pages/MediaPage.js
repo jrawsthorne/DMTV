@@ -4,6 +4,7 @@ import { Layout, Divider } from 'antd';
 import { getMediaType } from '../../helpers/mediaHelpers';
 import MediaContainer from '../media/MediaContainer';
 import PostsContainer from '../post/PostsContainer';
+import Similar from '../media/Similar';
 
 import './MediaPage.less';
 
@@ -49,6 +50,8 @@ class MediaPage extends React.Component {
               seasonNum={seasonNum}
               episodeNum={episodeNum}
             />
+            <Divider type="horizontal" />
+            <Similar mediaType={mediaType} tmdbid={id} />
           </Layout>}
       </Layout>
     );
