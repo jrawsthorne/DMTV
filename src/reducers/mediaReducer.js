@@ -192,6 +192,7 @@ export default (state = initialState, action) => {
         },
       };
     case types.FETCH_SIMILAR_MOVIES_FULFILLED:
+    case types.FETCH_SIMILAR_SHOWS_FULFILLED:
       return {
         ...state,
         items: {
@@ -201,6 +202,58 @@ export default (state = initialState, action) => {
             [action.meta.id]: {
               ..._.get(state, `items[${action.meta.type}][${action.meta.id}]`),
               similar: action.payload,
+            },
+          },
+        },
+        itemStates: {
+          ...state.itemStates,
+          [action.meta.type]: {
+            ..._.get(state, `itemStates[${action.meta.type}]`),
+            [action.meta.id]: {
+              ..._.get(state, `itemStates[${action.meta.type}][${action.meta.id}]`),
+              similar: {
+                loaded: true,
+                failed: false,
+                fetching: false,
+              },
+            },
+          },
+        },
+      };
+    case types.FETCH_SIMILAR_MOVIES_PENDING:
+    case types.FETCH_SIMILAR_SHOWS_PENDING:
+      return {
+        ...state,
+        itemStates: {
+          ...state.itemStates,
+          [action.meta.type]: {
+            ..._.get(state, `itemStates[${action.meta.type}]`),
+            [action.meta.id]: {
+              ..._.get(state, `itemStates[${action.meta.type}][${action.meta.id}]`),
+              similar: {
+                loaded: false,
+                failed: false,
+                fetching: true,
+              },
+            },
+          },
+        },
+      };
+    case types.FETCH_SIMILAR_MOVIES_REJECTED:
+    case types.FETCH_SIMILAR_SHOWS_REJECTED:
+      return {
+        ...state,
+        itemStates: {
+          ...state.itemStates,
+          [action.meta.type]: {
+            ..._.get(state, `itemStates[${action.meta.type}]`),
+            [action.meta.id]: {
+              ..._.get(state, `itemStates[${action.meta.type}][${action.meta.id}]`),
+              similar: {
+                loaded: true,
+                failed: true,
+                fetching: false,
+              },
             },
           },
         },
