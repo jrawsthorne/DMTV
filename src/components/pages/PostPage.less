@@ -1,15 +1,17 @@
 .PostPage__post {
-  display: none;
-  &.showPost {
-    display: block;
-  }
-  @media (min-width: 768px) {
-    padding-top: 0!important;
-  }
   & > .ant-divider {
     display: none;
     @media (min-width: 768px) {
       display: block;
     }
+  }
+  @media (min-width: 768px) {
+    padding-top: 0!important;
+    &__failed {
+      padding-top: 24px!important;
+    }
+  }
+  & > .ShowMobile {
+    display: initial;
   }
 }

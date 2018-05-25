@@ -26,8 +26,6 @@ class MediaContainer extends React.Component {
       mediaItem,
       fetching,
       loaded,
-      failed,
-      onLoad,
     } = this.props;
     if (!mediaItem || (!fetching && !loaded)) {
       if (mediaType === 'movie') fetchMovie(tmdbid).then(() => fetchSimilarMovies(tmdbid));
@@ -35,7 +33,6 @@ class MediaContainer extends React.Component {
       if (mediaType === 'season') fetchSeason(tmdbid, seasonNum).then(() => fetchSimilarShows(tmdbid));
       if (mediaType === 'episode') fetchEpisode(tmdbid, seasonNum, episodeNum).then(() => fetchSimilarShows(tmdbid));
     }
-    onLoad({ fetching, loaded, failed });
   }
   componentWillReceiveProps(nextProps) {
     const {
@@ -52,8 +49,6 @@ class MediaContainer extends React.Component {
       mediaItem,
       fetching,
       loaded,
-      onLoad,
-      failed,
     } = nextProps;
     if ((!mediaItem && !loaded && !fetching) || (!loaded && !fetching)) {
       if (mediaType === 'movie') fetchMovie(tmdbid).then(() => fetchSimilarMovies(tmdbid));
@@ -61,7 +56,6 @@ class MediaContainer extends React.Component {
       if (mediaType === 'season') fetchSeason(tmdbid, seasonNum).then(() => fetchSimilarShows(tmdbid));
       if (mediaType === 'episode') fetchEpisode(tmdbid, seasonNum, episodeNum).then(() => fetchSimilarShows(tmdbid));
     }
-    onLoad({ fetching, loaded, failed }, mediaItem);
   }
   render() {
     const {
@@ -73,14 +67,13 @@ class MediaContainer extends React.Component {
       mediaType,
       seasonNum,
       episodeNum,
-      noLoading,
       isAuthenticated,
       match: {
         path,
       },
     } = this.props;
     if (failed) return <div className="main-content"><p>Sorry, there was an error loading the metadata</p></div>;
-    if (fetching || !loaded) return noLoading ? '' : <Loading />;
+    if (fetching || !loaded) return <Loading />;
     const {
       backdropPath, posterPath, title, overview,
     } = getMediaItemDetails(mediaItem, mediaType, seasonNum, episodeNum);
@@ -92,28 +85,26 @@ class MediaContainer extends React.Component {
       next = _.get(nextPrev, 'next');
     }
     return (
-      <React.Fragment>
-        <Media
-          backdropPath={backdropPath}
-          poster={posterPath}
-          title={title}
-          overview={overview}
-          prev={prev}
-          next={next}
-          seasons={_.get(mediaItem, 'seasons')}
-          episodes={_.get(mediaItem, `seasons[${seasonNum}].episodes`)}
-          isAuthenticated={isAuthenticated}
-          tmdbid={tmdbid}
-          mediaType={mediaType}
-          seasonNum={seasonNum}
-          episodeNum={episodeNum}
-          actors={mediaItem.actors}
-          genres={mediaItem.genres}
-          company={mediaItem.company}
-          mediaItem={mediaItem}
-          isPostPage={path === '/@:author/:permlink'}
-        />
-      </React.Fragment>
+      <Media
+        backdropPath={backdropPath}
+        poster={posterPath}
+        title={title}
+        overview={overview}
+        prev={prev}
+        next={next}
+        seasons={_.get(mediaItem, 'seasons')}
+        episodes={_.get(mediaItem, `seasons[${seasonNum}].episodes`)}
+        isAuthenticated={isAuthenticated}
+        tmdbid={tmdbid}
+        mediaType={mediaType}
+        seasonNum={seasonNum}
+        episodeNum={episodeNum}
+        actors={mediaItem.actors}
+        genres={mediaItem.genres}
+        company={mediaItem.company}
+        mediaItem={mediaItem}
+        isPostPage={path === '/@:author/:permlink'}
+      />
     );
   }
 }
@@ -133,9 +124,7 @@ MediaContainer.propTypes = {
   fetching: PropTypes.bool,
   failed: PropTypes.bool,
   loaded: PropTypes.bool,
-  noLoading: PropTypes.bool,
   match: PropTypes.shape().isRequired,
-  onLoad: PropTypes.func,
   isAuthenticated: PropTypes.bool.isRequired,
 };
 
@@ -146,8 +135,6 @@ MediaContainer.defaultProps = {
   fetching: false,
   loaded: false,
   failed: false,
-  noLoading: false,
-  onLoad: () => { },
 };
 
 const mapStateToProps = (state, ownProps) => {

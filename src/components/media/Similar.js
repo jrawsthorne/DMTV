@@ -4,23 +4,28 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { Carousel } from 'antd';
 import { Link } from 'react-router-dom';
+import { getMediaItemDetails } from '../../helpers/mediaHelpers';
 import Loading from '../misc/Loading';
 import BodyShort from '../post/BodyShort';
 
-const SimilarItem = ({ item, url }) => (
-  <React.Fragment>
-    <Link to={url}>
-      <div className="SimilarPreviewBackdrop" style={{ height: 200, backgroundImage: `url(${item.backdrop_path && `https://image.tmdb.org/t/p/original${item.backdrop_path}`})` }} />
-    </Link>
-    <div className="SimilarPreviewBody">
-      <h2 style={{ marginBottom: 0 }}>
-        <Link to={url}>{item.title || item.name}</Link>
-      </h2>
-      <BodyShort body={item.overview} length={400} />
-    </div>
-  </React.Fragment>
-);
-
+const SimilarItem = ({ item, url, type }) => {
+  const {
+    backdropPath, title, overview,
+  } = getMediaItemDetails(item, type);
+  return (
+    <React.Fragment>
+      <Link to={url}>
+        <div className="SimilarPreviewBackdrop" style={{ height: 200, backgroundImage: `${backdropPath && `url(${backdropPath}`})`, backgroundColor: '#444' }} />
+      </Link>
+      <div className="SimilarPreviewBody">
+        <h2 style={{ marginBottom: 0 }}>
+          <Link to={url}>{title}</Link>
+        </h2>
+        <BodyShort body={overview} length={400} />
+      </div>
+    </React.Fragment>
+  );
+};
 
 const Similar = ({
   list, fetching, loaded, failed, type,
@@ -31,7 +36,7 @@ const Similar = ({
     <React.Fragment>
       <h2>Recommended</h2>
       <Carousel autoplay>
-        {list.map(item => <SimilarItem key={item.id} item={item} url={`/${type}/${item.id}`} />)}
+        {list.map(item => <SimilarItem key={item.id} type={type} item={item} url={`/${type}/${item.id}`} />)}
       </Carousel>
     </React.Fragment>
   );
@@ -48,6 +53,7 @@ Similar.propTypes = {
 SimilarItem.propTypes = {
   item: PropTypes.shape().isRequired,
   url: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => {

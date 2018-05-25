@@ -17,25 +17,21 @@ class PostContainer extends React.Component {
     failed: PropTypes.bool,
     author: PropTypes.string.isRequired,
     permlink: PropTypes.string.isRequired,
-    onLoad: PropTypes.func,
-    noLoading: PropTypes.bool.isRequired,
   };
   componentDidMount() {
     const {
-      fetching, loaded, failed, author, permlink, onLoad, post,
+      loaded, author, permlink,
     } = this.props;
     if (!loaded) {
       this.props.fetchPost(
         author,
         permlink,
       );
-    } else {
-      onLoad(post, { fetching, loaded, failed });
     }
   }
   componentWillReceiveProps(nextProps) {
     const {
-      fetching, loaded, failed, author, permlink, onLoad, post,
+      fetching, loaded, author, permlink,
     } = nextProps;
     if (!loaded && !fetching) {
       this.props.fetchPost(
@@ -43,14 +39,13 @@ class PostContainer extends React.Component {
         permlink,
       );
     }
-    onLoad(post, { fetching, loaded, failed });
   }
   render() {
     const {
-      loaded, failed, fetching, post, noLoading,
+      loaded, failed, fetching, post,
     } = this.props;
     if (failed) return 'Sorry, there was an error fetching the post';
-    if (fetching || !loaded) return noLoading ? '' : <Loading />;
+    if (fetching || !loaded) return <Loading />;
     return <Post body={post.body} title={post.title} />;
   }
 }
@@ -60,7 +55,6 @@ PostContainer.defaultProps = {
   fetching: false,
   failed: false,
   loaded: false,
-  onLoad: () => { },
 };
 
 const mapStateToProps = (state, ownProps) => {

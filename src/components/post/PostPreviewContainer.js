@@ -22,7 +22,7 @@ class NewPostsContainer extends React.Component {
         mediaUrl += `/episode/${media.episodeNum}`;
       }
     }
-    const poster = media.episodePath || media.backdropPath || '';
+    const backdropPath = media.episodePath || media.backdropPath || '';
     return (
       <div className="postsLayout__post">
         <Post
@@ -30,7 +30,7 @@ class NewPostsContainer extends React.Component {
           id={post.id}
           title={post.title}
           permlink={post.permlink}
-          posterPath={poster}
+          backdropPath={backdropPath}
           mediaTitle={title}
           author={post.author}
           url={`/${post.url}`}
