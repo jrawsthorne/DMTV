@@ -9,7 +9,6 @@ import { getMediaItemDetails, getNextPrev } from '../../helpers/mediaHelpers';
 import Loading from '../misc/Loading';
 
 import Media from './Media';
-import Similar from './Similar';
 
 class MediaContainer extends React.Component {
   componentDidMount() {
@@ -21,6 +20,7 @@ class MediaContainer extends React.Component {
       fetchMovie,
       fetchSimilarMovies,
       fetchShow,
+      fetchSimilarShows,
       fetchSeason,
       fetchEpisode,
       mediaItem,
@@ -31,9 +31,9 @@ class MediaContainer extends React.Component {
     } = this.props;
     if (!mediaItem || (!fetching && !loaded)) {
       if (mediaType === 'movie') fetchMovie(tmdbid).then(() => fetchSimilarMovies(tmdbid));
-      if (mediaType === 'show') fetchShow(tmdbid);
-      if (mediaType === 'season') fetchSeason(tmdbid, seasonNum);
-      if (mediaType === 'episode') fetchEpisode(tmdbid, seasonNum, episodeNum);
+      if (mediaType === 'show') fetchShow(tmdbid).then(() => fetchSimilarShows(tmdbid));
+      if (mediaType === 'season') fetchSeason(tmdbid, seasonNum).then(() => fetchSimilarShows(tmdbid));
+      if (mediaType === 'episode') fetchEpisode(tmdbid, seasonNum, episodeNum).then(() => fetchSimilarShows(tmdbid));
     }
     onLoad({ fetching, loaded, failed });
   }
@@ -46,6 +46,7 @@ class MediaContainer extends React.Component {
       fetchMovie,
       fetchSimilarMovies,
       fetchShow,
+      fetchSimilarShows,
       fetchSeason,
       fetchEpisode,
       mediaItem,
@@ -55,12 +56,12 @@ class MediaContainer extends React.Component {
       failed,
     } = nextProps;
     if ((!mediaItem && !loaded && !fetching) || (!loaded && !fetching)) {
-      if (mediaType === 'movie') fetchMovie(tmdbid).then(() => fetchSimilarMovies());
-      if (mediaType === 'show') fetchShow(tmdbid);
-      if (mediaType === 'season') fetchSeason(tmdbid, seasonNum);
-      if (mediaType === 'episode') fetchEpisode(tmdbid, seasonNum, episodeNum);
+      if (mediaType === 'movie') fetchMovie(tmdbid).then(() => fetchSimilarMovies(tmdbid));
+      if (mediaType === 'show') fetchShow(tmdbid).then(() => fetchSimilarShows(tmdbid));
+      if (mediaType === 'season') fetchSeason(tmdbid, seasonNum).then(() => fetchSimilarShows(tmdbid));
+      if (mediaType === 'episode') fetchEpisode(tmdbid, seasonNum, episodeNum).then(() => fetchSimilarShows(tmdbid));
     }
-    onLoad({ fetching, loaded, failed });
+    onLoad({ fetching, loaded, failed }, mediaItem);
   }
   render() {
     const {
@@ -112,7 +113,6 @@ class MediaContainer extends React.Component {
           mediaItem={mediaItem}
           isPostPage={path === '/@:author/:permlink'}
         />
-        {mediaItem.similar && <Similar list={mediaItem.similar} type="movie" />}
       </React.Fragment>
     );
   }
@@ -127,6 +127,7 @@ MediaContainer.propTypes = {
   fetchMovie: PropTypes.func.isRequired,
   fetchSimilarMovies: PropTypes.func.isRequired,
   fetchShow: PropTypes.func.isRequired,
+  fetchSimilarShows: PropTypes.func.isRequired,
   fetchSeason: PropTypes.func.isRequired,
   fetchEpisode: PropTypes.func.isRequired,
   fetching: PropTypes.bool,
@@ -182,4 +183,5 @@ export default withRouter(connect(mapStateToProps, {
   fetchEpisode: actions.fetchEpisode,
   fetchSeason: actions.fetchSeason,
   fetchSimilarMovies: actions.fetchSimilarMovies,
+  fetchSimilarShows: actions.fetchSimilarShows,
 })(MediaContainer));
