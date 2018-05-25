@@ -34,25 +34,33 @@ export const fetchMovie = id => ({
   },
 });
 
-export const fetchSimilarMovies = id => ({
-  type: FETCH_SIMILAR_MOVIES,
-  payload: theMovieDBAPI.movieSimilar(id).then(res => _.shuffle(res.results).slice(0, 5)),
-  meta: {
-    globalError: 'Sorry, there was an error fetching similar movies',
-    id,
-    type: 'movies',
-  },
-});
+export const fetchSimilarMovies = id => (dispatch, getState) => {
+  if (!_.get(getState(), `media.items.movies[${id}].similar`)) {
+    dispatch({
+      type: FETCH_SIMILAR_MOVIES,
+      payload: theMovieDBAPI.movieSimilar(id).then(res => _.shuffle(res.results).slice(0, 5)),
+      meta: {
+        globalError: 'Sorry, there was an error fetching similar movies',
+        id,
+        type: 'movies',
+      },
+    });
+  }
+};
 
-export const fetchSimilarShows = id => ({
-  type: FETCH_SIMILAR_SHOWS,
-  payload: theMovieDBAPI.tvSimilar(id).then(res => _.shuffle(res.results).slice(0, 5)),
-  meta: {
-    globalError: 'Sorry, there was an error fetching similar shows',
-    id,
-    type: 'shows',
-  },
-});
+export const fetchSimilarShows = id => (dispatch, getState) => {
+  if (!_.get(getState(), `media.items.shows[${id}].similar`)) {
+    dispatch({
+      type: FETCH_SIMILAR_SHOWS,
+      payload: theMovieDBAPI.tvSimilar(id).then(res => _.shuffle(res.results).slice(0, 5)),
+      meta: {
+        globalError: 'Sorry, there was an error fetching similar shows',
+        id,
+        type: 'shows',
+      },
+    });
+  }
+};
 
 /*
 fetch show details
