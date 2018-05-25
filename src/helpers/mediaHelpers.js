@@ -9,7 +9,7 @@ const movieDetails = movie => ({
 });
 
 const showDetails = show => ({
-  title: (show.title && show.year && `${show.title} (${show.year})`) || show.title || 'No title',
+  title: (show.title && show.year && `${show.title} (${show.year})`) || show.title || show.name || 'No title',
   overview: show.overview || 'No overview',
   backdropPath: (show.backdrop_path && `https://image.tmdb.org/t/p/original${show.backdrop_path}`) || '',
   posterPath: (show.poster_path && `https://image.tmdb.org/t/p/original${show.poster_path}`) || noImageFound,
