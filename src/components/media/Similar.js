@@ -22,7 +22,7 @@ const SimilarItem = ({ item, url, type }) => {
         <h2 style={{ marginBottom: 0 }}>
           <Link to={url}>{title}</Link>
         </h2>
-        <BodyShort body={overview} length={400} />
+        <BodyShort body={overview} />
       </div>
     </React.Fragment>
   );
@@ -39,8 +39,10 @@ const Similar = ({
       <MediaQuery minWidth={1050}>
         {(matches) => {
           let num = 1;
+          let padding = '40px';
           if (matches) {
             num = 2;
+            padding = '100px';
           }
           return (
             <Carousel
@@ -48,6 +50,11 @@ const Similar = ({
               autoplaySpeed={5000}
               slidesToShow={num}
               pauseOnHover
+              draggable
+              swipeToSlide
+              swipe
+              centerPadding={padding}
+              centerMode
             >
               {list.map(item => <SimilarItem key={item.id} type={type} item={item} url={`/${type}/${item.id}`} />)}
             </Carousel>
