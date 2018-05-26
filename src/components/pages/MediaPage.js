@@ -14,7 +14,13 @@ class MediaPage extends React.Component {
   componentDidMount() {
     window.scrollTo(0, 0);
   }
-
+  componentDidUpdate(prevProps) {
+    const { match: { url: prevUrl } } = prevProps;
+    const { match: { url: currentUrl } } = this.props;
+    if (prevUrl !== currentUrl) {
+      window.scrollTo(0, 0);
+    }
+  }
   render() {
     const {
       match: {
