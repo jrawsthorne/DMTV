@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { Carousel } from 'antd';
 import { Link } from 'react-router-dom';
+import MediaQuery from 'react-responsive';
 import { getMediaItemDetails } from '../../helpers/mediaHelpers';
 import Loading from '../misc/Loading';
 import BodyShort from '../post/BodyShort';
@@ -35,9 +36,24 @@ const Similar = ({
   return (
     <React.Fragment>
       <h2>Recommended</h2>
-      <Carousel autoplay>
-        {list.map(item => <SimilarItem key={item.id} type={type} item={item} url={`/${type}/${item.id}`} />)}
-      </Carousel>
+      <MediaQuery minWidth={1050}>
+        {(matches) => {
+          let num = 1;
+          if (matches) {
+            num = 2;
+          }
+          return (
+            <Carousel
+              autoplay
+              autoplaySpeed={5000}
+              slidesToShow={num}
+              pauseOnHover
+            >
+              {list.map(item => <SimilarItem key={item.id} type={type} item={item} url={`/${type}/${item.id}`} />)}
+            </Carousel>
+          );
+        }}
+      </MediaQuery>
     </React.Fragment>
   );
 };
