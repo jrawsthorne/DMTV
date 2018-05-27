@@ -9,6 +9,7 @@ import MediaContainer from '../media/MediaContainer';
 import PostContainer from '../post/PostContainer';
 import Similar from '../media/Similar';
 import './PostPage.less';
+import ScrollToTop from '../misc/ScrollToTop';
 
 const PostPage = ({
   mediaType,
@@ -30,6 +31,7 @@ const PostPage = ({
   };
   return (
     <Layout>
+      <ScrollToTop />
       {(!postLoaded || (!mediaLoaded && !postFailed)) && <Loading />}
       <Layout style={mediaContainerStyles} >
         {mediaType && tmdbid && <MediaContainer
