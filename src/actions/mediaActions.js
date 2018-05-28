@@ -9,14 +9,12 @@ import {
   FETCH_EPISODE,
   USER_RATE_CHANGE,
   SUBSCRIBE_CHANGE,
-  FETCH_SIMILAR_MOVIES,
-  FETCH_SIMILAR_SHOWS,
 } from './types';
 
 // fetch movie details and return object containing id, poster, backdrop, title, overview and year
 export const fetchMovie = id => ({
   type: FETCH_MOVIE,
-  payload: theMovieDBAPI.movieInfo({ id, append_to_response: 'credits' })
+  payload: theMovieDBAPI.movieInfo({ id, append_to_response: 'credits,similar' })
     .then(movie => ({
       id: movie.id,
       poster_path: movie.poster_path,
@@ -26,6 +24,7 @@ export const fetchMovie = id => ({
       year: movie.release_date && new Date(movie.release_date).getFullYear(),
       actors: movie.credits.cast.slice(0, 3),
       genres: movie.genres.slice(0, 3),
+      similar: _.orderBy(movie.similar.results, 'popularity', 'desc').slice(0, 10),
     })),
   meta: {
     globalError: "Sorry, we couln't find that movie",
@@ -34,41 +33,13 @@ export const fetchMovie = id => ({
   },
 });
 
-export const fetchSimilarMovies = id => (dispatch, getState) => {
-  if (!_.get(getState(), `media.items.movies[${id}].similar`)) {
-    dispatch({
-      type: FETCH_SIMILAR_MOVIES,
-      payload: theMovieDBAPI.movieSimilar(id).then(res => _.orderBy(res.results, 'popularity', 'desc').slice(0, 10)),
-      meta: {
-        globalError: 'Sorry, there was an error fetching similar movies',
-        id,
-        type: 'movies',
-      },
-    });
-  }
-};
-
-export const fetchSimilarShows = id => (dispatch, getState) => {
-  if (!_.get(getState(), `media.items.shows[${id}].similar`)) {
-    dispatch({
-      type: FETCH_SIMILAR_SHOWS,
-      payload: theMovieDBAPI.tvSimilar(id).then(res => _.orderBy(res.results, 'popularity', 'desc').slice(0, 10)),
-      meta: {
-        globalError: 'Sorry, there was an error fetching similar shows',
-        id,
-        type: 'shows',
-      },
-    });
-  }
-};
-
 /*
 fetch show details
 return object containing id, poster, backdrop, title, overview, year and seasons
 */
 export const fetchShow = id => ({
   type: FETCH_SHOW,
-  payload: theMovieDBAPI.tvInfo({ id, append_to_response: 'credits' })
+  payload: theMovieDBAPI.tvInfo({ id, append_to_response: 'credits,similar' })
     .then(show => ({
       id: show.id,
       poster_path: show.poster_path,
@@ -79,6 +50,7 @@ export const fetchShow = id => ({
       seasons: arrayToObject(show.seasons, 'season_number'),
       actors: show.credits.cast.slice(0, 3),
       genres: show.genres.slice(0, 3),
+      similar: _.orderBy(show.similar.results, 'popularity', 'desc').slice(0, 10),
     })),
   meta: {
     globalError: "Sorry, we couln't find that show",
@@ -96,7 +68,7 @@ export const fetchSeason = (id, seasonNum) => ({
   type: FETCH_SEASON,
   payload: theMovieDBAPI.tvInfo({
     id,
-    append_to_response: `season/${seasonNum},credits`,
+    append_to_response: `season/${seasonNum},credits,similar`,
   }).then((show) => {
     if (!show[`season/${seasonNum}`]) {
       throw new Error('Show found, season not found');
@@ -109,6 +81,7 @@ export const fetchSeason = (id, seasonNum) => ({
       overview: show.overview,
       actors: show.credits.cast.slice(0, 3),
       genres: show.genres.slice(0, 3),
+      similar: _.orderBy(show.similar.results, 'popularity', 'desc').slice(0, 10),
       seasons: {
         ...arrayToObject(show.seasons, 'season_number'),
         [seasonNum]: {
@@ -134,7 +107,7 @@ export const fetchEpisode = (id, seasonNum, episodeNum) => ({
   type: FETCH_EPISODE,
   payload: theMovieDBAPI.tvInfo({
     id,
-    append_to_response: `season/${seasonNum},credits`,
+    append_to_response: `season/${seasonNum},credits,similar`,
   }).then((show) => {
     // if episode not found in episodes object throw error
     if (!_.get(show, `[season/${seasonNum}].episodes`) || !_.get(show, `[season/${seasonNum}].episodes`).find(episode => episode.episode_number === parseInt(episodeNum, 10))) {
@@ -148,6 +121,7 @@ export const fetchEpisode = (id, seasonNum, episodeNum) => ({
       overview: show.overview,
       actors: show.credits.cast.slice(0, 3),
       genres: show.genres.slice(0, 3),
+      similar: _.orderBy(show.similar.results, 'popularity', 'desc').slice(0, 10),
       seasons: {
         ...arrayToObject(show.seasons, 'season_number'),
         [seasonNum]: {

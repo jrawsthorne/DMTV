@@ -6,7 +6,6 @@ import { Carousel } from 'antd';
 import { Link } from 'react-router-dom';
 import MediaQuery from 'react-responsive';
 import { getMediaItemDetails } from '../../helpers/mediaHelpers';
-import Loading from '../misc/Loading';
 import BodyShort from '../post/BodyShort';
 
 const SimilarItem = ({ item, url, type }) => {
@@ -29,10 +28,9 @@ const SimilarItem = ({ item, url, type }) => {
 };
 
 const Similar = ({
-  list, fetching, loaded, failed, type,
+  list, type,
 }) => {
-  if (fetching || !loaded) return <Loading />;
-  if (failed) return 'Sorry, there was an error fetching recommendations';
+  if (_.isEmpty(list)) return null;
   return (
     <React.Fragment>
       <h2>Recommended</h2>
@@ -55,6 +53,7 @@ const Similar = ({
               swipe
               centerPadding={padding}
               centerMode
+              lazyLoad
             >
               {list.map(item => <SimilarItem key={item.id} type={type} item={item} url={`/${type}/${item.id}`} />)}
             </Carousel>
@@ -67,9 +66,6 @@ const Similar = ({
 
 Similar.propTypes = {
   list: PropTypes.arrayOf(PropTypes.shape().isRequired).isRequired,
-  fetching: PropTypes.bool.isRequired,
-  loaded: PropTypes.bool.isRequired,
-  failed: PropTypes.bool.isRequired,
   type: PropTypes.string.isRequired,
 };
 
@@ -93,9 +89,6 @@ const mapStateToProps = (state, ownProps) => {
     id = tmdbid;
   }
   return {
-    fetching: _.get(state, `media.itemStates[${type}s][${id}].similar.fetching`, false),
-    loaded: _.get(state, `media.itemStates[${type}s][${id}].similar.loaded`, false),
-    failed: _.get(state, `media.itemStates[${type}s][${id}].similar.failed`, false),
     list: _.get(state, `media.items[${type}s][${id}].similar`, []),
     type: type || '',
   };
