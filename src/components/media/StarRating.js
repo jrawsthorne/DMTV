@@ -23,7 +23,7 @@ class StarRating extends React.Component {
     const { rating } = this.state;
     return (
       <Rate
-        value={(loaded && userRating) || rating}
+        value={loaded ? userRating : rating}
         onChange={this.handleRateChange}
         disabled={fetching}
       />
