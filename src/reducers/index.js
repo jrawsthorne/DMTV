@@ -8,6 +8,7 @@ import feedReducer from './feedReducer';
 import userReducer from './userReducer';
 import subscriptionsReducer from './subscriptionsReducer';
 import ratingsReducer from './ratingsReducer';
+import peopleReducer from './peopleReducer';
 
 export default combineReducers({
   media: movieReducer,
@@ -19,4 +20,5 @@ export default combineReducers({
   users: userReducer,
   subscriptions: subscriptionsReducer,
   ratings: ratingsReducer,
+  people: peopleReducer,
 });

@@ -9,6 +9,7 @@ import {
   FETCH_EPISODE,
   USER_RATE_CHANGE,
   SUBSCRIBE_CHANGE,
+  FETCH_ACTOR,
 } from './types';
 
 // fetch movie details and return object containing id, poster, backdrop, title, overview and year
@@ -30,6 +31,18 @@ export const fetchMovie = id => ({
     globalError: "Sorry, we couln't find that movie",
     id,
     type: 'movies',
+  },
+});
+
+export const fetchActor = id => ({
+  type: FETCH_ACTOR,
+  payload: theMovieDBAPI.personInfo({ id, append_to_response: 'combined_credits' }).then(person => ({
+    ...person,
+    combined_credits: _.orderBy(_.uniqBy(person.combined_credits.cast, 'id'), 'popularity', 'desc').slice(0, 10),
+  })),
+  meta: {
+    globalError: "Sorry, we couln't find that preson",
+    id,
   },
 });
 

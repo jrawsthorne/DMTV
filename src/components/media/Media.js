@@ -69,7 +69,7 @@ const Actors = ({ actors }) => (
   <div className="MediaHeader__info__actors">
     <h4>Actors</h4>
     {actors.map(actor => (
-      <p key={actor.credit_id}>{actor.name} as {actor.character}</p>
+      <Link key={actor.credit_id} to={`/person/${actor.id}`}><p>{actor.name} as {actor.character}</p></Link>
     ))}
     {actors.length === 0 && <p>No actors found</p>}
   </div>

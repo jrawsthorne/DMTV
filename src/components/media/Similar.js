@@ -8,7 +8,7 @@ import MediaQuery from 'react-responsive';
 import { getMediaItemDetails } from '../../helpers/mediaHelpers';
 import BodyShort from '../post/BodyShort';
 
-const SimilarItem = ({ item, url, type }) => {
+export const SimilarItem = ({ item, url, type }) => {
   const {
     backdropPath, title, overview,
   } = getMediaItemDetails(item, type);
