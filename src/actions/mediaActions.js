@@ -36,9 +36,13 @@ export const fetchMovie = id => ({
 
 export const fetchActor = id => ({
   type: FETCH_ACTOR,
-  payload: theMovieDBAPI.personInfo({ id, append_to_response: 'combined_credits' }).then(person => ({
-    ...person, /* The person's general info (name, bio) */
-    combined_credits: _.orderBy(_.uniqBy(person.combined_credits.cast, 'id'), 'popularity', 'desc').slice(0, 10), /* Top 10 highest rated shows/movies they've been in */
+  payload: theMovieDBAPI.personInfo({ id, append_to_response: 'combined_credits,known_for' }).then(person => theMovieDBAPI.searchPerson({ query: person.name }).then((people) => {
+    const { known_for: knownFor } = people.results.find(p => p.id === person.id);
+    return ({
+      ...person, /* The person's general info (name, bio) */
+      combined_credits: _.orderBy(_.uniqBy(person.combined_credits.cast, 'id'), 'popularity', 'desc').slice(0, 10), /* Top 10 highest rated shows/movies they've been in */
+      known_for: knownFor,
+    });
   })),
   meta: {
     globalError: "Sorry, we couln't find that preson",

@@ -21,17 +21,16 @@ class Search extends React.Component {
         .then(data =>
         // filter out people
         /* TODO: Ability to search for people */
-          data.filter(item => item.media_type !== 'person')
-            .map(mediaItem => ({
-              id: mediaItem.id,
-              title: _.get(mediaItem, 'title') || _.get(mediaItem, 'name') || 'No title',
-              /* set image to placeholder if not found */
-              img: (mediaItem.poster_path && `https://image.tmdb.org/t/p/w45${mediaItem.poster_path}`) || noImageFound,
-              year: (mediaItem.release_date && new Date(mediaItem.release_date).getFullYear()) ||
+          data.map(mediaItem => ({
+            id: mediaItem.id,
+            title: _.get(mediaItem, 'title') || _.get(mediaItem, 'name') || 'No title',
+            /* set image to placeholder if not found */
+            img: (mediaItem.poster_path && `https://image.tmdb.org/t/p/w45${mediaItem.poster_path}`) || (mediaItem.profile_path && `https://image.tmdb.org/t/p/w45${mediaItem.profile_path}`) || noImageFound,
+            year: (mediaItem.release_date && new Date(mediaItem.release_date).getFullYear()) ||
           (mediaItem.first_air_date && new Date(mediaItem.first_air_date).getFullYear()),
-              /* convert tmdbid types */
-              url: `/${mediaItem.media_type === 'tv' ? 'show' : 'movie'}/${mediaItem.id}`,
-            })))
+            /* convert tmdbid types */
+            url: `/${mediaItem.media_type === 'tv' ? 'show' : mediaItem.media_type}/${mediaItem.id}`,
+          })))
         .then(res => this.setState({ results: res, fetching: false }));
     } else {
       this.setState({
