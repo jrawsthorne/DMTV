@@ -4,6 +4,7 @@ import Error404Page from './components/pages/Error404Page';
 import MediaPage from './components/pages/MediaPage';
 import PostPage from './components/pages/PostPage';
 import ProfilePage from './components/pages/ProfilePage';
+import NewPostPage from './components/pages/NewPostPage';
 import PersonPage from './components/pages/PersonPage';
 
 const routes = [
@@ -34,6 +35,11 @@ const routes = [
         path: '/@:author/:permlink',
         exact: true,
         component: PostPage,
+      },
+      {
+        path: '/new',
+        exact: true,
+        component: NewPostPage,
       },
       {
         path: '/person/:id',

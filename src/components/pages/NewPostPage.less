@@ -1,0 +1,151 @@
+.NewPostPage__label {
+  font-weight: 700;
+  left: 11px;
+  position: absolute!important;
+  font-size: 11px!important;
+  transition: all .2s ease-in-out;
+  line-height: 35px;
+  &__empty {
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
+.NewPostPage__label-above label::after {
+  display: none;
+}
+
+.NewPostPage {
+  .has-error {
+    .ant-input {
+      &:focus,
+      &:hover {
+      box-shadow: 0 0 0 2px #e6bfbb!important;
+      }
+    }
+    .TagSelector > .ant-select-selection {
+      border: 1px solid #ee4938!important;
+      &:hover,
+      &:active,
+      &:focus {
+        box-shadow: 0 0 0 2px #e6bfbb!important;
+      }
+    }
+    .NewPostPage__label {
+      color: #ee4938
+    }
+    .ant-select-focused .ant-select-selection {
+      box-shadow: none!important;
+    }
+    .ant-input-affix-wrapper {
+      box-shadow: none;
+      &:hover,
+      &:active,
+      &:focus {
+        input > {
+          border: 1px solid #ee4938!important;
+        }
+        border: none;
+      }
+    }
+  }
+}
+
+.NewPostPage__input {
+  padding: 18px 11px 4px 11px;
+  height: 50px!important;
+  font-size: 14px!important;
+  &__empty {
+    padding-top: 4px!important;
+    font-size: 16px!important;
+    & > input {
+      padding-top: 4px!important;
+      font-size: 16px!important;
+    }
+  }
+}
+
+.ant-form-item-control {
+  line-height: 35px;
+}
+
+.NewPost-search-dropdown-container {
+  border-radius: 0;
+  max-width: 480px;
+  .ant-select-dropdown-menu-item {
+    border-radius: 0!important;
+    padding: 0;
+    &:hover,
+    &-active {
+      background-color: #eee!important
+    }
+    img {
+      margin-right: 10px!important;
+    }
+    &-selected {
+      background: none;
+      font-weight: normal;
+    }
+  }
+}
+
+.NewPostPage {
+  .ant-input::placeholder {
+    color: rgba(0, 0, 0, 0.65);
+  }
+  .ant-form-explain {
+    display: none;
+  }
+  .Tags {
+    .ant-form-item-label {
+      margin-bottom: 0.8em;
+      line-height: initial;
+      label::after {
+        content: none!important;
+      }
+    }
+    .ant-form-explain {
+      display: initial;
+    }
+  }
+  .ant-form-item {
+    margin-bottom: 24px;
+  }
+  .TagSelector > .ant-select-selection {
+    min-height: 50px;
+    padding: 11px;
+    line-height: 50px;
+    border: 1px solid #d9d9d9!important;
+    &:hover,
+    &:active,
+    &:focus {
+      box-shadow: 0 0 0 2px #eee!important;
+    }
+    & > .ant-select-selection__rendered {
+      margin-left: 0;
+      margin-right: 0;
+      & > .ant-select-selection__placeholder {
+        margin-left: 0;
+        color: rgba(0, 0, 0, 0.65);
+      }
+    }
+  }
+}
+
+.NewPostPage__input .ant-select-search__field .ant-input-affix-wrapper {
+  padding: 0!important;
+}
+
+.ant-input-affix-wrapper {
+  padding: 0!important;
+  & > input {
+    padding: 18px 11px 4px 11px;
+    height: 50px!important;
+    font-size: 14px;
+  }
+  &:hover > input,
+  &:active > input,
+  &:focus > input {
+    border: 1px solid #d9d9d9!important;
+  }
+}

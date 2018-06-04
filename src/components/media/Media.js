@@ -23,6 +23,14 @@ const SelectorPopover = Loadable({
   loader: () => import('./SelectorPopover'),
   loading: (() => null),
 });
+const NewPostButton = Loadable({
+  loader: () => import('./NewPostButton'),
+  loading: (() => null),
+});
+const Links = Loadable({
+  loader: () => import('./Links'),
+  loading: (() => null),
+});
 
 const AuthActions = ({
   tmdbid, mediaType, seasonNum, episodeNum, isAuthenticated,
@@ -89,34 +97,6 @@ const Switcher = ({ link, direction }) => {
   return null;
 };
 
-const Links = ({
-  mediaType, tmdbid, seasonNum, mediaItem, isPostPage,
-}) => {
-  if (mediaType === 'season' || mediaType === 'episode') {
-    return (
-      <div className="MediaHeader__info__links">
-        <Link to={`/show/${tmdbid}`} >
-          <Icon type="arrow-left" /> {mediaItem.title}
-        </Link>
-        {mediaType === 'episode' && (
-          <Link to={`/show/${tmdbid}/season/${seasonNum}`} >
-            <Icon type="arrow-left" /> {mediaItem.seasons[seasonNum].name}
-          </Link>
-        )}
-      </div>
-    );
-  } else if (isPostPage) {
-    return (
-      <div className="MediaHeader__info__links">
-        <Link to={`/${mediaType}/${tmdbid}`} >
-          <Icon type="arrow-left" /> {mediaItem.title}
-        </Link>
-      </div>
-    );
-  }
-  return null;
-};
-
 const backgroundImage = (backdropPath, opacity) => ({
   background: `linear-gradient(rgba(0,0,0,${opacity}),rgba(0,0,0,${opacity})),url(${backdropPath})`,
 });
@@ -131,14 +111,23 @@ const Media = props => (
       <MediaQuery query="(min-width: 768px)">
         <div className="MediaHeader__poster">
           <img alt="" src={props.poster} />
-          <AuthActions {...props} />
+          {!props.isNewPostPage && <AuthActions {...props} />}
         </div>
       </MediaQuery>
       <div className="MediaHeader__info" style={backgroundImage(props.backdropPath, 0.8)}>
         <div className="MediaHeader__info__title">
-          {props.title}
+          <h1>{props.title}</h1>
+          {props.isAuthenticated && !props.isNewPostPage &&
+            <NewPostButton
+              mediaType={props.mediaType}
+              tmdbid={props.tmdbid}
+              seasonNum={props.seasonNum}
+              episodeNum={props.episodeNum}
+              title={props.mediaItem.title || props.mediaItem.name}
+            />
+          }
         </div>
-        <Links {...props} />
+        {(props.mediaType === 'season' || props.mediaType === 'episode' || props.isPostPage) && <Links {...props} />}
         <Row gutter={32} type="flex">
           <Col xs={24} sm={24} lg={14}>
             <div className="MediaHeader__info__overview">
@@ -147,10 +136,13 @@ const Media = props => (
             </div>
             <SelectorPopover type="season" list={props.seasons} tmdbid={props.tmdbid} seasonNum={props.seasonNum} />
             <SelectorPopover type="episode" list={props.episodes} tmdbid={props.tmdbid} seasonNum={props.seasonNum} />
-            <MediaQuery query="(max-width: 768px)">
-              <AuthActions {...props} />
-            </MediaQuery>
+            {!props.isNewPostPage &&
+              <MediaQuery query="(max-width: 768px)">
+                <AuthActions {...props} />
+              </MediaQuery>
+            }
           </Col>
+
           <Col xs={24} sm={24} lg={10}>
             <Actors actors={props.actors} />
             <Genres genres={props.genres} />
@@ -180,6 +172,7 @@ Media.propTypes = {
   genres: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   mediaItem: PropTypes.shape().isRequired,
   isPostPage: PropTypes.bool.isRequired,
+  isNewPostPage: PropTypes.bool.isRequired,
 };
 
 Media.defaultProps = {
@@ -219,18 +212,6 @@ Switcher.propTypes = {
 
 Switcher.defaultProps = {
   link: undefined,
-};
-
-Links.propTypes = {
-  tmdbid: PropTypes.string.isRequired,
-  mediaType: PropTypes.string.isRequired,
-  seasonNum: PropTypes.string,
-  mediaItem: PropTypes.shape().isRequired,
-  isPostPage: PropTypes.bool.isRequired,
-};
-
-Links.defaultProps = {
-  seasonNum: undefined,
 };
 
 export default Media;

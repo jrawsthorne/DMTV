@@ -1,13 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { Popover, Icon } from 'antd';
+import { newPostInfo } from '../../actions/postActions';
 
 class SelectorPopver extends React.Component {
   state = {
     visible: false,
   }
   handleClick = (num) => {
+    const isNewPostPage = this.props.match.path === '/new';
     this.setState({ visible: false });
     const {
       tmdbid,
@@ -18,9 +21,22 @@ class SelectorPopver extends React.Component {
       },
     } = this.props;
     if (type === 'season') {
-      push(`/show/${tmdbid}/season/${num}`);
-    } else {
+      if (!isNewPostPage) {
+        push(`/show/${tmdbid}/season/${num}`);
+      } else {
+        this.props.newPostInfo({
+          mediaType: type,
+          seasonNum: num.toString(),
+        });
+      }
+    } else if (!isNewPostPage) {
       push(`/show/${tmdbid}/season/${seasonNum}/episode/${num}`);
+    } else {
+      this.props.newPostInfo({
+        mediaType: type,
+        seasonNum: seasonNum.toString(),
+        episodeNum: num.toString(),
+      });
     }
   }
   handleVisibleChange = (visible) => {
@@ -61,7 +77,9 @@ SelectorPopver.propTypes = {
   type: PropTypes.string.isRequired,
   tmdbid: PropTypes.string.isRequired,
   seasonNum: PropTypes.string,
+  newPostInfo: PropTypes.func.isRequired,
   history: PropTypes.shape().isRequired,
+  match: PropTypes.shape().isRequired,
 };
 
 SelectorPopver.defaultProps = {
@@ -69,4 +87,4 @@ SelectorPopver.defaultProps = {
   seasonNum: undefined,
 };
 
-export default withRouter(SelectorPopver);
+export default withRouter(connect(null, { newPostInfo })(SelectorPopver));

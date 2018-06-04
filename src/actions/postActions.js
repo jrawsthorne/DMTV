@@ -1,7 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import steemAPI from '../apis/steemAPI';
-import { FETCH_POSTS, FETCH_POST } from './types';
+import { FETCH_POSTS, FETCH_POST, NEW_POST_INFO } from './types';
 
 // return only data we need
 const getPostData = (steemPost, post) => ({
@@ -94,5 +94,10 @@ export const fetchPosts = ({
     },
   });
 };
+
+export const newPostInfo = data => ({
+  type: NEW_POST_INFO,
+  payload: data,
+});
 
 export default fetchPosts;

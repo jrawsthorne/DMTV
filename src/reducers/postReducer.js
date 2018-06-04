@@ -7,6 +7,7 @@ const initialState = {
   fetching: false,
   items: {},
   itemStates: {},
+  newPost: {},
 };
 
 export default (state = initialState, action) => {
@@ -77,6 +78,15 @@ export default (state = initialState, action) => {
           },
         },
       };
+    case types.NEW_POST_INFO: {
+      return {
+        ...state,
+        newPost: {
+          ...state.newPost,
+          ...action.payload,
+        },
+      };
+    }
     default:
       return state;
   }
