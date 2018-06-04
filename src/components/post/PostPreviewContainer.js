@@ -44,6 +44,7 @@ class NewPostsContainer extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
+  /* get post with specified ID from store */
   post: _.get(state, `posts.items[${ownProps.postId}]`, {}),
 });
 

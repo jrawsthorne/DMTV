@@ -48,9 +48,11 @@ export default (state = initialState, action) => {
         seasonNum, episodeNum, tmdbid, mediaType, value,
       } = action.meta;
       message.destroy();
+      /* removed mesage if score 0 */
       if (value === 0) {
         message.success('Rating removed successfully', 0.5);
       } else {
+        /* else added message */
         message.success('Rated successfully', 0.5);
       }
       if (!_.isEmpty(state.items)) {
@@ -58,8 +60,11 @@ export default (state = initialState, action) => {
         if (seasonNum) query.seasonNum = parseInt(seasonNum, 10);
         if (episodeNum) query.episodeNum = parseInt(episodeNum, 10);
         const currentRating = _.find(state.items, query);
+        /* if changing rating */
         if (currentRating) {
+          /* remove current rating */
           const ratings = _.filter(state.items, (rating => rating !== currentRating));
+          /* add new rating if not 0 */
           if (!_.isEmpty(action.payload)) ratings.push(action.payload);
           return {
             ...state,
@@ -70,6 +75,7 @@ export default (state = initialState, action) => {
           };
         }
       }
+      /* if ratings empty or new rating just add it */
       return {
         ...state,
         fetching: false,

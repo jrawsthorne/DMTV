@@ -51,6 +51,7 @@ class Topnav extends React.Component {
       </Menu>
     )
 
+  /* show different menu based on authentication state */
   menuRight = () => (
     _.isEmpty(this.props.username) ? this.menuLoggedOut() : this.menuLoggedIn()
   );

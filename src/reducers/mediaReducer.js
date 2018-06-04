@@ -10,6 +10,7 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case types.FETCH_MOVIE_PENDING:
     case types.FETCH_SHOW_PENDING:
+      /* set pending state for mediaitem with id */
       return {
         ...state,
         itemStates: {
@@ -25,8 +26,11 @@ export default (state = initialState, action) => {
           },
         },
       };
+
     case types.FETCH_MOVIE_FULFILLED:
     case types.FETCH_SHOW_FULFILLED:
+      /* set fulfilled state for mediaitem with id */
+      /* add data to /mediaType/id */
       return {
         ...state,
         items: {
@@ -54,6 +58,7 @@ export default (state = initialState, action) => {
       };
     case types.FETCH_MOVIE_REJECTED:
     case types.FETCH_SHOW_REJECTED:
+      /* set rejected state for mediaitem with id */
       return {
         ...state,
         itemStates: {
@@ -71,6 +76,7 @@ export default (state = initialState, action) => {
       };
     case types.FETCH_SEASON_PENDING:
     case types.FETCH_EPISODE_PENDING:
+      /* set pending state for mediaitem and season with id and seasonNum */
       return {
         ...state,
         itemStates: {
@@ -96,6 +102,8 @@ export default (state = initialState, action) => {
       };
     case types.FETCH_SEASON_FULFILLED:
     case types.FETCH_EPISODE_FULFILLED:
+      /* set fulfilled state for mediaitem, season and all episodes with id and seasonNum */
+      /* add data to /mediaType/id/seasonNum */
       return {
         ...state,
         items: {
@@ -130,6 +138,7 @@ export default (state = initialState, action) => {
                   loaded: true,
                   failed: false,
                   fetching: false,
+                  /* add success for each episode individually */
                   episodes: _.mapValues(
                     action.payload.seasons[action.meta.seasonNum].episodes,
                     () => ({
@@ -158,6 +167,7 @@ export default (state = initialState, action) => {
                 [action.meta.seasonNum]: {
                   episodes: {
                     ..._.get(state, `itemStates.shows[${action.meta.id}].seasons[action.meta.seasonNum].episodes`),
+                    /* add failure for that episode */
                     [action.meta.episodeNum]: {
                       loaded: true,
                       failed: true,
@@ -181,6 +191,7 @@ export default (state = initialState, action) => {
               ..._.get(state, `itemStates.shows[${action.meta.id}]`),
               seasons: {
                 ..._.get(state, `itemStates.shows[${action.meta.id}].seasons`),
+                /* add failure for that season */
                 [action.meta.seasonNum]: {
                   loaded: true,
                   failed: true,

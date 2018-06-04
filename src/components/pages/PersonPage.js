@@ -39,7 +39,16 @@ class PersonPage extends React.Component {
         </div>
         <div className="PersonPageContainer">
           <div className="PersonPageLayout">
-            {actor.combined_credits.map(item => <div key={item.id} className="PersonPageLayout__preview"><SimilarItem type={`${item.media_type === 'movie' ? 'movie' : 'show'}`} item={item} url={`/${item.media_type === 'movie' ? 'movie' : 'show'}/${item.id}`} /></div>)}
+            {/* show backdrop, name and overview for each show/movie featured in */}
+            {actor.combined_credits.map(item => (
+              <div key={item.id} className="PersonPageLayout__preview">
+                <SimilarItem
+                  type={`${item.media_type === 'movie' ? 'movie' : 'show'}`}
+                  item={item}
+                  url={`/${item.media_type === 'movie' ? 'movie' : 'show'}/${item.id}`}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </Layout>

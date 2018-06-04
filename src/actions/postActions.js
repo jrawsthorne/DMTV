@@ -30,7 +30,7 @@ export const fetchPost = (author, permlink) => ({
     .then(post =>
       steemAPI.getContentAsync(post.author, post.permlink)
         .then(steemPost => getPostData(steemPost, post)))
-    .then(steemPost => steemPost.id !== 0 && steemPost),
+    .then(steemPost => steemPost.id !== 0 && steemPost), /* only return post if it exists */
   meta: {
     author,
     permlink,
@@ -52,6 +52,7 @@ export const fetchPosts = ({
   subscriptions = false,
 }) => (dispatch, getState) => {
   let query;
+  /* change api request based on type of feed */
   if (subscriptions) {
     query = 'subscriptions';
   } else {
@@ -73,16 +74,17 @@ export const fetchPosts = ({
       },
     })
       .then(res =>
-        Promise.all(res.data.results.map(post =>
+        Promise.all(res.data.results.map(post => /* loop through each post from the db */
           (!_.get(posts, `@${post.author}/${post.permlink}`) ?
+            /* get the post from steem if not stored */
             steemAPI.getContentAsync(post.author, post.permlink)
               .then(steemPost => getPostData(steemPost, post))
-              .catch(() => Promise.resolve(null))
+              .catch(() => Promise.resolve(null)) /* carry on if error finding post */
             : _.get(posts, `@${post.author}/${post.permlink}`)
           )))
           .then(p => ({
             count: res.data.count,
-            posts: p.filter(post => post !== null),
+            posts: p.filter(post => post !== null), /* eliminate posts that errored */
           }))),
     meta: {
       globalError: 'Sorry, there was an error fetching posts',
@@ -95,6 +97,7 @@ export const fetchPosts = ({
   });
 };
 
+/* Update new post form data */
 export const newPostInfo = data => ({
   type: NEW_POST_INFO,
   payload: data,

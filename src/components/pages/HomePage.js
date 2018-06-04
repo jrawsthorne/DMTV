@@ -8,6 +8,7 @@ import PostsContainer from '../post/PostsContainer';
 class HomePage extends React.Component {
   static getDerivedStateFromProps(nextProps) {
     const { filter } = nextProps.match.params;
+    /* set filter state based on param */
     return {
       currentFilter: filter ? filter[0].toUpperCase() + filter.substr(1) : undefined,
     };
@@ -33,12 +34,14 @@ class HomePage extends React.Component {
     const { isAuthenticated, history: { push } } = this.props;
     const { isAuthenticated: wasAuthenticated } = prevProps;
     const { currentFilter } = this.state;
+    /* redirect to home if logout on subscription page */
     if (wasAuthenticated && !isAuthenticated && currentFilter === 'Subscriptions') {
       push('/');
     }
   }
   handleFilterClick = (key) => {
     const filter = key.toLowerCase();
+    /* change url based on filter click */
     if (filter === 'all') {
       this.props.history.push('/');
       this.setState({ currentFilter: undefined });
@@ -57,6 +60,7 @@ class HomePage extends React.Component {
     const { isAuthenticated } = this.props;
     const { visible, currentFilter } = this.state;
     const filters = ['All', 'Movies', 'Shows', 'Episodes'];
+    /* add subscriptions dropdown if authenticated */
     if (isAuthenticated) filters.push('Subscriptions');
     const content = (
       <div>
@@ -83,6 +87,7 @@ class HomePage extends React.Component {
             <span style={{ marginLeft: 5 }} className="Filter__dropdown"> {currentFilter && currentFilter} <Icon type="down" style={{ fontSize: 15 }} /></span>
           </Popover>
         </h2>
+        {/* show auth error if on subscriptions page and not logged in */}
         {(isAuthenticated || filter !== 'subscriptions') ? <PostsContainer {...props} /> : 'Not authenticated'}
       </Layout>
     );

@@ -46,12 +46,14 @@ export default (state = initialState, action) => {
     case types.SUBSCRIBE_CHANGE_FULFILLED: {
       const { type, tmdbid, subscribed } = action.meta;
       message.destroy();
+      /* if unsubscribing */
       if (JSON.parse(subscribed) === false) {
         message.success('Unubscribed successfully', 0.5);
         const currentSubscription = _.find(
           state.items,
           { type, tmdbid: parseInt(tmdbid, 10) },
         );
+        /* remove subscription from list */
         const subscriptions = _.filter(
           state.items,
           (subscription => subscription !== currentSubscription),
@@ -64,6 +66,7 @@ export default (state = initialState, action) => {
           items: subscriptions,
         };
       }
+      /* if subscribing */
       message.success('Subscribed successfully', 0.5);
       return {
         ...state,

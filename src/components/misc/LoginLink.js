@@ -4,6 +4,7 @@ import steemConnectAPI from '../../apis/steemConnectAPI';
 
 class LoginLink extends React.Component {
   handleLoginClick = () => {
+    /* get url to redirect to */
     const next = window.location.pathname.length > 1 ? window.location.pathname : '';
     window.location.href = steemConnectAPI.getLoginURL(next);
   }

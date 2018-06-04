@@ -23,9 +23,9 @@ export const fetchMovie = id => ({
       title: movie.title,
       overview: movie.overview,
       year: movie.release_date && new Date(movie.release_date).getFullYear(),
-      actors: movie.credits.cast.slice(0, 3),
-      genres: movie.genres.slice(0, 3),
-      similar: _.orderBy(movie.similar.results, 'popularity', 'desc').slice(0, 10),
+      actors: movie.credits.cast.slice(0, 3), /* Top 3 actors */
+      genres: movie.genres.slice(0, 3), /* Top 3 genres */
+      similar: _.orderBy(movie.similar.results, 'popularity', 'desc').slice(0, 10), /* Top 10 highest rated similar movies */
     })),
   meta: {
     globalError: "Sorry, we couln't find that movie",
@@ -37,8 +37,8 @@ export const fetchMovie = id => ({
 export const fetchActor = id => ({
   type: FETCH_ACTOR,
   payload: theMovieDBAPI.personInfo({ id, append_to_response: 'combined_credits' }).then(person => ({
-    ...person,
-    combined_credits: _.orderBy(_.uniqBy(person.combined_credits.cast, 'id'), 'popularity', 'desc').slice(0, 10),
+    ...person, /* The person's general info (name, bio) */
+    combined_credits: _.orderBy(_.uniqBy(person.combined_credits.cast, 'id'), 'popularity', 'desc').slice(0, 10), /* Top 10 highest rated shows/movies they've been in */
   })),
   meta: {
     globalError: "Sorry, we couln't find that preson",
@@ -61,9 +61,9 @@ export const fetchShow = id => ({
       overview: show.overview,
       year: show.first_air_date && new Date(show.first_air_date).getFullYear(),
       seasons: arrayToObject(show.seasons, 'season_number'),
-      actors: show.credits.cast.slice(0, 3),
-      genres: show.genres.slice(0, 3),
-      similar: _.orderBy(show.similar.results, 'popularity', 'desc').slice(0, 10),
+      actors: show.credits.cast.slice(0, 3), /* Top 3 actors */
+      genres: show.genres.slice(0, 3), /* Top 3 genres */
+      similar: _.orderBy(show.similar.results, 'popularity', 'desc').slice(0, 10), /* Top 10 highest rated similar shows */
     })),
   meta: {
     globalError: "Sorry, we couln't find that show",
@@ -92,14 +92,14 @@ export const fetchSeason = (id, seasonNum) => ({
       backdrop_path: show.backdrop_path,
       title: show.name,
       overview: show.overview,
-      actors: show.credits.cast.slice(0, 3),
-      genres: show.genres.slice(0, 3),
-      similar: _.orderBy(show.similar.results, 'popularity', 'desc').slice(0, 10),
+      actors: show.credits.cast.slice(0, 3), /* Top 3 actors */
+      genres: show.genres.slice(0, 3), /* Top 3 genres */
+      similar: _.orderBy(show.similar.results, 'popularity', 'desc').slice(0, 10), /* Top 10 highest rated similar shows */
       seasons: {
-        ...arrayToObject(show.seasons, 'season_number'),
+        ...arrayToObject(show.seasons, 'season_number'), /* each season with number as key */
         [seasonNum]: {
           ...arrayToObject(show.seasons, 'season_number')[seasonNum],
-          episodes: arrayToObject(show[`season/${seasonNum}`].episodes, 'episode_number'),
+          episodes: arrayToObject(show[`season/${seasonNum}`].episodes, 'episode_number'), /* each episode with number as key */
         },
       },
     });
@@ -132,14 +132,14 @@ export const fetchEpisode = (id, seasonNum, episodeNum) => ({
       backdrop_path: show.backdrop_path,
       title: show.name,
       overview: show.overview,
-      actors: show.credits.cast.slice(0, 3),
-      genres: show.genres.slice(0, 3),
-      similar: _.orderBy(show.similar.results, 'popularity', 'desc').slice(0, 10),
+      actors: show.credits.cast.slice(0, 3), /* Top 3 actors */
+      genres: show.genres.slice(0, 3), /* Top 3 genres */
+      similar: _.orderBy(show.similar.results, 'popularity', 'desc').slice(0, 10), /* Top 10 highest rated similar shows */
       seasons: {
-        ...arrayToObject(show.seasons, 'season_number'),
+        ...arrayToObject(show.seasons, 'season_number'), /* each season with number as key */
         [seasonNum]: {
           ...arrayToObject(show.seasons, 'season_number')[seasonNum],
-          episodes: arrayToObject(show[`season/${seasonNum}`].episodes, 'episode_number'),
+          episodes: arrayToObject(show[`season/${seasonNum}`].episodes, 'episode_number'), /* each episode with number as key */
         },
       },
     });
@@ -152,6 +152,7 @@ export const fetchEpisode = (id, seasonNum, episodeNum) => ({
   },
 });
 
+/* change the rating of a show or movie */
 export const userRateChange = (
   mediaType,
   tmdbid,
@@ -177,7 +178,7 @@ export const userRateChange = (
   },
 });
 
-
+/* subscribe or unsubscribe from a show or movie */
 export const subscribeChange = (type, tmdbid, subscribed) => ({
   type: SUBSCRIBE_CHANGE,
   payload: axios.post(`${process.env.API_URL}/subscriptions/change`, {

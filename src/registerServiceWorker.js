@@ -1,4 +1,5 @@
 export default function register () {
+  /* only add in production */
   if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       const swUrl = '/service-worker.js';
@@ -26,6 +27,7 @@ export default function register () {
 }
 
 export function unregister () {
+  /* remove service worker if it exists */
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready.then(registration => {
       registration.unregister();

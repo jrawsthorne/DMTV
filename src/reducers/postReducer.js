@@ -20,6 +20,8 @@ export default (state = initialState, action) => {
         ...state.itemStates,
       };
 
+      /* set fulfilled state for each post */
+      /* add data for each post to /posts/author/permlink */
       _.each(action.payload.posts, (post) => {
         items[`@${post.author}/${post.permlink}`] = post;
         itemStates[`@${post.author}/${post.permlink}`] = {
@@ -36,6 +38,7 @@ export default (state = initialState, action) => {
       };
     }
     case types.FETCH_POST_PENDING:
+      /* set pending state for that post */
       return {
         ...state,
         itemStates: {
@@ -49,6 +52,8 @@ export default (state = initialState, action) => {
         },
       };
     case types.FETCH_POST_FULFILLED:
+    /* set fulfilled state for that post */
+    /* add data for that post to /posts/post/author/permlink */
       return {
         ...state,
         items: {
@@ -66,6 +71,7 @@ export default (state = initialState, action) => {
         },
       };
     case types.FETCH_POST_REJECTED:
+      /* set failure state for that post */
       return {
         ...state,
         itemStates: {
@@ -79,6 +85,7 @@ export default (state = initialState, action) => {
         },
       };
     case types.NEW_POST_INFO: {
+      /* merge new and old new post data */
       return {
         ...state,
         newPost: {

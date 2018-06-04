@@ -18,6 +18,7 @@ class MediaPage extends React.Component {
     const { match: { url: prevUrl } } = prevProps;
     const { match: { url: currentUrl } } = this.props;
     if (prevUrl !== currentUrl) {
+      /* scroll to top and page change */
       window.scrollTo(0, 0);
     }
   }
@@ -30,6 +31,7 @@ class MediaPage extends React.Component {
       }, mediaLoaded,
     } = this.props;
     const type = getMediaType({ mediaType, seasonNum, episodeNum });
+    /* don't show posts until media loaded */
     const styles = {
       display: mediaLoaded ? 'initial' : 'none',
     };

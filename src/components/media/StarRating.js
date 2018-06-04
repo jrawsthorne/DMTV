@@ -10,10 +10,13 @@ class StarRating extends React.Component {
     rating: 0,
   }
   handleRateChange = (value) => {
+    /* set state to prevent flickering */
+    /* TODO: pendingRate action instead */
     this.setState({ rating: value });
     const {
       mediaType, tmdbid, seasonNum, episodeNum,
     } = this.props;
+    /* change the rating for the specified item */
     this.props.userRateChange(mediaType, tmdbid, seasonNum, episodeNum, value);
   }
   render() {
@@ -25,7 +28,7 @@ class StarRating extends React.Component {
       <Rate
         value={loaded ? userRating : rating}
         onChange={this.handleRateChange}
-        disabled={fetching}
+        disabled={fetching} /* disable while changing */
       />
     );
   }

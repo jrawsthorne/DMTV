@@ -18,6 +18,7 @@ class NewPostPage extends React.Component {
   componentDidMount() {
     const { data } = this.props;
     const value = _.get(data, 'search.value', '');
+    /* if search value on load then search */
     if (value.length > 0) {
       this.handleSearch(value);
     }
@@ -25,6 +26,7 @@ class NewPostPage extends React.Component {
   componentDidUpdate(prevProps) {
     if (this.props.data.tmdbid !== prevProps.data.tmdbid ||
       this.props.data.mediaType !== prevProps.data.mediaType) {
+      /* remove error if tmdbid and mediaType */
       if (!_.isEmpty(this.props.data.tmdbid) && !_.isEmpty(this.props.data.mediaType)) {
         this.props.newPostInfo({
           search: {
@@ -33,6 +35,7 @@ class NewPostPage extends React.Component {
           },
         });
       } else if (_.isEmpty(this.props.data.search.errors)) {
+        /* set errors if currently empty */
         this.props.newPostInfo({
           search: {
             ...this.props.data.search,
@@ -43,6 +46,7 @@ class NewPostPage extends React.Component {
         });
       }
     }
+    /* hacky, set field value if set to change */
     if (_.get(this.props.data, 'change', false)) {
       this.props.form.setFieldsValue({ search: this.props.data.mediaTitle });
       this.props.newPostInfo({ change: false });
@@ -59,17 +63,21 @@ class NewPostPage extends React.Component {
             .map(mediaItem => ({
               id: mediaItem.id,
               title: _.get(mediaItem, 'title') || _.get(mediaItem, 'name') || 'No title',
+              /* set image to placeholder if not found */
               img: (mediaItem.poster_path && `https://image.tmdb.org/t/p/w45${mediaItem.poster_path}`) || noImageFound,
               year: (mediaItem.release_date && new Date(mediaItem.release_date).getFullYear()) ||
           (mediaItem.first_air_date && new Date(mediaItem.first_air_date).getFullYear()),
               url: `/${mediaItem.media_type === 'tv' ? 'show' : 'movie'}/${mediaItem.id}`,
+              /* convert tmdbid types */
               mediaType: mediaItem.media_type === 'tv' ? 'show' : 'movie',
             })))
+        /* update new post info with search state */
         .then(res => this.props.newPostInfo({
           searchResults: res,
           searchFetching: false,
         }));
     } else {
+      /* clear search state if query empty */
       this.props.newPostInfo({
         searchResults: [],
         searchFetching: false,
@@ -77,12 +85,15 @@ class NewPostPage extends React.Component {
     }
   }
 
+  /* wait 0.3s before searching */
   debouncedSearch = _.debounce(q => this.handleSearch(q), 300);
 
+  /* search with trimmed value on change */
   handleAutoCompleteSearch = (value) => {
     this.debouncedSearch(value.trim());
   }
 
+  /* change new post info on select */
   handleSelectOnAutoCompleteDropdown = (value, option) => {
     const { props: { mediatype, title }, key } = option;
     this.props.newPostInfo({
@@ -91,17 +102,22 @@ class NewPostPage extends React.Component {
       mediaTitle: title,
       seasonNum: null,
       episodeNum: null,
-      change: true,
+      change: true, /* hacky, clear error on next render */
     });
   }
+
+  /* return true if string length 0 */
   emptyInput = input =>
     _.get(this.props.data, `${input}.value`, '').length === 0
 
+  /* validate fields on submit */
   handleSubmit = (e) => {
     e.preventDefault();
 
     this.props.form.validateFieldsAndScroll();
   }
+
+  /* search input valid if tmdbid and mediaType set */
   checkSearchInput = (rule, value, callback) => {
     const { data } = this.props;
     const tmdbid = _.get(data, 'tmdbid', '');
@@ -111,6 +127,8 @@ class NewPostPage extends React.Component {
     }
     callback();
   }
+
+  /* tags valid if don't contain special characters */
   checkTags = (rule, value, callback) => {
     value
       .map(tag => ({ tag, valid: /^[a-z0-9]+(-[a-z0-9]+)*$/.test(tag) }))
@@ -152,13 +170,16 @@ class NewPostPage extends React.Component {
           autoCapitalize="off"
           spellCheck="false"
           autoCorrect="off"
+          /* set input classname if empty and no error */
           className={classNames('NewPostPage__input', { NewPostPage__input__empty: this.emptyInput('search') && !getFieldError('search') })}
           id="mediaItem"
+          /* search and fetching icon */
           suffix={searchFetching ? <Spin indicator={<Icon type="loading" style={{ fontSize: '16px', color: '#cccccc' }} spin />} /> : <Icon style={{ fontSize: '16px', color: '#cccccc' }} type="search" />}
         />
       </AutoComplete>);
     return (
       <React.Fragment>
+        {/* show media container if mediaType and tmdbid */}
         {mediaType && tmdbid && <MediaContainer
           mediaType={mediaType}
           tmdbid={tmdbid}
@@ -179,9 +200,11 @@ class NewPostPage extends React.Component {
               })(searchAutoComplete)}
               <label
                 htmlFor="search"
+                /* set label value to error or label text */
                 title={getFieldError('search') ? getFieldError('title') : 'Search for a show/film'}
+                /* set label classname if empty and no error */
                 className={classNames('NewPostPage__label', { NewPostPage__label__empty: this.emptyInput('search') && !getFieldError('search') })}
-              >{getFieldError('search') ? getFieldError('search') : 'Search for a show/film'}
+              >{getFieldError('search') ? getFieldError('search') : 'Search for a show/film'} {/* set label value to error or label text */}
               </label>
             </FormItem>
             <FormItem>
@@ -199,15 +222,18 @@ class NewPostPage extends React.Component {
                 ],
               })(<Input
                 name="title"
+                /* set input classname if empty and no error */
                 className={classNames('NewPostPage__input', { NewPostPage__input__empty: this.emptyInput('title') && !getFieldError('title') })}
                 placeholder="Enter title"
                 id="title"
               />)}
               <label
                 htmlFor="title"
+                /* set label value to error or label text */
                 title={getFieldError('title') ? getFieldError('title')[0] : 'Enter Title'}
+                /* set label classname if empty and no error */
                 className={classNames('NewPostPage__label', { NewPostPage__label__empty: this.emptyInput('title') && !getFieldError('title') })}
-              >{getFieldError('title') ? getFieldError('title')[0] : 'Enter Title'}
+              >{getFieldError('title') ? getFieldError('title')[0] : 'Enter Title'} {/* set label value to error or label text */}
               </label>
             </FormItem>
             <FormItem className="Tags" label="Tags">
@@ -254,10 +280,12 @@ const mapStateToProps = state => ({
   data: _.get(state, 'posts.newPost', {}),
 });
 
+/* update store on field change */
 const onFieldsChange = (props, fields) => {
   props.newPostInfo({ ...fields });
 };
 
+/* set fields based on redux store */
 const mapPropsToFields = props => ({
   title: Form.createFormField({
     ...props.data.title,

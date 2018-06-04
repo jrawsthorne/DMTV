@@ -21,6 +21,7 @@ import registerServiceWorker from './registerServiceWorker';
 
 import routes from './routes';
 
+/* if cookie on load set steemconnect token */
 const accessToken = Cookie.get('access_token');
 if (accessToken) {
   steemConnectAPI.setAccessToken(accessToken);
@@ -28,7 +29,7 @@ if (accessToken) {
 
 const initialState = {};
 const history = createHistory();
-// create middleware
+// create middleware (thunk, promise)
 const middleware = [
   errorMiddleware,
   promiseMiddleware(),
@@ -55,4 +56,5 @@ ReactDOM.render(
   , document.getElementById('root'),
 );
 
+/* service worker to serve cached files */
 registerServiceWorker();

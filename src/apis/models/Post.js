@@ -57,5 +57,6 @@ const schema = new mongoose.Schema(
   },
 );
 
+/* Each author and permlink combination must be unique */
 schema.index({ author: 1, permlink: 1 }, { unique: true });
 module.exports = mongoose.model('posts', schema);

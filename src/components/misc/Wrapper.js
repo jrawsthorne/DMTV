@@ -9,9 +9,11 @@ import Topnav from '../navigation/Topnav';
 
 class Wrapper extends React.Component {
   componentDidMount() {
+    /* login if access token but not authenticated */
     if (steemConnectAPI.options.accessToken && !this.props.isAuthenticated) {
       this.props.login()
         .then(() => {
+          /* fetching ratings and subscriptions after login */
           this.props.fetchUserRatings();
           this.props.fetchUserSubscriptions();
         });

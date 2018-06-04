@@ -5,17 +5,20 @@ import { Link } from 'react-router-dom';
 import { Icon } from 'antd';
 import * as actions from '../../actions/postActions';
 
+/* Links to go back to the main item or the season page */
 const Links = ({
   mediaType, tmdbid, seasonNum, mediaItem, isPostPage, isNewPostPage, newPostInfo,
 }) => {
   if (mediaType === 'season' || mediaType === 'episode') {
     if (!isNewPostPage) {
       return (
+        /* Link to the main show page */
         <div className="MediaHeader__info__links">
           <Link to={`/show/${tmdbid}`} >
             <Icon type="arrow-left" /> {mediaItem.title}
           </Link>
           {mediaType === 'episode' && (
+            /* Link to the season page */
             <Link to={`/show/${tmdbid}/season/${seasonNum}`} >
               <Icon type="arrow-left" /> {mediaItem.seasons[seasonNum].name}
             </Link>
@@ -25,11 +28,12 @@ const Links = ({
     }
     return (
       <div className="MediaHeader__info__links">
+        {/* Change the new post info to the main show */}
         <p onClick={() => newPostInfo({ seasonNum: null, episodeNum: null, mediaType: 'show' })} role="presentation" >
           <Icon type="arrow-left" /> {mediaItem.title}
         </p>
         {mediaType === 'episode' && (
-        <p onClick={() => newPostInfo({ episodeNum: null, mediaType: 'season' })} role="presentation" >
+        <p onClick={() => newPostInfo({ episodeNum: null, mediaType: 'season' })} role="presentation" > {/* Change the new post info to the season */}
           <Icon type="arrow-left" /> {mediaItem.seasons[seasonNum].name}
         </p>
           )}
@@ -38,6 +42,7 @@ const Links = ({
   } else if (isPostPage) {
     return (
       <div className="MediaHeader__info__links">
+        {/* Link to the movie or show page from a post */}
         <Link to={`/${mediaType}/${tmdbid}`} >
           <Icon type="arrow-left" /> {mediaItem.title}
         </Link>

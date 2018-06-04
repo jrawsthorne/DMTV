@@ -33,6 +33,7 @@ const schema = new Schema(
   },
 );
 
+/* A user can only have 1 rating per item */
 schema.index({
   user: 1, mediaType: 1, tmdbid: 1, seasonNum: 1, episodeNum: 1,
 }, { unique: true });

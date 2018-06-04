@@ -10,6 +10,7 @@ class SubscribeButton extends React.Component {
     const { mediaType } = this.props;
     let type = 'show';
     if (mediaType === 'movie') type = 'movie';
+    /* toggle subscription based on current state */
     this.props.subscribeChange(type, this.props.tmdbid, !this.props.isSubscribed);
   }
   render() {
@@ -43,6 +44,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     fetching: _.get(state, 'subscriptions.fetching', false),
     loaded: _.get(state, 'subscriptions.loaded', false),
+    /* isSubscribed if subscription found with specified type and tmdbid */
     isSubscribed: !!_.find(_.get(state, 'subscriptions.items', []), { type, tmdbid: parseInt(tmdbid, 10) }),
   };
 };

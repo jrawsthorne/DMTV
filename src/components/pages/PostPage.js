@@ -32,6 +32,7 @@ const PostPage = ({
   return (
     <Layout>
       <ScrollToTop />
+      {/* show loading while media and post loading */}
       {(!postLoaded || (!mediaLoaded && !postFailed)) && <Loading />}
       <Layout style={mediaContainerStyles} >
         {mediaType && tmdbid && <MediaContainer
@@ -41,6 +42,7 @@ const PostPage = ({
           episodeNum={episodeNum && episodeNum.toString()}
         />}
       </Layout>
+      {/* hide main content until media loaded */}
       <Layout className={classNames('main-content', 'PostPage__post', { PostPage__post__failed: postFailed })} style={postConatinerStyles}>
         {!postFailed && <Divider />}
         <PostContainer

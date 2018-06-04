@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import noImageFound from '../images/no-image-found.jpg';
 
+/* get the paths and text for each type of item */
+
 const movieDetails = movie => ({
   title: (movie.title && movie.year && `${movie.title} (${movie.year})`) || movie.title || 'No title',
   overview: movie.overview || 'No overview',
@@ -70,6 +72,7 @@ export const getNextPrev = (mediaItem, seasonNum, episodeNum) => {
   };
 };
 
+/* create object from specified field in array */
 export const arrayToObject = (arr, keyField) =>
   Object.assign({}, ...arr.map(item => ({ [item[keyField]]: item })));
 

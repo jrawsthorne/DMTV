@@ -25,6 +25,7 @@ class MediaContainer extends React.Component {
       fetching,
       loaded,
     } = this.props;
+    /* Fetch metadata based on mediaType */
     if (!mediaItem || (!fetching && !loaded)) {
       if (mediaType === 'movie') fetchMovie(tmdbid);
       if (mediaType === 'show') fetchShow(tmdbid);
@@ -46,6 +47,7 @@ class MediaContainer extends React.Component {
       fetching,
       loaded,
     } = nextProps;
+    /* Fetch metadata based on mediaType */
     if ((!mediaItem && !loaded && !fetching) || (!loaded && !fetching)) {
       if (mediaType === 'movie') fetchMovie(tmdbid);
       if (mediaType === 'show') fetchShow(tmdbid);
@@ -70,11 +72,13 @@ class MediaContainer extends React.Component {
     } = this.props;
     if (failed) return <div className="main-content"><p>Sorry, there was an error loading the metadata</p></div>;
     if (fetching || !loaded) return <Loading />;
+    /* get details based on type */
     const {
       backdropPath, posterPath, title, overview,
     } = getMediaItemDetails(mediaItem, mediaType, seasonNum, episodeNum);
     let prev;
     let next;
+    /* add next and previous buttons if episode or season */
     if (seasonNum) {
       const nextPrev = getNextPrev(mediaItem, seasonNum, episodeNum);
       prev = _.get(nextPrev, 'prev');
@@ -138,6 +142,7 @@ const mapStateToProps = (state, ownProps) => {
   } = ownProps;
   let query = '';
   let type;
+  /* match store structure */
   if (mediaType === 'movie') {
     type = 'movies';
   } else if (mediaType === 'show' || mediaType === 'episode' || mediaType === 'season') {
@@ -148,6 +153,7 @@ const mapStateToProps = (state, ownProps) => {
   if (seasonNum) query += `.seasons.${seasonNum}`;
   const fetching = _.get(state.media.itemStates, `${query}.fetching`);
   if (episodeNum) query += `.episodes.${episodeNum}`;
+  /* use season/episode failed and loaded states */
   const failed = _.get(state.media.itemStates, `${query}.failed`);
   const loaded = _.get(state.media.itemStates, `${query}.loaded`);
   return {

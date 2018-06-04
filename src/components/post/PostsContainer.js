@@ -37,6 +37,7 @@ class PostsContainer extends React.Component {
     subscriptions: false,
   }
   componentDidMount() {
+    /* fetch posts based on search criteria */
     if (!this.props.fetching) {
       this.props.fetchPosts({
         postType: this.props.postType,
@@ -69,6 +70,7 @@ class PostsContainer extends React.Component {
     } = this.props;
     const { match: { url: prevUrl } } = prevProps;
     if (prevUrl !== currentUrl || (!loaded && !fetching)) {
+      /* fetch posts based on search criteria */
       fetchPosts({
         postType,
         mediaType,
@@ -104,6 +106,8 @@ class PostsContainer extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
+  /* where to find posts feed */
+  /* TODO: better way to do this */
   let key = ownProps.mediaType || ownProps.type || ownProps.author || (ownProps.subscriptions && 'subscriptionsFeed') || 'all';
   if (ownProps.tmdbid) key += ownProps.tmdbid;
   if (ownProps.seasonNum) key += ownProps.seasonNum;

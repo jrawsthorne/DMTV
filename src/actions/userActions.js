@@ -1,6 +1,7 @@
 import steemAPI from '../apis/steemAPI';
 import { FETCH_ACCOUNT } from './types';
 
+/* fetch account details by username */
 export const fetchAccount = name => ({
   type: FETCH_ACCOUNT,
   payload: steemAPI.getAccountsAsync([name]).then((result) => {

@@ -10,6 +10,7 @@ class NewPostButton extends React.Component {
     const {
       mediaType, tmdbid, title, seasonNum, episodeNum,
     } = this.props;
+    /* add details to new post */
     this.props.newPostInfo({
       mediaType,
       tmdbid,
@@ -22,6 +23,7 @@ class NewPostButton extends React.Component {
       searchResults: [],
       searchFetching: false,
     });
+    /* redirect to new post page */
     this.props.history.push('/new');
   }
   render() {

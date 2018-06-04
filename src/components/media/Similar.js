@@ -8,6 +8,7 @@ import MediaQuery from 'react-responsive';
 import { getMediaItemDetails } from '../../helpers/mediaHelpers';
 import BodyShort from '../post/BodyShort';
 
+/* show the backdrop, title and overview with link to its page */
 export const SimilarItem = ({ item, url, type }) => {
   const {
     backdropPath, title, overview,
@@ -39,6 +40,7 @@ const Similar = ({
           let num = 1;
           let centerPadding = '40px';
           let infinite = true;
+          /* if above 1050px */
           if (matches) {
             num = 2;
             centerPadding = '100px';
@@ -61,6 +63,7 @@ const Similar = ({
               lazyLoad
               infinite={infinite}
             >
+              {/* for each item add it to the carousel */}
               {list.map(item => <SimilarItem key={item.id} type={type} item={item} url={`/${type}/${item.id}`} />)}
             </Carousel>
           );
@@ -87,10 +90,12 @@ const mapStateToProps = (state, ownProps) => {
   } = ownProps;
   let type;
   let id;
+  /* get type and tmdbid from post */
   if (!mediaType && !tmdbid) {
     const post = _.get(state, `posts.items[@${author}/${permlink}].media`, {});
     ({ type, tmdbid: id } = post);
   } else {
+    /* use type and tmdbid given */
     type = mediaType;
     id = tmdbid;
   }

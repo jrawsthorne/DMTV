@@ -32,6 +32,7 @@ const Links = Loadable({
   loading: (() => null),
 });
 
+/* Only available when logged in */
 const AuthActions = ({
   tmdbid, mediaType, seasonNum, episodeNum, isAuthenticated,
 }) => {
@@ -60,11 +61,13 @@ const AuthActions = ({
     <React.Fragment>
       <div className="MediaHeader__info__rating">
         <h4>Rating</h4>
+        {/* Link to log in if not authenticated */}
         <LoginLink linkText="Log in to rate" />
       </div>
     </React.Fragment>);
 };
 
+/* Show a list of genres */
 const Genres = ({ genres }) => (
   <div className="MediaHeader__info__genres">
     <h4>Genres</h4>
@@ -73,6 +76,7 @@ const Genres = ({ genres }) => (
   </div>
 );
 
+/* Show a list of actors */
 const Actors = ({ actors }) => (
   <div className="MediaHeader__info__actors">
     <h4>Actors</h4>
@@ -83,6 +87,7 @@ const Actors = ({ actors }) => (
   </div>
 );
 
+/* Go to the next or previous episode or season */
 const Switcher = ({ link, direction }) => {
   if (link) {
     return (
@@ -103,20 +108,24 @@ const backgroundImage = (backdropPath, opacity) => ({
 
 const Media = props => (
   <div className="MediaItem">
+    {/* Only show on larger screens */}
     <MediaQuery query="(min-width: 768px)">
       <div className="MediaItem__backdrop" style={backgroundImage(props.backdropPath, 0.5)} />
     </MediaQuery>
     <div className="MediaHeader">
       <Switcher link={props.prev} direction="left" />
+      {/* Only show on larger screens */}
       <MediaQuery query="(min-width: 768px)">
         <div className="MediaHeader__poster">
           <img alt="" src={props.poster} />
+          {/* Don't show auth actions on new post page */}
           {!props.isNewPostPage && <AuthActions {...props} />}
         </div>
       </MediaQuery>
       <div className="MediaHeader__info" style={backgroundImage(props.backdropPath, 0.8)}>
         <div className="MediaHeader__info__title">
           <h1>{props.title}</h1>
+          {/* Show new post button if authenticated */}
           {props.isAuthenticated && !props.isNewPostPage &&
             <NewPostButton
               mediaType={props.mediaType}
@@ -127,6 +136,7 @@ const Media = props => (
             />
           }
         </div>
+        {/* Show links back if season, show or post page */}
         {(props.mediaType === 'season' || props.mediaType === 'episode' || props.isPostPage) && <Links {...props} />}
         <Row gutter={32} type="flex">
           <Col xs={24} sm={24} lg={14}>
@@ -134,9 +144,11 @@ const Media = props => (
               <h4>Overview</h4>
               <BodyShort body={props.overview} />
             </div>
+            {/* popovers for episodes and seasons */}
             <SelectorPopover type="season" list={props.seasons} tmdbid={props.tmdbid} seasonNum={props.seasonNum} />
             <SelectorPopover type="episode" list={props.episodes} tmdbid={props.tmdbid} seasonNum={props.seasonNum} />
             {!props.isNewPostPage &&
+              /* Show auth actions below if on mobile/tablet */
               <MediaQuery query="(max-width: 768px)">
                 <AuthActions {...props} />
               </MediaQuery>

@@ -11,6 +11,7 @@ class SelectorPopver extends React.Component {
   }
   handleClick = (num) => {
     const isNewPostPage = this.props.match.path === '/new';
+    /* hide popover when clicked */
     this.setState({ visible: false });
     const {
       tmdbid,
@@ -22,16 +23,20 @@ class SelectorPopver extends React.Component {
     } = this.props;
     if (type === 'season') {
       if (!isNewPostPage) {
+        /* go to the season page if not on the new post page */
         push(`/show/${tmdbid}/season/${num}`);
       } else {
+        /* else update the new post info */
         this.props.newPostInfo({
           mediaType: type,
           seasonNum: num.toString(),
         });
       }
     } else if (!isNewPostPage) {
+      /* go to the episode page if not on the new post page */
       push(`/show/${tmdbid}/season/${seasonNum}/episode/${num}`);
     } else {
+      /* else update the new post info */
       this.props.newPostInfo({
         mediaType: type,
         seasonNum: seasonNum.toString(),

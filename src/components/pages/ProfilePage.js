@@ -30,6 +30,7 @@ class ProfilePage extends React.Component {
     } = this.props;
     if (!loaded || fetching) return <Loading />;
     if (failed || !user) return <div className="main-content">Sorry, there was an error fetching that user</div>;
+    /* get profile from user JSON metadata */
     const jsonMetadata = JSON.parse(user.json_metadata);
     const { profile } = jsonMetadata;
     const {
@@ -47,6 +48,7 @@ class ProfilePage extends React.Component {
         />
         <Layout className="main-content">
           <h2>Latest posts from {name || user.name}</h2>
+          {/* posts by that user */}
           <PostsContainer author={user.name} />
         </Layout>
       </React.Fragment>

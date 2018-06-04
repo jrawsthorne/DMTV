@@ -5,6 +5,7 @@ const initialState = {
   created: {},
 };
 
+/* array of strngs to find full posts */
 const feedIdsList = (state = [], action) => {
   switch (action.type) {
     case types.FETCH_POSTS_FULFILLED:
@@ -14,6 +15,7 @@ const feedIdsList = (state = [], action) => {
   }
 };
 
+/* set list of ids if posts fetched successfully */
 const feedCategory = (state = {}, action) => {
   switch (action.type) {
     case types.FETCH_POSTS_PENDING:
@@ -30,6 +32,7 @@ const feedCategory = (state = {}, action) => {
         fetching: false,
         loaded: true,
         failed: false,
+        /* has more if number of posts doesn't equal count from db */
         hasMore: action.payload.posts.length !== action.payload.count || false,
         list: feedIdsList(state.list, action),
       };
