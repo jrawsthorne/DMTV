@@ -37,10 +37,15 @@ const Similar = ({
       <MediaQuery minWidth={1050}>
         {(matches) => {
           let num = 1;
-          let padding = '40px';
+          let centerPadding = '40px';
+          let infinite = true;
           if (matches) {
             num = 2;
-            padding = '100px';
+            centerPadding = '100px';
+          }
+          if (list.length === 1) {
+            infinite = false;
+            centerPadding = '0px';
           }
           return (
             <Carousel
@@ -51,9 +56,10 @@ const Similar = ({
               draggable
               swipeToSlide
               swipe
-              centerPadding={padding}
+              centerPadding={centerPadding}
               centerMode
               lazyLoad
+              infinite={infinite}
             >
               {list.map(item => <SimilarItem key={item.id} type={type} item={item} url={`/${type}/${item.id}`} />)}
             </Carousel>
