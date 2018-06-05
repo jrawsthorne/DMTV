@@ -5,7 +5,6 @@ import { Layout, Form, Input, AutoComplete, Select, Button, Spin, Icon } from 'a
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import ScrollToTop from '../misc/ScrollToTop';
 import './NewPostPage.less';
 import theMovieDBAPI from '../../apis/theMovieDBAPI';
 import noImageFound from '../../images/no-image-found.jpg';
@@ -187,7 +186,6 @@ class NewPostPage extends React.Component {
           episodeNum={episodeNum && episodeNum.toString()}
         />}
         <Layout className="main-content NewPostPage">
-          <ScrollToTop />
           <h2>New post</h2>
           <Form hideRequiredMark onSubmit={this.handleSubmit}>
             <FormItem>
