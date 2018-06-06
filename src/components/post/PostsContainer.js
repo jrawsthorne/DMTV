@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import InfiniteScroll from 'react-infinite-scroller';
 import * as actions from '../../actions/postActions';
 
 import Loading from '../misc/Loading';
@@ -25,6 +26,7 @@ class PostsContainer extends React.Component {
     match: PropTypes.shape().isRequired,
     author: PropTypes.string,
     subscriptions: PropTypes.bool,
+    hasMore: PropTypes.bool,
   };
   static defaultProps = {
     tmdbid: undefined,
@@ -35,6 +37,7 @@ class PostsContainer extends React.Component {
     seasonNum: undefined,
     author: undefined,
     subscriptions: false,
+    hasMore: false,
   }
   componentDidMount() {
     /* fetch posts based on search criteria */
@@ -83,12 +86,25 @@ class PostsContainer extends React.Component {
       });
     }
   }
+  loadMore = () =>
+    this.props.fetchPosts({
+      postType: this.props.postType,
+      mediaType: this.props.mediaType,
+      type: this.props.type,
+      tmdbid: this.props.tmdbid,
+      seasonNum: this.props.seasonNum,
+      episodeNum: this.props.episodeNum,
+      author: this.props.author,
+      subscriptions: this.props.subscriptions,
+      lastPost: this.props.posts[this.props.posts.length - 1],
+    });
   render() {
     const {
       loaded,
       failed,
       fetching,
       posts,
+      hasMore,
     } = this.props;
     if (fetching || !loaded) return <Loading />;
     if (failed) return <div><p>Sory, there was an error fetching posts</p></div>;
@@ -96,9 +112,14 @@ class PostsContainer extends React.Component {
     return (
       <div className="posts">
         <div className="postsContainer">
-          <div className="postsLayout">
+          <InfiniteScroll
+            loadMore={this.loadMore}
+            hasMore={!fetching && hasMore}
+            className="postsLayout"
+            threshold={1500}
+          >
             {posts.map(postId => <PostPreviewContainer key={postId} postId={postId} />)}
-          </div>
+          </InfiniteScroll>
         </div>
       </div>
     );
@@ -117,6 +138,7 @@ const mapStateToProps = (state, ownProps) => {
     fetching: _.get(state, `feed.created.${key}.fetching`, false),
     loaded: _.get(state, `feed.created.${key}.loaded`, false),
     failed: _.get(state, `feed.created.${key}.failed`, false),
+    hasMore: _.get(state, `feed.created.${key}.hasMore`, false),
   };
 };
 

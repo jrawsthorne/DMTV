@@ -20,6 +20,8 @@ const getPostData = (steemPost, post) => ({
     type: post.type,
     tmdbid: post.tmdbid,
   },
+  /* WHEN LIVE WILL USE STEEM CREATED AT */
+  createdAt: post.createdAt,
 });
 
 // fetch post from db and return steem and db info
@@ -50,6 +52,8 @@ export const fetchPosts = ({
   type = undefined,
   author = undefined,
   subscriptions = false,
+  limit = 10,
+  lastPost = undefined,
 }) => (dispatch, getState) => {
   let query;
   /* change api request based on type of feed */
@@ -59,6 +63,8 @@ export const fetchPosts = ({
     query = 'posts';
   }
   const posts = getState().posts.items;
+  /* only posts created before last post */
+  const createdBefore = lastPost && posts[lastPost].createdAt;
   dispatch({
     type: FETCH_POSTS,
     payload: axios.get(`${process.env.API_URL}/${query}`, {
@@ -71,6 +77,8 @@ export const fetchPosts = ({
         episodeNum: seasonNum && episodeNum ? episodeNum : undefined,
         rating: rating || undefined,
         author: author || undefined,
+        createdBefore: createdBefore || undefined,
+        limit,
       },
     })
       .then(res =>
@@ -93,6 +101,7 @@ export const fetchPosts = ({
       seasonNum,
       episodeNum,
       sortBy: 'created',
+      lastPost,
     },
   });
 };

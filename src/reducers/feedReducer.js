@@ -9,7 +9,7 @@ const initialState = {
 const feedIdsList = (state = [], action) => {
   switch (action.type) {
     case types.FETCH_POSTS_FULFILLED:
-      return _.uniq([...action.payload.posts.map(post => `@${post.author}/${post.permlink}`)]);
+      return _.uniq(state.concat([...action.payload.posts.map(post => `@${post.author}/${post.permlink}`)]));
     default:
       return state;
   }
@@ -19,6 +19,15 @@ const feedIdsList = (state = [], action) => {
 const feedCategory = (state = {}, action) => {
   switch (action.type) {
     case types.FETCH_POSTS_PENDING:
+      if (action.meta.lastPost) {
+        return {
+          ...state,
+          fetching: false,
+          loaded: true,
+          failed: false,
+          list: feedIdsList(state.list, action),
+        };
+      }
       return {
         ...state,
         fetching: true,
@@ -33,7 +42,7 @@ const feedCategory = (state = {}, action) => {
         loaded: true,
         failed: false,
         /* has more if number of posts doesn't equal count from db */
-        hasMore: action.payload.posts.length !== action.payload.count || false,
+        hasMore: feedIdsList(state.list, action).length !== action.payload.count || false,
         list: feedIdsList(state.list, action),
       };
     case types.FETCH_POSTS_REJECTED:

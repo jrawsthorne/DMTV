@@ -22,7 +22,17 @@ router.get('/@:author/:permlink', (req, res) => {
 
 router.get('/', (req, res) => {
   const {
-    postType = 'all', sortBy = 'created', mediaType, type, tmdbid, seasonNum, episodeNum, rating, author, limit = 20,
+    postType = 'all',
+    sortBy = 'created',
+    mediaType,
+    type,
+    tmdbid,
+    seasonNum,
+    episodeNum,
+    rating,
+    author,
+    limit = 10,
+    createdBefore = false,
   } = req.query;
   if (episodeNum && !seasonNum) {
     // return error if episode but no season specified
@@ -63,8 +73,10 @@ router.get('/', (req, res) => {
       }
     });
   } else {
+    let countQuery = {};
     const query = {};
     // construct query
+    let postLimit = parseInt(limit, 10);
     if (mediaType) query.mediaType = mediaType;
     if (type) query.type = type;
     if (tmdbid) query.tmdbid = tmdbid;
@@ -75,15 +87,22 @@ router.get('/', (req, res) => {
     if (postType !== 'all') {
       query.postType = postType;
     }
+    countQuery = { ...query };
+    if (createdBefore) {
+      postLimit += 1;
+      query.createdAt = { $lte: createdBefore };
+    }
     // find the total number of posts and return the newest 20
     Promise.all([
-      Post.count(query),
-      Post.find(query).sort({ createdAt: -1 }).limit(limit),
+      Post.count(countQuery),
+      Post.find(query)
+        .sort({ createdAt: -1 })
+        .limit(postLimit),
     ]).then((data) => {
       // return the total count and an array of posts
       res.json({
         count: data[0],
-        results: data[1],
+        results: createdBefore ? data[1].slice(1) : data[1],
       });
     });
   }
@@ -95,7 +114,7 @@ router.post('/update-metadata', (req, res) => {
   const { testing_token: testingToken } = req.cookies;
   if (!testingToken || testingToken !== process.env.TESTING_TOKEN) {
     // return error if no testing token
-    return res.status(400).json({ error: 'Not authenticated' });
+    res.status(400).json({ error: 'Not authenticated' });
   }
   const {
     author,
@@ -108,7 +127,7 @@ router.post('/update-metadata', (req, res) => {
   } = req.body;
   if (!author || !permlink || !postType || !mediaType || !tmdbid || (mediaType === 'season' && !seasonNum) || (mediaType === 'episode' && (!seasonNum || !episodeNum))) {
     // return error if wrong paramaters given
-    return res.status(400).json({ error: 'Post couldn\'t be updated' });
+    res.status(400).json({ error: 'Post couldn\'t be updated' });
   }
 
   // find the post
