@@ -11,6 +11,7 @@ import {
   SUBSCRIBE_CHANGE,
   FETCH_ACTOR,
 } from './types';
+import { AUTH_HEADERS } from './authActions';
 
 // fetch movie details and return object containing id, poster, backdrop, title, overview and year
 export const fetchMovie = id => ({
@@ -171,7 +172,7 @@ export const userRateChange = (
     seasonNum: seasonNum || undefined,
     episodeNum: episodeNum || undefined,
     value,
-  }).then(res => res.data),
+  }, AUTH_HEADERS).then(res => res.data),
   meta: {
     mediaType,
     tmdbid,
@@ -189,7 +190,7 @@ export const subscribeChange = (type, tmdbid, subscribed) => ({
     type,
     tmdbid,
     subscribed,
-  }).then(res => res.data),
+  }, AUTH_HEADERS).then(res => res.data),
   meta: {
     globalError: 'Sorry, there was an error changing your subscription',
     type,
