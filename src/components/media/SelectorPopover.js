@@ -63,14 +63,14 @@ class SelectorPopver extends React.Component {
                 role="presentation"
                 onClick={() => this.handleClick(item[`${type}_number`])}
                 onKeyPress={() => this.handleClick(item[`${type}_number`])}
-                className="Filter__option"
+                className="Selector__option"
                 key={item[`${type}_number`]}
               >{item.name}
               </p>
             ))}
           trigger="click"
         >
-          <h4 className="Filter__dropdown">{`${type.charAt(0).toUpperCase() + type.slice(1)}s`} <Icon type="down" style={{ fontSize: 15 }} /></h4>
+          <h4 className="Selector">{`${type.charAt(0).toUpperCase() + type.slice(1)}s`} <Icon type="down" style={{ fontSize: 15 }} /></h4>
         </Popover>
       </div>
     );

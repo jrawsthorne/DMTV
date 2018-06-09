@@ -145,8 +145,8 @@ const Media = props => (
               <BodyShort body={props.overview} />
             </div>
             {/* popovers for episodes and seasons */}
-            <SelectorPopover type="season" list={props.seasons} tmdbid={props.tmdbid} seasonNum={props.seasonNum} />
-            <SelectorPopover type="episode" list={props.episodes} tmdbid={props.tmdbid} seasonNum={props.seasonNum} />
+            {props.seasons && <SelectorPopover type="season" list={props.seasons} tmdbid={props.tmdbid} seasonNum={props.seasonNum} />}
+            {props.episodes && <SelectorPopover type="episode" list={props.episodes} tmdbid={props.tmdbid} seasonNum={props.seasonNum} />}
             {!props.isNewPostPage &&
               /* Show auth actions below if on mobile/tablet */
               <MediaQuery query="(max-width: 768px)">

@@ -7,6 +7,7 @@ import MediaQuery from 'react-responsive';
 import * as actions from '../../actions/mediaActions';
 import { SimilarItem } from '../media/Similar';
 import BodyShort from '../post/BodyShort';
+import { getPerson, getPersonState } from '../../reducers';
 import './PersonPage.less';
 
 import Loading from '../misc/Loading';
@@ -103,10 +104,8 @@ PersonPage.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  actor: _.get(state, `people.items[${ownProps.match.params.id}]`, {}),
-  fetching: _.get(state, `people.itemStates[${ownProps.match.params.id}].fetching`, false),
-  loaded: _.get(state, `people.itemStates[${ownProps.match.params.id}].loaded`, false),
-  failed: _.get(state, `people.itemStates[${ownProps.match.params.id}].failed`, false),
+  actor: getPerson(state, ownProps.match.params.id),
+  ...getPersonState(state, ownProps.match.params.id),
 });
 
 export default connect(mapStateToProps, { fetchActor: actions.fetchActor })(PersonPage);

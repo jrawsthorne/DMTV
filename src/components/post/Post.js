@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 
 import Body from '../../helpers/bodyHelpers';
 
-const Post = props => (
+const Post = ({ title, body }) => (
   <React.Fragment>
-    <h1>{props.title}</h1>
-    <Body body={props.body} returnType="Object" />
+    <h1>{title}</h1>
+    <Body body={body} returnType="Object" />
   </React.Fragment>
 );
 

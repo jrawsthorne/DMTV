@@ -4,7 +4,7 @@ import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import * as actions from '../../actions/userActions';
-import PostsContainer from '../post/PostsContainer';
+import PostsContainer from '../../containers/UserPostsContainer';
 import ProfileHeader from '../profile/ProfileHeader';
 
 import Loading from '../misc/Loading';

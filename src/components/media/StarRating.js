@@ -17,7 +17,9 @@ class StarRating extends React.Component {
       mediaType, tmdbid, seasonNum, episodeNum,
     } = this.props;
     /* change the rating for the specified item */
-    this.props.userRateChange(mediaType, tmdbid, seasonNum, episodeNum, value);
+    this.props.userRateChange({
+      mediaType, tmdbid, seasonNum, episodeNum, value,
+    });
   }
   render() {
     const {

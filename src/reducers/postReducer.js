@@ -98,3 +98,5 @@ export default (state = initialState, action) => {
       return state;
   }
 };
+
+export const getPost = (state, postId) => _.get(state, `items[${postId}]`, {});

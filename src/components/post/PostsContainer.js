@@ -114,9 +114,10 @@ class PostsContainer extends React.Component {
         <div className="postsContainer">
           <InfiniteScroll
             loadMore={this.loadMore}
-            hasMore={!fetching && hasMore}
+            hasMore={!fetching && loaded && hasMore}
             className="postsLayout"
             threshold={1500}
+            loader={<Loading />}
           >
             {posts.map(postId => <PostPreviewContainer key={postId} postId={postId} />)}
           </InfiniteScroll>

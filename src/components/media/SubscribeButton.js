@@ -7,11 +7,11 @@ import { subscribeChange } from '../../actions/mediaActions';
 
 class SubscribeButton extends React.Component {
   handleSubscribeChange = () => {
-    const { mediaType } = this.props;
+    const { mediaType, tmdbid, isSubscribed } = this.props;
     let type = 'show';
     if (mediaType === 'movie') type = 'movie';
     /* toggle subscription based on current state */
-    this.props.subscribeChange(type, this.props.tmdbid, !this.props.isSubscribed);
+    this.props.subscribeChange({ type, tmdbid, subscribed: !isSubscribed });
   }
   render() {
     const {
