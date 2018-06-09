@@ -1,9 +1,15 @@
 import Cookie from 'js-cookie';
 import axios from 'axios';
 import steemConnectAPI from '../apis/steemConnectAPI';
-import { LOGIN, LOGOUT, FETCH_USER_RATINGS, FETCH_USER_SUBSCRIPTIONS } from './types';
+import {
+  LOGIN,
+  LOGOUT,
+  LOGGED_OUT,
+  FETCH_USER_RATINGS,
+  FETCH_USER_SUBSCRIPTIONS,
+} from './types';
 
-export const AUTH_HEADERS = { headers: { Authorization: `Bearer ${Cookie.get('token')}` } };
+export const getAuthHeaders = () => ({ headers: { Authorization: `Bearer ${Cookie.get('token')}` } });
 
 export const login = () => ({
   type: LOGIN,
@@ -33,11 +39,15 @@ export const logout = () => (dispatch) => {
   });
 };
 
+export const loggedOut = () => ({
+  type: LOGGED_OUT,
+});
+
 /* fetch all the ratings for the current user */
 export const fetchUserRatings = () => ({
   type: FETCH_USER_RATINGS,
   /* add authorization header */
-  payload: axios.get(`${process.env.API_URL}/users/ratings`, AUTH_HEADERS).then(res => res.data),
+  payload: axios.get(`${process.env.API_URL}/users/ratings`, getAuthHeaders()).then(res => res.data),
   meta: { globalError: 'Error fetching ratings' },
 });
 
@@ -45,7 +55,7 @@ export const fetchUserRatings = () => ({
 export const fetchUserSubscriptions = () => ({
   type: FETCH_USER_SUBSCRIPTIONS,
   /* add authorization header */
-  payload: axios.get(`${process.env.API_URL}/users/subscriptions`, AUTH_HEADERS).then(res => res.data),
+  payload: axios.get(`${process.env.API_URL}/users/subscriptions`, getAuthHeaders()).then(res => res.data),
   meta: { globalError: 'Error fetching subscriptions' },
 });
 

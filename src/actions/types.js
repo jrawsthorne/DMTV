@@ -4,6 +4,7 @@ export const LOGIN_FULFILLED = 'LOGIN_FULFILLED';
 export const LOGIN_REJECTED = 'LOGIN_REJECTED';
 
 export const LOGOUT = 'LOGOUT';
+export const LOGGED_OUT = 'LOGGED_OUT';
 
 export const FETCH_MOVIE = 'FETCH_MOVIE';
 export const FETCH_MOVIE_PENDING = 'FETCH_MOVIE_PENDING';

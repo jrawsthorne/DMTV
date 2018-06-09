@@ -11,7 +11,7 @@ import {
   SUBSCRIBE_CHANGE,
   FETCH_ACTOR,
 } from './types';
-import { AUTH_HEADERS } from './authActions';
+import { getAuthHeaders } from './authActions';
 
 // fetch movie details and return object containing id, poster, backdrop, title, overview and year
 export const fetchMovie = id => ({
@@ -158,39 +158,25 @@ export const fetchEpisode = (id, seasonNum, episodeNum) => ({
 });
 
 /* change the rating of a show or movie */
-export const userRateChange = (
-  mediaType,
-  tmdbid,
-  seasonNum = undefined,
-  episodeNum = undefined,
-  value,
-) => ({
+export const userRateChange = rateData => ({
   type: USER_RATE_CHANGE,
   payload: axios.post(`${process.env.API_URL}/ratings/add`, {
-    mediaType,
-    tmdbid,
-    seasonNum: seasonNum || undefined,
-    episodeNum: episodeNum || undefined,
-    value,
-  }, AUTH_HEADERS).then(res => res.data),
+    ...rateData,
+  }, getAuthHeaders()).then(res => res.data),
   meta: {
-    mediaType,
-    tmdbid,
-    seasonNum: seasonNum || undefined,
-    episodeNum: episodeNum || undefined,
-    value,
+    ...rateData,
     globalError: 'Sorry, there was an error adding the rating',
   },
 });
 
 /* subscribe or unsubscribe from a show or movie */
-export const subscribeChange = (type, tmdbid, subscribed) => ({
+export const subscribeChange = ({ type, tmdbid, subscribed }) => ({
   type: SUBSCRIBE_CHANGE,
   payload: axios.post(`${process.env.API_URL}/subscriptions/change`, {
     type,
     tmdbid,
     subscribed,
-  }, AUTH_HEADERS).then(res => res.data),
+  }, getAuthHeaders()).then(res => res.data),
   meta: {
     globalError: 'Sorry, there was an error changing your subscription',
     type,

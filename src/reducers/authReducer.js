@@ -45,6 +45,11 @@ export default (state = initialState, action) => {
         fetching: false,
         user: {},
       };
+    case types.LOGGED_OUT:
+      return {
+        ...state,
+        loaded: true,
+      };
     default:
       return state;
   }

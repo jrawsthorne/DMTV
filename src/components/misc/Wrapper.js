@@ -17,6 +17,8 @@ class Wrapper extends React.Component {
           this.props.fetchUserRatings();
           this.props.fetchUserSubscriptions();
         });
+    } else {
+      this.props.loggedOut();
     }
   }
 
@@ -37,6 +39,7 @@ Wrapper.propTypes = {
   route: PropTypes.shape().isRequired,
   history: PropTypes.shape().isRequired,
   login: PropTypes.func.isRequired,
+  loggedOut: PropTypes.func.isRequired,
   username: PropTypes.string,
   isAuthenticated: PropTypes.bool.isRequired,
   fetchUserRatings: PropTypes.func.isRequired,
@@ -52,8 +55,11 @@ const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
 
-export default connect(mapStateToProps, {
+const mapDispatchToProps = {
   login: actions.login,
+  loggedOut: actions.loggedOut,
   fetchUserRatings: actions.fetchUserRatings,
   fetchUserSubscriptions: actions.fetchUserSubscriptions,
-})(Wrapper);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Wrapper);
