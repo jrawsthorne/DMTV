@@ -5,11 +5,16 @@ import { Layout, Form, Input, AutoComplete, Select, Button, Spin, Icon } from 'a
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import readingTime from 'reading-time';
 import './NewPostPage.less';
 import theMovieDBAPI from '../../apis/theMovieDBAPI';
 import noImageFound from '../../images/no-image-found.jpg';
 import MediaContainer from '../media/MediaContainer';
-import { newPostInfo } from '../../actions/postActions';
+import { newPostInfo, createPost } from '../../actions/postActions';
+import Body, { getHtml } from '../../helpers/bodyHelpers';
+import { extractImageTags, extractLinks } from '../../helpers/parser';
+import Loading from '../misc/Loading';
+import Error401Page from './Error401Page';
 
 const FormItem = Form.Item;
 
@@ -51,6 +56,91 @@ class NewPostPage extends React.Component {
       this.props.newPostInfo({ change: false });
     }
   }
+
+  getNewPostData = (form) => {
+    const data = {
+      body: form.body,
+      title: form.title,
+      lastUpdated: Date.now(),
+    };
+
+    data.parentAuthor = '';
+    data.author = this.props.user.name || '';
+
+    const {
+      tmdbid, mediaType, seasonNum, episodeNum,
+    } = this.props.data;
+
+    let tags = [`reviewapp-${mediaType}-reviews`];
+    const { tags: formTags } = form;
+    tags = _.uniq(tags.concat(formTags));
+    const users = [];
+    const userRegex = /@([a-zA-Z.0-9-]+)/g;
+    let matches;
+
+    const postBody = data.body;
+
+    // eslint-disable-next-line
+    while ((matches = userRegex.exec(postBody))) {
+      if (users.indexOf(matches[1]) === -1) {
+        users.push(matches[1]);
+      }
+    }
+
+    const parsedBody = getHtml(postBody, {}, 'text');
+
+    const images = extractImageTags(parsedBody).map(tag =>
+      tag.src.replace('https://steemitimages.com/0x0/', ''));
+    const links = extractLinks(parsedBody);
+
+    if (data.title && !this.permlink) {
+      data.permlink = _.kebabCase(data.title);
+    } else {
+      data.permlink = this.permlink;
+    }
+
+    const metaData = {
+      community: 'review',
+      app: 'review/0.0.1',
+      format: 'markdown',
+      review: {
+        tmdbid,
+        mediaType,
+        seasonNum: seasonNum || undefined,
+        episodeNum: episodeNum || undefined,
+      },
+      tags,
+    };
+
+    if (users.length) {
+      metaData.users = users;
+    }
+    if (links.length) {
+      metaData.links = links.slice(0, 10);
+    }
+    if (images.length) {
+      metaData.image = images;
+    }
+
+    data.parentPermlink = tags.length ? tags[0] : 'general';
+    data.jsonMetadata = metaData;
+
+    return data;
+  };
+
+   /* validate fields on submit */
+   handleSubmit = (e) => {
+     e.preventDefault();
+
+     this.props.form.validateFieldsAndScroll((err, values) => {
+       if (!err) {
+         const data = this.getNewPostData(values);
+         this.props.createPost(data)
+           .then(newPost => console.log(newPost));
+       }
+     });
+   }
+
   handleSearch = (q) => {
     this.props.newPostInfo({ searchFetching: true });
     if (q) {
@@ -109,13 +199,6 @@ class NewPostPage extends React.Component {
   emptyInput = input =>
     _.get(this.props.data, `${input}.value`, '').length === 0
 
-  /* validate fields on submit */
-  handleSubmit = (e) => {
-    e.preventDefault();
-
-    this.props.form.validateFieldsAndScroll();
-  }
-
   /* search input valid if tmdbid and mediaType set */
   checkSearchInput = (rule, value, callback) => {
     const { data } = this.props;
@@ -138,10 +221,25 @@ class NewPostPage extends React.Component {
   }
   render() {
     const {
+      isAuthenticated,
+      authLoaded,
       data: {
-        mediaType, tmdbid, seasonNum, episodeNum, searchResults, searchFetching,
+        mediaType,
+        tmdbid,
+        seasonNum,
+        episodeNum,
+        searchResults,
+        searchFetching,
+        body: bodyField,
       }, form: { getFieldDecorator, getFieldError },
     } = this.props;
+
+    if (!authLoaded) return <Loading />;
+    if (!isAuthenticated) return <Error401Page />;
+
+    const body = _.get(bodyField, 'value', '');
+
+    const { words, minutes } = readingTime(body);
 
     const dropdownOptions = _.map(searchResults, option => (
       <AutoComplete.Option key={`${option.id}`} mediatype={option.mediaType} title={option.title} url={option.url} className="search-autocomplete">
@@ -250,6 +348,20 @@ class NewPostPage extends React.Component {
                 id="tags"
               />)}
             </FormItem>
+            <FormItem label="Body" className="Body">
+              {getFieldDecorator('body', {
+                initialValue: '',
+                rules: [
+                  {
+                    required: true,
+                    message: 'Body can\'t be empty',
+                  },
+                ],
+              })(<Input.TextArea rows={20} />)}
+            </FormItem>
+            {words !== 0 && <p>{words} word{words > 1 && 's'} / {Math.ceil(minutes)} minute{minutes > 1 && 's'} to read</p>}
+            {!_.isEmpty(body) && <h2>Preview</h2>}
+            {<Body body={body} returnType="Object" />}
             <Form.Item>
               <Button htmlType="submit">Submit</Button>
             </Form.Item>
@@ -262,6 +374,7 @@ class NewPostPage extends React.Component {
 
 NewPostPage.propTypes = {
   newPostInfo: PropTypes.func.isRequired,
+  createPost: PropTypes.func.isRequired,
   data: PropTypes.shape({
     search: PropTypes.shape(),
     title: PropTypes.shape(),
@@ -270,12 +383,21 @@ NewPostPage.propTypes = {
     searchResults: PropTypes.arrayOf(PropTypes.shape()),
     searchFetching: PropTypes.bool,
     mediaTitle: PropTypes.string,
+    body: PropTypes.shape(),
+    seasonNum: PropTypes.string,
+    episodeNum: PropTypes.string,
   }).isRequired,
   form: PropTypes.shape().isRequired,
+  isAuthenticated: PropTypes.bool.isRequired,
+  authLoaded: PropTypes.bool.isRequired,
+  user: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
   data: _.get(state, 'posts.newPost', {}),
+  isAuthenticated: state.auth.isAuthenticated,
+  authLoaded: state.auth.loaded,
+  user: state.auth.user,
 });
 
 /* update store on field change */
@@ -297,9 +419,13 @@ const mapPropsToFields = props => ({
     ...props.data.tags,
     value: _.get(props.data, 'tags.value', []),
   }),
+  body: Form.createFormField({
+    ...props.data.body,
+    value: _.get(props.data, 'body.value', ''),
+  }),
 });
 
 export default
-connect(mapStateToProps, { newPostInfo })(Form.create({
+connect(mapStateToProps, { newPostInfo, createPost })(Form.create({
   onFieldsChange, mapPropsToFields,
 })(NewPostPage));

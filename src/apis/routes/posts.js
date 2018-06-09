@@ -45,10 +45,10 @@ router.get('/', (req, res) => {
     let tag;
     if (mediaType) {
       // add mediaType to tag if present (will be changed when name)
-      tag = `review.app-${mediaType}-reviews`;
+      tag = `reviewapp-${mediaType}-reviews`;
     } else {
       // general tag for all posts (will be changed when name)
-      tag = 'review.app-reviews';
+      tag = 'reviewapp-reviews';
     }
     // query the steem api for posts matching sort
     steemAPI[`getDiscussionsBy${uppercaseSortBy}Async`]({

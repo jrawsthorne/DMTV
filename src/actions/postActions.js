@@ -1,7 +1,8 @@
 import axios from 'axios';
 import _ from 'lodash';
-import steemAPI from '../apis/steemAPI';
-import { FETCH_POSTS, FETCH_POST, NEW_POST_INFO } from './types';
+import { push } from 'react-router-redux';
+import { FETCH_POSTS, FETCH_POST, NEW_POST_INFO, CREATE_POST } from './types';
+import { createPermlink } from '../helpers/steemitHelpers';
 
 // return only data we need
 const getPostData = (steemPost, post) => ({
@@ -89,5 +90,84 @@ export const newPostInfo = data => ({
   type: NEW_POST_INFO,
   payload: data,
 });
+
+const broadcastComment = (
+  steemConnectAPI,
+  parentAuthor,
+  parentPermlink,
+  author,
+  title,
+  body,
+  jsonMetadata,
+  permlink,
+) => {
+  const operations = [];
+  const commentOp = [
+    'comment',
+    {
+      parent_author: parentAuthor,
+      parent_permlink: parentPermlink,
+      author,
+      permlink,
+      title,
+      body,
+      json_metadata: JSON.stringify(jsonMetadata),
+    },
+  ];
+  operations.push(commentOp);
+
+  const commentOptionsConfig = {
+    author,
+    permlink,
+    allow_votes: true,
+    allow_curation_rewards: true,
+    max_accepted_payout: '1000000.000 SBD',
+    percent_steem_dollars: 10000,
+    extensions: [
+      [
+        0,
+        {
+          beneficiaries: [{ account: 'review.app', weight: 1500 }],
+        },
+      ],
+    ],
+  };
+
+  operations.push(['comment_options', commentOptionsConfig]);
+
+  return steemConnectAPI.broadcast(operations);
+};
+
+export const createPost = postData => (dispatch, getState, { steemConnectAPI }) => {
+  const {
+    parentAuthor,
+    parentPermlink,
+    author,
+    title,
+    body,
+    jsonMetadata,
+  } = postData;
+  const getPermLink = createPermlink(title, author, parentAuthor, parentPermlink);
+
+  dispatch({
+    type: CREATE_POST,
+    payload: {
+      promise: getPermLink.then(permlink =>
+        broadcastComment(
+          steemConnectAPI,
+          parentAuthor,
+          parentPermlink,
+          author,
+          title,
+          body,
+          jsonMetadata,
+          permlink,
+        ).then((result) => {
+          dispatch(push(`/@${author}/${permlink}`));
+          return result;
+        })),
+    },
+  });
+};
 
 export default fetchPosts;

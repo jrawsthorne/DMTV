@@ -36,6 +36,7 @@ const middleware = [
   thunk.withExtraArgument({
     theMovieDBAPI,
     steemAPI,
+    steemConnectAPI,
   }),
 ];
 
