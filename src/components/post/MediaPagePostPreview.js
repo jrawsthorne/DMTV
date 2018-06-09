@@ -11,8 +11,6 @@ const PostPreview = ({
   backdropPath,
   overview,
   title,
-  mediaTitle,
-  mediaUrl,
   post,
 }) => {
   const options = {
@@ -29,12 +27,11 @@ const PostPreview = ({
       </Link>
       <div className="PostPreviewBody">
         <h2 style={{ marginBottom: 0 }}>
-          <Link to={mediaUrl}>{mediaTitle}</Link>
+          <Link to={url}>{title}</Link>
         </h2>
-        <p style={{ marginBottom: '1em', display: 'inline' }}>
+        <p style={{ marginBottom: '1em' }}>
           <Icon style={{ fontSize: 12, marginRight: 5 }} type="clock-circle-o" /> {created} - <Link to={`/@${post.author}`}>{post.author}</Link>
         </p>
-        <h3><Link to={url}>{title}</Link></h3>
         <BodyShort body={overview} /> <Link to={url}>Read more</Link>
       </div>
     </React.Fragment>
@@ -46,8 +43,6 @@ PostPreview.propTypes = {
   title: PropTypes.string.isRequired,
   backdropPath: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
-  mediaTitle: PropTypes.string.isRequired,
-  mediaUrl: PropTypes.string.isRequired,
   post: PropTypes.shape().isRequired,
 };
 

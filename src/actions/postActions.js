@@ -25,7 +25,7 @@ const getPostData = (steemPost, post) => ({
 });
 
 // fetch post from db and return steem and db info
-export const fetchPost = (author, permlink) => ({
+export const fetchPost = (author, permlink) => (dispatch, getState, { steemAPI }) => dispatch({
   type: FETCH_POST,
   payload: axios.get(`${process.env.API_URL}/posts/@${author}/${permlink}`)
     .then(res => res.data)
@@ -42,42 +42,24 @@ export const fetchPost = (author, permlink) => ({
 
 // add sortby options
 
-export const fetchPosts = ({
-  postType = 'all',
-  mediaType = undefined,
-  tmdbid = undefined,
-  seasonNum = undefined,
-  episodeNum = undefined,
-  rating = undefined,
-  type = undefined,
-  author = undefined,
-  subscriptions = false,
-  limit = 10,
-  lastPost = undefined,
-}) => (dispatch, getState) => {
-  let query;
-  /* change api request based on type of feed */
-  if (subscriptions) {
-    query = 'subscriptions';
-  } else {
-    query = 'posts';
-  }
+export const fetchPosts = ({ sortBy = 'created', category, limit = 20 }) => (
+  dispatch,
+  getState,
+  { steemAPI },
+) => {
   const posts = getState().posts.items;
-  /* only posts created before last post */
-  const createdBefore = lastPost && posts[lastPost].createdAt;
+  let query = {};
+  if (category === 'movie' || category === 'show' || category === 'episode') {
+    query.mediaType = category;
+  } else if (_.isObject(category)) {
+    query = { ...category };
+  }
   dispatch({
     type: FETCH_POSTS,
-    payload: axios.get(`${process.env.API_URL}/${query}`, {
+    payload: axios.get(`${process.env.API_URL}/posts`, {
       params: {
-        postType: postType || 'all',
-        mediaType: mediaType || undefined,
-        type: type || undefined,
-        tmdbid: tmdbid || undefined,
-        seasonNum: seasonNum || undefined,
-        episodeNum: seasonNum && episodeNum ? episodeNum : undefined,
-        rating: rating || undefined,
-        author: author || undefined,
-        createdBefore: createdBefore || undefined,
+        sortBy,
+        ...query,
         limit,
       },
     })
@@ -95,13 +77,9 @@ export const fetchPosts = ({
             posts: p.filter(post => post !== null), /* eliminate posts that errored */
           }))),
     meta: {
-      globalError: 'Sorry, there was an error fetching posts',
-      mediaType: mediaType || type || author || (subscriptions && 'subscriptionsFeed') || 'all',
-      tmdbid,
-      seasonNum,
-      episodeNum,
-      sortBy: 'created',
-      lastPost,
+      sortBy,
+      category: category || 'all',
+      limit,
     },
   });
 };

@@ -35,16 +35,18 @@ const feedCategory = (state = {}, action) => {
         failed: false,
         list: feedIdsList(state.list, action),
       };
-    case types.FETCH_POSTS_FULFILLED:
+    case types.FETCH_POSTS_FULFILLED: {
       return {
         ...state,
         fetching: false,
         loaded: true,
         failed: false,
         /* has more if number of posts doesn't equal count from db */
-        hasMore: feedIdsList(state.list, action).length !== action.payload.count || false,
+        hasMore: feedIdsList(state.list, action).length !== action.payload.count
+          && !_.isEmpty(action.payload.posts),
         list: feedIdsList(state.list, action),
       };
+    }
     case types.FETCH_POSTS_REJECTED:
       return {
         ...state,
@@ -58,18 +60,135 @@ const feedCategory = (state = {}, action) => {
   }
 };
 
+const feedEpisode = (state = {}, action) => {
+  switch (action.type) {
+    case types.FETCH_POSTS_FULFILLED:
+    case types.FETCH_POSTS_PENDING:
+    case types.FETCH_POSTS_REJECTED: {
+      const {
+        meta: {
+          category: {
+            episodeNum,
+          },
+        },
+      } = action;
+      return {
+        ...state,
+        [episodeNum]: feedCategory(state[episodeNum], action),
+      };
+    }
+    default:
+      return state;
+  }
+};
+
+const feedEpisodes = (state = {}, action) => {
+  switch (action.type) {
+    case types.FETCH_POSTS_FULFILLED:
+    case types.FETCH_POSTS_PENDING:
+    case types.FETCH_POSTS_REJECTED:
+      return {
+        ...state,
+        episodes: feedEpisode(state.episodes, action),
+      };
+    default:
+      return state;
+  }
+};
+
+const feedSeason = (state = {}, action) => {
+  switch (action.type) {
+    case types.FETCH_POSTS_FULFILLED:
+    case types.FETCH_POSTS_PENDING:
+    case types.FETCH_POSTS_REJECTED: {
+      const {
+        meta: {
+          category: {
+            seasonNum, episodeNum,
+          },
+        },
+      } = action;
+      if (!episodeNum) {
+        return {
+          ...state,
+          [seasonNum]: feedCategory(state[seasonNum], action),
+        };
+      }
+      return {
+        ...state,
+        [seasonNum]: feedEpisodes(state[seasonNum], action),
+      };
+    }
+    default:
+      return state;
+  }
+};
+
+const feedSeasons = (state = {}, action) => {
+  switch (action.type) {
+    case types.FETCH_POSTS_FULFILLED:
+    case types.FETCH_POSTS_PENDING:
+    case types.FETCH_POSTS_REJECTED:
+      return {
+        ...state,
+        seasons: feedSeason(state.seasons, action),
+      };
+    default:
+      return state;
+  }
+};
+
+const feedTmdbid = (state = {}, action) => {
+  switch (action.type) {
+    case types.FETCH_POSTS_FULFILLED:
+    case types.FETCH_POSTS_PENDING:
+    case types.FETCH_POSTS_REJECTED: {
+      const {
+        meta: {
+          category: {
+            tmdbid, type: mediaType, seasonNum, episodeNum,
+          },
+        },
+      } = action;
+      if (mediaType === 'movie' || (mediaType === 'show' && !seasonNum && !episodeNum)) {
+        return {
+          ...state,
+          [tmdbid]: feedCategory(state[tmdbid], action),
+        };
+      }
+      return {
+        ...state,
+        [tmdbid]: feedSeasons(state[tmdbid], action),
+      };
+    }
+    default:
+      return state;
+  }
+};
+
 const feedSortBy = (state = {}, action) => {
   switch (action.type) {
     case types.FETCH_POSTS_FULFILLED:
     case types.FETCH_POSTS_PENDING:
     case types.FETCH_POSTS_REJECTED: {
-      let key = action.meta.mediaType;
-      if (action.meta.tmdbid) key += action.meta.tmdbid;
-      if (action.meta.seasonNum) key += action.meta.seasonNum;
-      if (action.meta.episodeNum) key += action.meta.episodeNum;
+      if (_.isObject(action.meta.category)) {
+        if (action.meta.category.type) {
+          return {
+            ...state,
+            [action.meta.category.type]:
+              feedTmdbid(state[action.meta.category.type], action),
+          };
+        }
+        if (action.meta.category.author) {
+          return {
+            ...state,
+            [action.meta.category.author]: feedCategory(state[action.meta.category.author], action),
+          };
+        }
+      }
       return {
         ...state,
-        [key]: feedCategory(state[key], action),
+        [action.meta.category]: feedCategory(state[action.meta.category], action),
       };
     }
     default:
@@ -92,3 +211,5 @@ const feed = (state = initialState, action) => {
 };
 
 export default feed;
+
+export const getFeed = state => state;

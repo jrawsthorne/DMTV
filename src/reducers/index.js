@@ -2,12 +2,12 @@ import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
 import movieReducer from './mediaReducer';
 import authReducer from './authReducer';
-import postReducer from './postReducer';
-import feedReducer from './feedReducer';
+import postReducer, * as fromPost from './postReducer';
+import feedReducer, * as fromFeed from './feedReducer';
 import userReducer from './userReducer';
 import subscriptionsReducer from './subscriptionsReducer';
 import ratingsReducer from './ratingsReducer';
-import peopleReducer from './peopleReducer';
+import peopleReducer, * as fromPeople from './peopleReducer';
 
 export default combineReducers({
   media: movieReducer,
@@ -20,3 +20,9 @@ export default combineReducers({
   ratings: ratingsReducer,
   people: peopleReducer,
 });
+
+export const getFeed = state => fromFeed.getFeed(state.feed);
+export const getPost = (state, postId) => fromPost.getPost(state.posts, postId);
+export const getPerson = (state, personId) => fromPeople.getPerson(state.people.items, personId);
+export const getPersonState = (state, personId) =>
+  fromPeople.getPersonState(state.people.itemStates, personId);

@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { connect } from 'react-redux';
+import { getPost } from '../reducers';
 
-import Post from './PostPreview';
+import Post from '../components/post/PostPreview';
 
-class NewPostsContainer extends React.Component {
+class PostPreviewContainer extends React.Component {
   static propTypes = {
     post: PropTypes.shape().isRequired,
   };
@@ -45,7 +45,7 @@ class NewPostsContainer extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
   /* get post with specified ID from store */
-  post: _.get(state, `posts.items[${ownProps.postId}]`, {}),
+  post: getPost(state, ownProps.postId),
 });
 
-export default connect(mapStateToProps, null)(NewPostsContainer);
+export default connect(mapStateToProps, null)(PostPreviewContainer);

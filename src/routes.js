@@ -1,20 +1,49 @@
+import Loadable from 'react-loadable';
 import Wrapper from './components/misc/Wrapper';
-import HomePage from './components/pages/HomePage';
-import Error404Page from './components/pages/Error404Page';
-import MediaPage from './components/pages/MediaPage';
-import PostPage from './components/pages/PostPage';
-import ProfilePage from './components/pages/ProfilePage';
-import NewPostPage from './components/pages/NewPostPage';
-import PersonPage from './components/pages/PersonPage';
+
+const HomePage = Loadable({
+  loader: () => import('./components/pages/HomePage'),
+  loading: (() => null),
+});
+
+const Error404Page = Loadable({
+  loader: () => import('./components/pages/Error404Page'),
+  loading: (() => null),
+});
+
+const MediaPage = Loadable({
+  loader: () => import('./components/pages/MediaPage'),
+  loading: (() => null),
+});
+
+const PostPage = Loadable({
+  loader: () => import('./components/pages/PostPage'),
+  loading: (() => null),
+});
+
+const ProfilePage = Loadable({
+  loader: () => import('./components/pages/ProfilePage'),
+  loading: (() => null),
+});
+
+const NewPostPage = Loadable({
+  loader: () => import('./components/pages/NewPostPage'),
+  loading: (() => null),
+});
+
+const PersonPage = Loadable({
+  loader: () => import('./components/pages/PersonPage'),
+  loading: (() => null),
+});
 
 const routes = [
   {
     component: Wrapper,
     routes: [
       {
-        path: '/:filter(movies|shows|episodes|all|subscriptions)?',
-        exact: true,
+        path: '/:sortBy(trending|created|active|hot|promoted)?/:category(movie|show|episode)?',
         component: HomePage,
+        exact: true,
       },
       {
         path: '/:mediaType(movie|show)/:id',

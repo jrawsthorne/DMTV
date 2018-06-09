@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import ellipsis from 'text-ellipsis';
 import striptags from 'striptags';
@@ -10,21 +9,18 @@ function decodeEntities(body) {
   return body.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 }
 
-const BodyShort = (props) => {
-  let body = striptags(remarkable.render(striptags(decodeEntities(props.body))));
-  body = body.replace(/(?:https?|ftp):\/\/[\S]+/g, '');
+const BodyShort = ({ body, length }) => {
+  let strippedbody = striptags(remarkable.render(striptags(decodeEntities(body))));
+  strippedbody = strippedbody.replace(/(?:https?|ftp):\/\/[\S]+/g, '');
 
   // If body consists of whitespace characters only skip it.
-  if (!body.replace(/\s/g, '').length) {
+  if (!strippedbody.replace(/\s/g, '').length) {
     return null;
   }
 
   /* eslint-disable react/no-danger */
   return (
-    <div
-      className={props.className}
-      dangerouslySetInnerHTML={{ __html: ellipsis(body, props.length, { ellipsis: '…' }) }}
-    />
+    ellipsis(strippedbody, length, { ellipsis: '…' })
   );
   /* eslint-enable react/no-danger */
 };

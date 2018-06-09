@@ -65,11 +65,15 @@ router.get('/', (req, res) => {
         // find posts
         Post.find(query).then((posts) => {
           // return posts
-          res.json(posts);
+          res.json({
+            results: posts,
+          });
         });
       } else {
         // return empty array if no matching steem posts
-        res.json([]);
+        res.json({
+          results: [],
+        });
       }
     });
   } else {
