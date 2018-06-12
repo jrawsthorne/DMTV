@@ -33,21 +33,18 @@ class ProfilePage extends React.Component {
     /* get profile from user JSON metadata */
     const jsonMetadata = JSON.parse(user.json_metadata);
     const { profile } = jsonMetadata;
-    const {
-      name, cover_image: coverImage, about, website, location,
-    } = profile;
     return (
       <React.Fragment>
         <ProfileHeader
           username={user.name}
-          coverImage={coverImage}
-          about={about}
-          name={name}
-          website={website}
-          location={location}
+          coverImage={profile && profile.cover_image}
+          about={profile && profile.about}
+          name={profile && profile.name}
+          website={profile && profile.website}
+          location={profile && profile.location}
         />
         <Layout className="main-content">
-          <h2>Latest posts from {name || user.name}</h2>
+          <h2>Latest posts from {(profile && profile.name) || user.name}</h2>
           {/* posts by that user */}
           <PostsContainer author={user.name} />
         </Layout>
