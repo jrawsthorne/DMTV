@@ -23,9 +23,9 @@ const PostPreview = ({
     <React.Fragment>
       <Link to={url}>
         {/* coloured background if doesn't exist */}
-        <div className="PostPreviewBackdrop" style={{ backgroundImage: `${backdropPath && `url(https://image.tmdb.org/t/p/w780${backdropPath})`}`, backgroundColor: '#444' }} />
+        <div className="PostPreview__backdrop" style={{ backgroundImage: `${backdropPath && `url(https://image.tmdb.org/t/p/w780${backdropPath})`}`, backgroundColor: '#444' }} />
       </Link>
-      <div className="PostPreviewBody">
+      <div className="PostPreview__body">
         <h2 style={{ marginBottom: 0 }}>
           <Link to={url}>{title}</Link>
         </h2>

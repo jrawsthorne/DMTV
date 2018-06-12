@@ -12,17 +12,17 @@ const Error404Page = Loadable({
 });
 
 const MediaPage = Loadable({
-  loader: () => import('./components/pages/MediaPage'),
+  loader: () => import('./components/media/MediaPage'),
   loading: (() => null),
 });
 
 const PostPage = Loadable({
-  loader: () => import('./components/pages/PostPage'),
+  loader: () => import('./components/post/PostPage'),
   loading: (() => null),
 });
 
 const ProfilePage = Loadable({
-  loader: () => import('./components/pages/ProfilePage'),
+  loader: () => import('./components/profile/ProfilePage'),
   loading: (() => null),
 });
 
@@ -32,7 +32,7 @@ const NewPostPage = Loadable({
 });
 
 const PersonPage = Loadable({
-  loader: () => import('./components/pages/PersonPage'),
+  loader: () => import('./components/person/PersonPage'),
   loading: (() => null),
 });
 

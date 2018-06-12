@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { FETCH_ACCOUNT_PENDING, FETCH_ACCOUNT_FULFILLED, FETCH_ACCOUNT_REJECTED } from '../actions/types';
 
 const initialState = {
@@ -47,3 +48,10 @@ export default (state = initialState, action) => {
       return state;
   }
 };
+
+export const getUser = (state, username) => _.get(state, `${username}`);
+export const getUserState = (state, username) => ({
+  fetching: _.get(state, `${username}.fetching`, false),
+  loaded: _.get(state, `${username}.loaded`, false),
+  failed: _.get(state, `${username}.failed`, false),
+});

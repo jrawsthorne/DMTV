@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import { fetchPost } from '../../actions/postActions';
+import { fetchPost } from '../actions/postActions';
 
-import Loading from '../misc/Loading';
+import Loading from '../components/misc/Loading';
 
-import Post from '../post/Post';
+import Post from '../components/post/Post';
 
 class PostContainer extends React.Component {
   static propTypes = {
@@ -29,10 +29,10 @@ class PostContainer extends React.Component {
       );
     }
   }
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate() {
     const {
       fetching, loaded, author, permlink,
-    } = nextProps;
+    } = this.props;
     if (!loaded && !fetching) {
       this.props.fetchPost(
         author,

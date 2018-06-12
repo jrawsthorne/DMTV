@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import MediaQuery from 'react-responsive';
 import { getMediaItemDetails } from '../../helpers/mediaHelpers';
 import BodyShort from '../post/BodyShort';
+import './Similar.less';
 
 /* show the backdrop, title and overview with link to its page */
 export const SimilarItem = ({ item, url, type }) => {
@@ -16,9 +17,9 @@ export const SimilarItem = ({ item, url, type }) => {
   return (
     <React.Fragment>
       <Link to={url}>
-        <div className="SimilarPreviewBackdrop" style={{ height: 200, backgroundImage: `${backdropPath && `url(${backdropPath}`})`, backgroundColor: '#444' }} />
+        <div className="SimilarItem__backdrop" style={{ height: 200, backgroundImage: `${backdropPath && `url(${backdropPath}`})`, backgroundColor: '#444' }} />
       </Link>
-      <div className="SimilarPreviewBody">
+      <div className="SimilarItem__body">
         <h2 style={{ marginBottom: 0 }}>
           <Link to={url}>{title}</Link>
         </h2>

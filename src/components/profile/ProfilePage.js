@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 import * as actions from '../../actions/userActions';
+import { getUser, getUserState } from '../../reducers';
 import PostsContainer from '../../containers/UserPostsContainer';
-import ProfileHeader from '../profile/ProfileHeader';
+import ProfileHeader from './ProfileHeader';
 
 import Loading from '../misc/Loading';
 
@@ -16,11 +16,11 @@ class ProfilePage extends React.Component {
       fetchAccount(username);
     }
   }
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     const {
       match: { url: currentURL, params: { username } }, user, fetchAccount, fetching, loaded,
-    } = nextProps;
-    if ((!fetching && !loaded) || (!user && currentURL !== this.props.match.url)) {
+    } = this.props;
+    if ((!fetching && !loaded) || (!user && currentURL !== prevProps.match.url)) {
       fetchAccount(username);
     }
   }
@@ -70,10 +70,8 @@ ProfilePage.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  user: _.get(state, `users.users[${ownProps.match.params.username}]`),
-  fetching: _.get(state, `users.users[${ownProps.match.params.username}].fetching`, false),
-  loaded: _.get(state, `users.users[${ownProps.match.params.username}].loaded`, false),
-  failed: _.get(state, `users.users[${ownProps.match.params.username}].failed`, false),
+  user: getUser(state, ownProps.match.params.username),
+  ...getUserState(state, ownProps.match.params.username),
 });
 
 export default connect(mapStateToProps, { fetchAccount: actions.fetchAccount })(ProfilePage);

@@ -5,8 +5,10 @@ import { connect } from 'react-redux';
 import { Layout, Divider } from 'antd';
 import classNames from 'classnames';
 import Loading from '../misc/Loading';
-import MediaContainer from '../media/MediaContainer';
-import PostContainer from '../post/PostContainer';
+import MediaContainer from '../../containers/MediaContainer';
+import PostContainer from '../../containers/PostContainer';
+import { getPostState, getPost } from '../../reducers';
+import { getMediaStatusFromState } from '../../helpers/stateHelpers';
 import Similar from '../media/Similar';
 import './PostPage.less';
 import ScrollToTop from '../misc/ScrollToTop';
@@ -79,22 +81,16 @@ PostPage.defaultProps = {
 };
 
 const mapStateToProps = (state, ownProps) => {
+  const { match: { params: { author, permlink } } } = ownProps;
   const {
-    match: {
-      params: { author, permlink },
-    },
-  } = ownProps;
-  const {
-    mediaType, type, tmdbid, seasonNum, episodeNum,
-  } = _.get(state, `posts.items[@${author}/${permlink}].media`, {});
-  let query = '';
-  query += `[${type}s].${tmdbid}`;
-  if (seasonNum) query += `.seasons.${seasonNum}`;
-  if (episodeNum) query += `.episodes.${episodeNum}`;
+    mediaType, tmdbid, seasonNum, episodeNum,
+  } = _.get(getPost(state, `@${author}/${permlink}`), 'media', {});
   return {
-    postLoaded: _.get(state, `posts.itemStates[@${author}/${permlink}].loaded`, false),
-    postFailed: _.get(state, `posts.itemStates[@${author}/${permlink}].failed`, false),
-    mediaLoaded: _.get(state.media.itemStates, `${query}.loaded`, false),
+    postLoaded: getPostState(state, `@${author}/${permlink}`).loaded,
+    postFailed: getPostState(state, `@${author}/${permlink}`).failed,
+    mediaLoaded: getMediaStatusFromState({
+      id: tmdbid, mediaType, seasonNum, episodeNum,
+    }, state.media.itemStates).loaded,
     mediaType,
     tmdbid,
     seasonNum,

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Layout, Divider } from 'antd';
 import { getMediaType } from '../../helpers/mediaHelpers';
 import { getMediaStatusFromState } from '../../helpers/stateHelpers';
-import MediaContainer from '../media/MediaContainer';
+import MediaContainer from '../../containers/MediaContainer';
 import MediaPostsContainer from '../../containers/MediaPostsContainer';
 import Similar from '../media/Similar';
 import ScrollToTop from '../misc/ScrollToTop';

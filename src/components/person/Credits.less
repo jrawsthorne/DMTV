@@ -1,0 +1,28 @@
+.CreditItem__backdrop {
+  height: 200px;
+  background-size: cover;
+}
+.CreditItem__body {
+  background: #fff;
+  padding: 20px;
+  margin-top: -25px;
+  width: 95%;
+  float: right;
+}
+
+.PersonPage__credits {
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+.PersonPage__credits__layout {
+	display: flex;
+  flex-wrap: wrap;
+  .CreditItem {
+    width: 100%;
+    padding: 10px;
+    @media (min-width: 768px) {
+      width: 50%;
+    }
+  }
+}

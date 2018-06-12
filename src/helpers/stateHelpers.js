@@ -76,11 +76,18 @@ export const getFeedStatusFromState = (sortBy, category = 'all', feedState) => {
 export const getMediaStatusFromState = ({
   id, mediaType, seasonNum, episodeNum,
 }, state) => {
-  let query = `${mediaType}s.${id}`;
+  let type;
+  if (mediaType === 'movie') {
+    type = 'movies';
+  } else if (mediaType === 'show' || mediaType === 'episode' || mediaType === 'season') {
+    type = 'shows';
+  }
+  let query = `${type}.${id}`;
   if (seasonNum) query += `.seasons.${seasonNum}`;
+  const fetching = _.get(state, `${query}.fetching`, false);
   if (episodeNum) query += `.episodes.${episodeNum}`;
   return {
-    fetching: _.get(state, `${query}.fetching`, false),
+    fetching,
     loaded: _.get(state, `${query}.loaded`, false),
     failed: _.get(state, `${query}.failed`, false),
   };

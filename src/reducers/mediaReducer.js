@@ -206,3 +206,13 @@ export default (state = initialState, action) => {
       return state;
   }
 };
+
+export const getMediaItem = (state, mediaType, tmdbid) => {
+  let type;
+  if (mediaType === 'movie') {
+    type = 'movies';
+  } else if (mediaType === 'show' || mediaType === 'episode' || mediaType === 'season') {
+    type = 'shows';
+  }
+  return _.get(state, `${type}.${tmdbid}`, {});
+};
