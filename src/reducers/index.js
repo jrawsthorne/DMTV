@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux';
-import { routerReducer } from 'react-router-redux';
 import mediaReducer, * as fromMedia from './mediaReducer';
 import authReducer from './authReducer';
 import postReducer, * as fromPost from './postReducer';
@@ -11,7 +10,6 @@ import peopleReducer, * as fromPeople from './peopleReducer';
 
 export default combineReducers({
   media: mediaReducer,
-  router: routerReducer,
   auth: authReducer,
   posts: postReducer,
   feed: feedReducer,
