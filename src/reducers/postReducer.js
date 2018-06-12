@@ -94,6 +94,35 @@ export default (state = initialState, action) => {
         },
       };
     }
+    case types.CREATE_POST_PENDING:
+      return {
+        ...state,
+        newPost: {
+          ...state.newPost,
+          broadcasting: true,
+          failed: false,
+          broadcasted: false,
+        },
+      };
+    case types.CREATE_POST_REJECTED:
+      return {
+        ...state,
+        newPost: {
+          ...state.newPost,
+          broadcasting: false,
+          failed: true,
+          broadcasted: false,
+        },
+      };
+    case types.CREATE_POST_FULFILLED:
+      return {
+        ...state,
+        newPost: {
+          broadcasting: false,
+          failed: false,
+          broadcasted: true,
+        },
+      };
     default:
       return state;
   }

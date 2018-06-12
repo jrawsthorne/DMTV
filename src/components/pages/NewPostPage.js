@@ -140,8 +140,7 @@ class NewPostPage extends React.Component {
      this.props.form.validateFieldsAndScroll((err, values) => {
        if (!err) {
          const data = this.getNewPostData(values);
-         this.props.createPost(data)
-           .then(newPost => console.log(newPost));
+         this.props.createPost(data);
        }
      });
    }
@@ -236,6 +235,7 @@ class NewPostPage extends React.Component {
         searchResults,
         searchFetching,
         body: bodyField,
+        broadcasting,
       }, form: { getFieldDecorator, getFieldError },
     } = this.props;
 
@@ -368,7 +368,7 @@ class NewPostPage extends React.Component {
             {!_.isEmpty(body) && <h2>Preview</h2>}
             {<Body body={body} returnType="Object" />}
             <Form.Item>
-              <Button htmlType="submit">Submit</Button>
+              <Button loading={broadcasting} htmlType="submit">Submit</Button>
             </Form.Item>
           </Form>
         </Layout>
