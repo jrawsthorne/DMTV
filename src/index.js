@@ -8,7 +8,7 @@ import { renderRoutes } from 'react-router-config';
 import createHistory from 'history/createBrowserHistory';
 import thunk from 'redux-thunk';
 import Cookie from 'js-cookie';
-import { ConnectedRouter } from 'react-router-redux';
+import { ConnectedRouter, connectRouter, routerMiddleware } from 'connected-react-router';
 import promiseMiddleware from 'redux-promise-middleware';
 import { mountResponsive } from './vendor/responsive';
 import errorMiddleware from './errorMiddleware';
@@ -31,6 +31,7 @@ const initialState = {};
 const history = createHistory();
 // create middleware (thunk, promise)
 const middleware = [
+  routerMiddleware(history),
   errorMiddleware,
   promiseMiddleware(),
   thunk.withExtraArgument({
@@ -42,7 +43,7 @@ const middleware = [
 
 // create store
 const store = createStore(
-  rootReducer,
+  connectRouter(history)(rootReducer),
   initialState,
   composeWithDevTools(applyMiddleware(...middleware)),
 );

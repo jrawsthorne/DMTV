@@ -1,5 +1,6 @@
 const express = require('express');
 const Post = require('../models/Post');
+const passport = require('passport');
 const theMovieDBAPI = require('../theMovieDBAPI');
 const steemAPI = require('../steemAPI');
 const _ = require('lodash');
@@ -206,55 +207,114 @@ router.post('/update-metadata', (req, res) => {
 
 // add an existing post to the database
 // requires testingToken during development phase
-router.post('/add', (req, res) => {
-  const { testing_token: testingToken } = req.cookies;
-  if (!testingToken || testingToken !== process.env.TESTING_TOKEN) {
-    // return error if no testing token
-    res.status(400).json({ error: 'Not authenticated' });
-  }
+router.post('/add', passport.authenticate('jwt', { session: false }), (req, res) => {
+  const { user } = req;
   const {
     author,
     permlink,
-    postType,
-    mediaType,
-    type,
-    tmdbid,
-    seasonNum,
-    episodeNum,
-    rating,
-    title,
-    posterPath,
-    backdropPath,
-    episodePath,
-    seasonPath,
   } = req.body;
 
-  const newPost = new Post({
-    author,
-    permlink,
-    postType,
-    mediaType,
-    type,
-    tmdbid,
-    title,
-    posterPath: posterPath || undefined,
-    backdropPath: backdropPath || undefined,
-    episodePath: episodePath || undefined,
-    seasonPath: seasonPath || undefined,
-    seasonNum: seasonNum || undefined,
-    episodeNum: episodeNum || undefined,
-    rating: rating || undefined,
-  });
+  if (user.username !== author) {
+    res.status(400).json({ error: 'Unauthorised' });
+  } else {
+    steemAPI.getContentAsync(author, permlink).then((post) => {
+      const jsonMetadata = JSON.parse(post.json_metadata);
+      if (!jsonMetadata.review || jsonMetadata.community !== 'review') res.status(401).json({ erro: 'Not a post for DMTV' });
+      const {
+        mediaType, type, tmdbid, mediaTitle: title, seasonNum, episodeNum,
+      } = jsonMetadata.review;
 
-  // add the post
-  newPost.save().then((post) => {
-    // return the new post
-    res.json(post);
-  })
-    .catch(() => {
-      // return error if fails
-      res.status(400).json({ error: 'Post couldn\'t be added to the database' });
+      return new Promise((resolve, reject) => {
+        let posterPath;
+        let backdropPath;
+        let episodePath;
+        let seasonPath;
+        switch (mediaType) {
+          case 'movie':
+            return theMovieDBAPI.movieImages(tmdbid).then((movie) => {
+              if (movie.posters && movie.posters[0]) {
+                posterPath = movie.posters[0].file_path;
+              }
+              if (movie.backdrops && movie.backdrops[0]) {
+                backdropPath = movie.backdrops[0].file_path;
+              }
+              resolve({
+                posterPath,
+                backdropPath,
+              });
+            });
+          case 'show':
+            return theMovieDBAPI.tvImages(tmdbid).then((show) => {
+              if (show.posters && show.posters[0]) {
+                posterPath = show.posters[0].file_path;
+              }
+              if (show.backdrops && show.backdrops[0]) {
+                backdropPath = show.backdrops[0].file_path;
+              }
+              resolve({
+                posterPath,
+                backdropPath,
+              });
+            });
+          case 'episode':
+            return theMovieDBAPI.tvInfo({ id: tmdbid, append_to_response: `season/${seasonNum}` }).then((show) => {
+              posterPath = show.poster_path;
+              backdropPath = show.backdrop_path;
+              if (show[`season/${seasonNum}`]) {
+                seasonPath = show[`season/${seasonNum}`].poster_path;
+                if (show[`season/${seasonNum}`].episodes && show[`season/${seasonNum}`].episodes.find(episode => episode.episode_number === parseInt(episodeNum, 10))) {
+                  episodePath = show[`season/${seasonNum}`].episodes.find(episode => episode.episode_number === parseInt(episodeNum, 10)).still_path;
+                }
+              }
+              resolve({
+                posterPath,
+                backdropPath,
+                seasonPath,
+                episodePath,
+              });
+            });
+          case 'season':
+            return theMovieDBAPI.tvInfo({ id: tmdbid, append_to_response: `season/${seasonNum}` }).then((show) => {
+              posterPath = show.poster_path;
+              backdropPath = show.backdrop_path;
+              if (show[`season/${seasonNum}`]) {
+                seasonPath = show[`season/${seasonNum}`].poster_path;
+              }
+              resolve({
+                posterPath,
+                backdropPath,
+                seasonPath,
+              });
+            });
+          default:
+            return reject(new Error('Invalid media type'));
+        }
+      })
+        .then((images) => {
+          const newPost = new Post({
+            author,
+            permlink,
+            postType: 'review',
+            mediaType,
+            type,
+            tmdbid,
+            title,
+            seasonNum,
+            episodeNum,
+            ...images,
+          });
+          // add the post
+          newPost.save().then((p) => {
+            // return the new post
+            res.json(p);
+          })
+            .catch(() => {
+              // return error if fails
+              res.status(400).json({ error: 'Post couldn\'t be added to the database' });
+            });
+        });
     });
+  }
 });
 
 module.exports = router;

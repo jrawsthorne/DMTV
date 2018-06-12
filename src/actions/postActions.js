@@ -1,8 +1,9 @@
 import axios from 'axios';
 import _ from 'lodash';
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router';
 import { FETCH_POSTS, FETCH_POST, NEW_POST_INFO, CREATE_POST } from './types';
 import { createPermlink } from '../helpers/steemitHelpers';
+import { getAuthHeaders } from './authActions';
 import { getFeed, getPosts } from '../reducers';
 import { getFeedFromState } from '../helpers/stateHelpers';
 
@@ -155,6 +156,7 @@ const broadcastComment = (
   permlink,
 ) => {
   const operations = [];
+  /* add main post */
   const commentOp = [
     'comment',
     {
@@ -169,6 +171,7 @@ const broadcastComment = (
   ];
   operations.push(commentOp);
 
+  /* add beneficiary - will change when live */
   const commentOptionsConfig = {
     author,
     permlink,
@@ -186,8 +189,10 @@ const broadcastComment = (
     ],
   };
 
+  /* combine both operations */
   operations.push(['comment_options', commentOptionsConfig]);
 
+  /* croadcast the operations */
   return steemConnectAPI.broadcast(operations);
 };
 
@@ -200,25 +205,24 @@ export const createPost = postData => (dispatch, getState, { steemConnectAPI }) 
     body,
     jsonMetadata,
   } = postData;
+  /* get correctly formatted permlink */
   const getPermLink = createPermlink(title, author, parentAuthor, parentPermlink);
 
   dispatch({
     type: CREATE_POST,
-    payload: {
-      promise: getPermLink.then(permlink =>
-        broadcastComment(
-          steemConnectAPI,
-          parentAuthor,
-          parentPermlink,
-          author,
-          title,
-          body,
-          jsonMetadata,
-          permlink,
-        ).then((result) => {
-          dispatch(push(`/@${author}/${permlink}`));
-          return result;
-        })),
+    payload: getPermLink.then(permlink =>
+      broadcastComment(
+        steemConnectAPI,
+        parentAuthor,
+        parentPermlink,
+        author,
+        title,
+        body,
+        jsonMetadata,
+        permlink,
+      ).then(() => axios.post(`${process.env.API_URL}/posts/add`, { author, permlink }, getAuthHeaders()).then(() => dispatch(push(`/@${author}/${permlink}`))))),
+    meta: {
+      globalError: 'Sorry, an error ocurred adding your post',
     },
   });
 };

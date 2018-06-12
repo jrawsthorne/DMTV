@@ -9,7 +9,7 @@ import readingTime from 'reading-time';
 import './NewPostPage.less';
 import theMovieDBAPI from '../../apis/theMovieDBAPI';
 import noImageFound from '../../images/no-image-found.jpg';
-import MediaContainer from '../media/MediaContainer';
+import MediaContainer from '../../containers/MediaContainer';
 import { newPostInfo, createPost } from '../../actions/postActions';
 import Body, { getHtml } from '../../helpers/bodyHelpers';
 import { extractImageTags, extractLinks } from '../../helpers/parser';
@@ -68,7 +68,7 @@ class NewPostPage extends React.Component {
     data.author = this.props.user.name || '';
 
     const {
-      tmdbid, mediaType, seasonNum, episodeNum,
+      tmdbid, mediaType, seasonNum, episodeNum, mediaTitle,
     } = this.props.data;
 
     let tags = [`reviewapp-${mediaType}-reviews`];
@@ -99,6 +99,9 @@ class NewPostPage extends React.Component {
       data.permlink = this.permlink;
     }
 
+    let type = mediaType;
+    if (type === 'episode' || type === 'season') type = 'show';
+
     const metaData = {
       community: 'review',
       app: 'review/0.0.1',
@@ -106,6 +109,8 @@ class NewPostPage extends React.Component {
       review: {
         tmdbid,
         mediaType,
+        type,
+        mediaTitle,
         seasonNum: seasonNum || undefined,
         episodeNum: episodeNum || undefined,
       },
@@ -135,8 +140,7 @@ class NewPostPage extends React.Component {
      this.props.form.validateFieldsAndScroll((err, values) => {
        if (!err) {
          const data = this.getNewPostData(values);
-         this.props.createPost(data)
-           .then(newPost => console.log(newPost));
+         this.props.createPost(data);
        }
      });
    }
@@ -231,6 +235,7 @@ class NewPostPage extends React.Component {
         searchResults,
         searchFetching,
         body: bodyField,
+        broadcasting,
       }, form: { getFieldDecorator, getFieldError },
     } = this.props;
 
@@ -363,7 +368,7 @@ class NewPostPage extends React.Component {
             {!_.isEmpty(body) && <h2>Preview</h2>}
             {<Body body={body} returnType="Object" />}
             <Form.Item>
-              <Button htmlType="submit">Submit</Button>
+              <Button loading={broadcasting} htmlType="submit">Submit</Button>
             </Form.Item>
           </Form>
         </Layout>
