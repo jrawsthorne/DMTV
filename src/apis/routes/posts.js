@@ -1,5 +1,6 @@
 const express = require('express');
 const Post = require('../models/Post');
+const passport = require('passport');
 const theMovieDBAPI = require('../theMovieDBAPI');
 const steemAPI = require('../steemAPI');
 const _ = require('lodash');
@@ -206,12 +207,8 @@ router.post('/update-metadata', (req, res) => {
 
 // add an existing post to the database
 // requires testingToken during development phase
-router.post('/add', (req, res) => {
-  const { testing_token: testingToken } = req.cookies;
-  if (!testingToken || testingToken !== process.env.TESTING_TOKEN) {
-    // return error if no testing token
-    res.status(400).json({ error: 'Not authenticated' });
-  }
+router.post('/add', passport.authenticate('jwt', { session: false }), (req, res) => {
+  const { user } = req;
   const {
     author,
     permlink,
@@ -228,6 +225,10 @@ router.post('/add', (req, res) => {
     episodePath,
     seasonPath,
   } = req.body;
+
+  if (user.username !== author) {
+    res.status(401).json({ error: 'Unauthorised' });
+  }
 
   const newPost = new Post({
     author,
