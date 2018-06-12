@@ -1,5 +1,6 @@
 import axios from 'axios';
 import _ from 'lodash';
+import { push } from 'connected-react-router';
 import { FETCH_POSTS, FETCH_POST, NEW_POST_INFO, CREATE_POST } from './types';
 import { createPermlink } from '../helpers/steemitHelpers';
 import { getAuthHeaders } from './authActions';
@@ -219,8 +220,10 @@ export const createPost = postData => (dispatch, getState, { steemConnectAPI }) 
         body,
         jsonMetadata,
         permlink,
-      ).then(() => axios.post(`${process.env.API_URL}/posts/add`, { author, permlink }, getAuthHeaders())
-        .then(() => console.log('Done')))),
+      ).then(() => axios.post(`${process.env.API_URL}/posts/add`, { author, permlink }, getAuthHeaders()).then(() => dispatch(push(`/@${author}/${permlink}`))))),
+    meta: {
+      globalError: 'Sorry, an error ocurred adding your post',
+    },
   });
 };
 
