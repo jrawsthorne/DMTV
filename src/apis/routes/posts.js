@@ -32,7 +32,9 @@ router.get('/', (req, res) => {
     rating,
     author,
     limit = 10,
-    createdBefore = false,
+    createdBefore,
+    startAuthor,
+    startPermlink,
   } = req.query;
   if (episodeNum && !seasonNum) {
     // return error if episode but no season specified
@@ -52,7 +54,11 @@ router.get('/', (req, res) => {
     }
     // query the steem api for posts matching sort
     steemAPI[`getDiscussionsBy${uppercaseSortBy}Async`]({
-      tag, limit, truncate_body: 1,
+      tag,
+      limit,
+      truncate_body: 1,
+      start_author: startAuthor && startAuthor,
+      start_permlink: startPermlink && startPermlink,
     }).then((steemPosts) => {
       if (steemPosts.length > 0) {
         // construct query that matches all returned posts
@@ -66,7 +72,7 @@ router.get('/', (req, res) => {
         Post.find(query).then((posts) => {
           // return posts
           res.json({
-            results: posts,
+            results: (!!startAuthor && !!startPermlink) ? posts.slice(1) : posts,
           });
         });
       } else {

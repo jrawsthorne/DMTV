@@ -99,4 +99,10 @@ export default (state = initialState, action) => {
   }
 };
 
-export const getPost = (state, postId) => _.get(state, `items[${postId}]`, {});
+export const getPost = (state, postId) => _.get(state, postId, {});
+export const getPostState = (state, postId) => ({
+  fetching: _.get(state, `${postId}.fetching`, false),
+  loaded: _.get(state, `${postId}.loaded`, false),
+  failed: _.get(state, `${postId}.failed`, false),
+});
+export const getPosts = state => state;

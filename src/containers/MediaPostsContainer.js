@@ -17,6 +17,7 @@ import FeedContainer from './MediaPageFeedContainer';
 class PostsContainer extends React.Component {
   static propTypes = {
     fetchPosts: PropTypes.func.isRequired,
+    fetchMorePosts: PropTypes.func.isRequired,
     match: PropTypes.shape().isRequired,
     feed: PropTypes.shape().isRequired,
   };
@@ -69,6 +70,7 @@ class PostsContainer extends React.Component {
   }
   render() {
     const {
+      fetchMorePosts,
       match: {
         params: {
           mediaType,
@@ -79,13 +81,13 @@ class PostsContainer extends React.Component {
       },
       feed,
     } = this.props;
-    const loadMore = () => null;
     const category = {
       type: mediaType, tmdbid, seasonNum, episodeNum,
     };
     const content = getFeedFromState('created', category, feed);
+    const loadMore = () => fetchMorePosts({ category });
     const {
-      fetching, loaded, hasMore, failed,
+      fetching, loaded, hasMore, failed, fetchingMore,
     } = getFeedStatusFromState('created', category, feed);
     if (fetching || !loaded) return <Loading />;
     if (failed) return <div><p>Sory, there was an error fetching posts</p></div>;
@@ -95,8 +97,8 @@ class PostsContainer extends React.Component {
         <div className="postsContainer">
           <FeedContainer
             content={content}
-            fetching={fetching}
-            hasMore={hasMore}
+            fetchingMore={fetchingMore}
+            hasMore={hasMore && !fetchingMore}
             loadMore={loadMore}
           />
         </div>
@@ -111,6 +113,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = ({
   fetchPosts: actions.fetchPosts,
+  fetchMorePosts: actions.fetchMorePosts,
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PostsContainer));

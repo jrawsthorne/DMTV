@@ -1,16 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import InfiniteScroll from 'react-infinite-scroller';
+import InfiniteScroll from '../vendor/InfiniteScroll';
 import Loading from '../components/misc/Loading';
 import MediaPagePostPreviewContainer from './MediaPagePostPreviewContainer';
 
 const MediaPageFeedContainer = ({
-  content, fetching, hasMore, loadMore,
+  content, fetchingMore, hasMore, loadMore,
 }) => (
   <InfiniteScroll
     loadMore={loadMore}
-    hasMore={!fetching && hasMore}
+    hasMore={hasMore}
     className="postsLayout"
+    loadingMore={fetchingMore}
     threshold={1500}
     loader={<Loading />}
   >
@@ -21,14 +22,14 @@ const MediaPageFeedContainer = ({
 
 MediaPageFeedContainer.propTypes = {
   content: PropTypes.arrayOf(PropTypes.string),
-  fetching: PropTypes.bool,
+  fetchingMore: PropTypes.bool,
   hasMore: PropTypes.bool,
   loadMore: PropTypes.func,
 };
 
 MediaPageFeedContainer.defaultProps = {
   content: [],
-  fetching: false,
+  fetchingMore: false,
   hasMore: false,
   loadMore: () => {},
 };

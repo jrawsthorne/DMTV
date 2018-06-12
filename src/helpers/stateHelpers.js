@@ -57,6 +57,7 @@ export const getFeedStatusFromState = (sortBy, category = 'all', feedState) => {
       }
       return {
         fetching: _.get(feedState, `${query}.fetching`, false),
+        fetchingMore: _.get(feedState, `${query}.fetchingMore`, false),
         loaded: _.get(feedState, `${query}.loaded`, false),
         failed: _.get(feedState, `${query}.failed`, false),
         hasMore: _.get(feedState, `${query}.hasMore`, false),

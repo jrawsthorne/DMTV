@@ -22,10 +22,7 @@ const feedCategory = (state = {}, action) => {
       if (action.meta.lastPost) {
         return {
           ...state,
-          fetching: false,
-          loaded: true,
-          failed: false,
-          list: feedIdsList(state.list, action),
+          fetchingMore: true,
         };
       }
       return {
@@ -33,17 +30,25 @@ const feedCategory = (state = {}, action) => {
         fetching: true,
         loaded: false,
         failed: false,
-        list: feedIdsList(state.list, action),
       };
     case types.FETCH_POSTS_FULFILLED: {
+      if (action.meta.lastPost) {
+        return {
+          ...state,
+          fetchingMore: false,
+          list: feedIdsList(state.list, action),
+          hasMore: !!(feedIdsList(state.list, action).length !== action.payload.count
+          && !_.isEmpty(action.payload.posts)),
+        };
+      }
       return {
         ...state,
         fetching: false,
         loaded: true,
         failed: false,
         /* has more if number of posts doesn't equal count from db */
-        hasMore: feedIdsList(state.list, action).length !== action.payload.count
-          && !_.isEmpty(action.payload.posts),
+        hasMore: !!(feedIdsList(state.list, action).length !== action.payload.count
+          && !_.isEmpty(action.payload.posts)),
         list: feedIdsList(state.list, action),
       };
     }

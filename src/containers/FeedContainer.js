@@ -1,16 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import InfiniteScroll from 'react-infinite-scroller';
+import InfiniteScroll from '../vendor/InfiniteScroll';
 import Loading from '../components/misc/Loading';
 import PostPreviewContainer from './PostPreviewContainer';
 
 const FeedContainer = ({
-  content, fetching, hasMore, loadMore,
+  content, hasMore, loadMore, fetchingMore,
 }) => (
   <InfiniteScroll
     loadMore={loadMore}
-    hasMore={!fetching && hasMore}
+    hasMore={hasMore}
     className="postsLayout"
+    loadingMore={fetchingMore}
     threshold={1500}
     loader={<Loading />}
   >
@@ -21,16 +22,16 @@ const FeedContainer = ({
 
 FeedContainer.propTypes = {
   content: PropTypes.arrayOf(PropTypes.string),
-  fetching: PropTypes.bool,
   hasMore: PropTypes.bool,
   loadMore: PropTypes.func,
+  fetchingMore: PropTypes.bool,
 };
 
 FeedContainer.defaultProps = {
   content: [],
-  fetching: false,
   hasMore: false,
   loadMore: () => {},
+  fetchingMore: false,
 };
 
 export default FeedContainer;

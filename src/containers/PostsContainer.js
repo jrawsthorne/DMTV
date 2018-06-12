@@ -17,6 +17,7 @@ import FeedContainer from './FeedContainer';
 class PostsContainer extends React.Component {
   static propTypes = {
     fetchPosts: PropTypes.func.isRequired,
+    fetchMorePosts: PropTypes.func.isRequired,
     match: PropTypes.shape().isRequired,
     feed: PropTypes.shape().isRequired,
   };
@@ -57,14 +58,15 @@ class PostsContainer extends React.Component {
   }
   render() {
     const {
+      fetchMorePosts,
       match: { params: { sortBy: sort, category } },
       feed,
     } = this.props;
-    const loadMore = () => null;
     const sortBy = sort || 'trending';
     const content = getFeedFromState(sortBy, category, feed);
+    const loadMore = () => fetchMorePosts({ category, sortBy });
     const {
-      fetching, loaded, hasMore, failed,
+      fetching, loaded, hasMore, failed, fetchingMore,
     } = getFeedStatusFromState(sortBy, category, feed);
     if (fetching || !loaded) return <Loading />;
     if (failed) return <div><p>Sory, there was an error fetching posts</p></div>;
@@ -74,9 +76,9 @@ class PostsContainer extends React.Component {
         <div className="postsContainer">
           <FeedContainer
             content={content}
-            fetching={fetching}
-            hasMore={hasMore}
+            hasMore={hasMore && !fetchingMore}
             loadMore={loadMore}
+            fetchingMore={fetchingMore}
           />
         </div>
       </div>
@@ -90,6 +92,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = ({
   fetchPosts: actions.fetchPosts,
+  fetchMorePosts: actions.fetchMorePosts,
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PostsContainer));

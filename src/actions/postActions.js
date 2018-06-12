@@ -3,6 +3,8 @@ import _ from 'lodash';
 import { push } from 'react-router-redux';
 import { FETCH_POSTS, FETCH_POST, NEW_POST_INFO, CREATE_POST } from './types';
 import { createPermlink } from '../helpers/steemitHelpers';
+import { getFeed, getPosts } from '../reducers';
+import { getFeedFromState } from '../helpers/stateHelpers';
 
 // return only data we need
 const getPostData = (steemPost, post) => ({
@@ -81,6 +83,57 @@ export const fetchPosts = ({ sortBy = 'created', category, limit = 20 }) => (
       sortBy,
       category: category || 'all',
       limit,
+    },
+  });
+};
+
+export const fetchMorePosts = ({ sortBy = 'created', category, limit = 20 }) => (
+  dispatch,
+  getState,
+  { steemAPI },
+) => {
+  const state = getState();
+  const feed = getFeed(state);
+  const posts = getPosts(state);
+  const feedContent = getFeedFromState(sortBy, category, feed);
+  const lastPost = posts[feedContent[feedContent.length - 1]];
+  const { author: startAuthor, permlink: startPermlink, createdAt: createdBefore } = lastPost;
+  let query = {};
+  if (category === 'movie' || category === 'show' || category === 'episode') {
+    query.mediaType = category;
+  } else if (_.isObject(category)) {
+    query = { ...category };
+  }
+  dispatch({
+    type: FETCH_POSTS,
+    payload: axios.get(`${process.env.API_URL}/posts`, {
+      params: {
+        sortBy,
+        ...query,
+        limit,
+        startAuthor,
+        startPermlink,
+        createdBefore,
+      },
+    })
+      .then(res =>
+        Promise.all(res.data.results.map(post => /* loop through each post from the db */
+          (!_.get(posts, `@${post.author}/${post.permlink}`) ?
+            /* get the post from steem if not stored */
+            steemAPI.getContentAsync(post.author, post.permlink)
+              .then(steemPost => getPostData(steemPost, post))
+              .catch(() => Promise.resolve(null)) /* carry on if error finding post */
+            : _.get(posts, `@${post.author}/${post.permlink}`)
+          )))
+          .then(p => ({
+            count: res.data.count,
+            posts: p.filter(post => post !== null), /* eliminate posts that errored */
+          }))),
+    meta: {
+      sortBy,
+      category: category || 'all',
+      limit,
+      lastPost,
     },
   });
 };
