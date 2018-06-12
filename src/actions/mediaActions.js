@@ -157,6 +157,16 @@ export const fetchEpisode = (id, seasonNum, episodeNum) => ({
   },
 });
 
+/* decide which action to dispatch based on mediaType */
+export const fetchMedia = ({
+  tmdbid, mediaType, seasonNum, episodeNum,
+}) => (dispatch) => {
+  if (mediaType === 'movie') dispatch(fetchMovie(tmdbid));
+  if (mediaType === 'show') dispatch(fetchShow(tmdbid));
+  if (mediaType === 'season') dispatch(fetchSeason(tmdbid, seasonNum));
+  if (mediaType === 'episode') dispatch(fetchEpisode(tmdbid, seasonNum, episodeNum));
+};
+
 /* change the rating of a show or movie */
 export const userRateChange = rateData => ({
   type: USER_RATE_CHANGE,
