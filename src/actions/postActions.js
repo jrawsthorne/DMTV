@@ -1,8 +1,8 @@
 import axios from 'axios';
 import _ from 'lodash';
-import { push } from 'react-router-redux';
 import { FETCH_POSTS, FETCH_POST, NEW_POST_INFO, CREATE_POST } from './types';
 import { createPermlink } from '../helpers/steemitHelpers';
+import { getAuthHeaders } from './authActions';
 import { getFeed, getPosts } from '../reducers';
 import { getFeedFromState } from '../helpers/stateHelpers';
 
@@ -155,6 +155,7 @@ const broadcastComment = (
   permlink,
 ) => {
   const operations = [];
+  /* add main post */
   const commentOp = [
     'comment',
     {
@@ -169,6 +170,7 @@ const broadcastComment = (
   ];
   operations.push(commentOp);
 
+  /* add beneficiary - will change when live */
   const commentOptionsConfig = {
     author,
     permlink,
@@ -186,8 +188,10 @@ const broadcastComment = (
     ],
   };
 
+  /* combine both operations */
   operations.push(['comment_options', commentOptionsConfig]);
 
+  /* croadcast the operations */
   return steemConnectAPI.broadcast(operations);
 };
 
@@ -200,6 +204,7 @@ export const createPost = postData => (dispatch, getState, { steemConnectAPI }) 
     body,
     jsonMetadata,
   } = postData;
+  /* get correctly formatted permlink */
   const getPermLink = createPermlink(title, author, parentAuthor, parentPermlink);
 
   dispatch({
@@ -216,7 +221,21 @@ export const createPost = postData => (dispatch, getState, { steemConnectAPI }) 
           jsonMetadata,
           permlink,
         ).then((result) => {
-          dispatch(push(`/@${author}/${permlink}`));
+          const {
+            mediaType, type, tmdbid, mediaTitle, seasonNum, episodeNum,
+          } = jsonMetadata.review;
+          axios.post(`${process.env.API_URL}/posts/add`, {
+            author,
+            permlink,
+            postType: 'review',
+            mediaType,
+            type,
+            tmdbid,
+            title: mediaTitle,
+            seasonNum,
+            episodeNum,
+          }, getAuthHeaders())
+            .then(() => console.log('Done'));
           return result;
         })),
     },
