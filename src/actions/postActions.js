@@ -209,36 +209,18 @@ export const createPost = postData => (dispatch, getState, { steemConnectAPI }) 
 
   dispatch({
     type: CREATE_POST,
-    payload: {
-      promise: getPermLink.then(permlink =>
-        broadcastComment(
-          steemConnectAPI,
-          parentAuthor,
-          parentPermlink,
-          author,
-          title,
-          body,
-          jsonMetadata,
-          permlink,
-        ).then((result) => {
-          const {
-            mediaType, type, tmdbid, mediaTitle, seasonNum, episodeNum,
-          } = jsonMetadata.review;
-          axios.post(`${process.env.API_URL}/posts/add`, {
-            author,
-            permlink,
-            postType: 'review',
-            mediaType,
-            type,
-            tmdbid,
-            title: mediaTitle,
-            seasonNum,
-            episodeNum,
-          }, getAuthHeaders())
-            .then(() => console.log('Done'));
-          return result;
-        })),
-    },
+    payload: getPermLink.then(permlink =>
+      broadcastComment(
+        steemConnectAPI,
+        parentAuthor,
+        parentPermlink,
+        author,
+        title,
+        body,
+        jsonMetadata,
+        permlink,
+      ).then(() => axios.post(`${process.env.API_URL}/posts/add`, { author, permlink }, getAuthHeaders())
+        .then(() => console.log('Done')))),
   });
 };
 
