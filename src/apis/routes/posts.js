@@ -69,16 +69,24 @@ router.get('/', (req, res) => {
             permlink: post.permlink,
           })),
         };
-        // find posts
-        Post.find(query).then((posts) => {
-          // return posts
+        const countQuery = {
+          mediaType,
+        };
+        // find the total number of posts and return posts matching the sortBy
+        Promise.all([
+          Post.count(countQuery),
+          Post.find(query),
+        ]).then((data) => {
+          // return the total count and an array of posts
           res.json({
-            results: (!!startAuthor && !!startPermlink) ? posts.slice(1) : posts,
+            count: data[0],
+            results: startAuthor && startPermlink ? data[1].slice(1) : data[1],
           });
         });
       } else {
         // return empty array if no matching steem posts
         res.json({
+          count: 0,
           results: [],
         });
       }

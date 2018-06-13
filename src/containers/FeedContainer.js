@@ -13,7 +13,7 @@ const FeedContainer = ({
     className="postsLayout"
     loadingMore={fetchingMore}
     threshold={1500}
-    loader={<Loading />}
+    loader={<Loading key="loader" />}
   >
     {content.map(id => <PostPreviewContainer key={id} postId={id} />)}
   </InfiniteScroll>
