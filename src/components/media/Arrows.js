@@ -8,7 +8,6 @@ import { newPostInfo } from '../../actions/postActions';
 class Arrows extends React.Component {
   handleClick = () => {
     const isNewPostPage = this.props.match.path === '/new';
-    /* hide popover when clicked */
     const {
       seasonNum,
       episodeNum,
@@ -19,6 +18,7 @@ class Arrows extends React.Component {
       },
     } = this.props;
     if (isNewPostPage) {
+      /* work out new episode and season number if on new post page */
       const oldEpisodeNum = parseInt(episodeNum, 10);
       const oldSeasonNum = parseInt(seasonNum, 10);
       let newEpisodeNum;
@@ -53,6 +53,7 @@ class Arrows extends React.Component {
         mediaType,
       });
     } else {
+      /* else just redirect */
       push(link);
     }
   }
