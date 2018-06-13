@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icon, Row, Col } from 'antd';
+import { Row, Col } from 'antd';
 import Loadable from 'react-loadable';
 import { Link } from 'react-router-dom';
 import MediaQuery from 'react-responsive';
@@ -29,6 +29,10 @@ const NewPostButton = Loadable({
 });
 const Links = Loadable({
   loader: () => import('./Links'),
+  loading: (() => null),
+});
+const Arrows = Loadable({
+  loader: () => import('./Arrows'),
   loading: (() => null),
 });
 
@@ -87,21 +91,6 @@ const Actors = ({ actors }) => (
   </div>
 );
 
-/* Go to the next or previous episode or season */
-const Switcher = ({ link, direction }) => {
-  if (link) {
-    return (
-      <Link className="prev-next" to={link} >
-        <Icon
-          type={direction === 'left' ? 'left' : 'right'}
-          className={`${direction === 'left' ? 'prev' : 'next'}-icon`}
-        />
-      </Link>
-    );
-  }
-  return null;
-};
-
 const backgroundImage = (backdropPath, opacity) => ({
   background: `linear-gradient(rgba(0,0,0,${opacity}),rgba(0,0,0,${opacity})),url(${backdropPath})`,
 });
@@ -113,7 +102,7 @@ const Media = props => (
       <div className="MediaItem__backdrop" style={backgroundImage(props.backdropPath, 0.5)} />
     </MediaQuery>
     <div className="MediaHeader">
-      <Switcher link={props.prev} direction="left" />
+      <Arrows link={props.prev} direction="left" seasonNum={props.seasonNum} episodeNum={props.episodeNum} />
       {/* Only show on larger screens */}
       <MediaQuery query="(min-width: 768px)">
         <div className="MediaHeader__poster">
@@ -161,7 +150,7 @@ const Media = props => (
           </Col>
         </Row>
       </div>
-      <Switcher link={props.next} direction="right" />
+      <Arrows link={props.next} direction="right" seasonNum={props.seasonNum} episodeNum={props.episodeNum} />
     </div>
   </div>
 );
@@ -215,15 +204,6 @@ Genres.propTypes = {
 
 Actors.propTypes = {
   actors: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-};
-
-Switcher.propTypes = {
-  direction: PropTypes.string.isRequired,
-  link: PropTypes.string,
-};
-
-Switcher.defaultProps = {
-  link: undefined,
 };
 
 export default Media;

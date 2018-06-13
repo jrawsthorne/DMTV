@@ -30,6 +30,7 @@ class SelectorPopver extends React.Component {
         this.props.newPostInfo({
           mediaType: type,
           seasonNum: num.toString(),
+          episodeNum: null,
         });
       }
     } else if (!isNewPostPage) {
