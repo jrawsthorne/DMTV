@@ -7,6 +7,9 @@ const router = express.Router();
 
 router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => {
   const { user: { subscriptions: subscriptionIds } } = req; // subscription ids from passport user
+
+  const { createdBefore, limit = 10 } = req.query;
+
   // find the user's subscriptions
   Subscription.find({ _id: { $in: subscriptionIds } }).then((subscriptions) => {
     if (subscriptions.length > 0) {
@@ -17,15 +20,21 @@ router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => 
           tmdbid: subscription.tmdbid,
         })),
       };
+      let postLimit = parseInt(limit, 10);
+      const countQuery = { ...query };
+      if (createdBefore) {
+        postLimit += 1;
+        query.createdAt = { $lte: createdBefore };
+      }
       // find the total number of posts and return the newest 20
       Promise.all([
-        Post.count(query),
-        Post.find(query).sort({ createdAt: -1 }).limit(20),
+        Post.count(countQuery),
+        Post.find(query).sort({ createdAt: -1 }).limit(postLimit),
       ]).then((data) => {
         // return the total count and an array of posts
         res.json({
           count: data[0],
-          results: data[1],
+          results: createdBefore ? data[1].slice(1) : data[1],
         });
       });
     } else {
