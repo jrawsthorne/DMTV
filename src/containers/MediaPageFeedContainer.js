@@ -1,22 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import InfiniteScroll from '../vendor/InfiniteScroll';
 import Loading from '../components/misc/Loading';
 import MediaPagePostPreviewContainer from './MediaPagePostPreviewContainer';
+import { PostsLayout } from './FeedContainer';
 
 const MediaPageFeedContainer = ({
   content, fetchingMore, hasMore, loadMore,
 }) => (
-  <InfiniteScroll
+  <PostsLayout
     loadMore={loadMore}
     hasMore={hasMore}
-    className="postsLayout"
     loadingMore={fetchingMore}
     threshold={1500}
     loader={<Loading />}
   >
     {content.map(id => <MediaPagePostPreviewContainer key={id} postId={id} />)}
-  </InfiniteScroll>
+  </PostsLayout>
 
 );
 

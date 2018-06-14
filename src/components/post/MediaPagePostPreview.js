@@ -1,10 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import BodyShort from './BodyShort';
-
-import './PostPreview.less';
+import { Backdrop, StyledPostPreview, Body, MediaTitle, PostDetails, CreatedIcon } from './PostPreview';
 
 const PostPreview = ({
   url,
@@ -20,21 +18,21 @@ const PostPreview = ({
   let created = new Date(post.created);
   created = created.toLocaleDateString('en-GB', options);
   return (
-    <React.Fragment>
+    <StyledPostPreview>
       <Link to={url}>
         {/* coloured background if doesn't exist */}
-        <div className="PostPreview__backdrop" style={{ backgroundImage: `${backdropPath && `url(https://image.tmdb.org/t/p/w780${backdropPath})`}`, backgroundColor: '#444' }} />
+        <Backdrop path={backdropPath} />
       </Link>
-      <div className="PostPreview__body">
-        <h2 style={{ marginBottom: 0 }}>
+      <Body>
+        <MediaTitle>
           <Link to={url}>{title}</Link>
-        </h2>
-        <p style={{ marginBottom: '1em' }}>
-          <Icon style={{ fontSize: 12, marginRight: 5 }} type="clock-circle-o" /> {created} - <Link to={`/@${post.author}`}>{post.author}</Link>
-        </p>
+        </MediaTitle>
+        <PostDetails>
+          <CreatedIcon type="clock-circle-o" /> {created} - <Link to={`/@${post.author}`}>{post.author}</Link>
+        </PostDetails>
         <BodyShort body={overview} /> <Link to={url}>Read more</Link>
-      </div>
-    </React.Fragment>
+      </Body>
+    </StyledPostPreview>
   );
 };
 

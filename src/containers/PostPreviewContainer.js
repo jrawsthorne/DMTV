@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getPost } from '../reducers';
 
-import Post from '../components/post/PostPreview';
+import PostPreview from '../components/post/PostPreview';
 
 class PostPreviewContainer extends React.Component {
   static propTypes = {
@@ -24,21 +24,19 @@ class PostPreviewContainer extends React.Component {
     }
     const backdropPath = media.episodePath || media.backdropPath || '';
     return (
-      <div className="postsLayout__post">
-        <Post
-          overview={post.body}
-          id={post.id}
-          title={post.title}
-          permlink={post.permlink}
-          backdropPath={backdropPath}
-          mediaTitle={title}
-          author={post.author}
-          url={`/${post.url}`}
-          mediaUrl={mediaUrl}
-          handleLikeClick={this.handleLikeClick}
-          post={post}
-        />
-      </div>
+      <PostPreview
+        overview={post.body}
+        id={post.id}
+        title={post.title}
+        permlink={post.permlink}
+        backdropPath={backdropPath}
+        mediaTitle={title}
+        author={post.author}
+        url={`/${post.url}`}
+        mediaUrl={mediaUrl}
+        handleLikeClick={this.handleLikeClick}
+        post={post}
+      />
     );
   }
 }

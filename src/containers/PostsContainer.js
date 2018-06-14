@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import styled from 'styled-components';
 import * as actions from '../actions/postActions';
 import {
   getFeedFromState,
@@ -13,6 +14,11 @@ import { getFeed } from '../reducers';
 import Loading from '../components/misc/Loading';
 
 import FeedContainer from './FeedContainer';
+
+export const Container = styled.div`
+  margin-left: -10px;
+  margin-right: -10px;
+`;
 
 class PostsContainer extends React.Component {
   static propTypes = {
@@ -72,16 +78,14 @@ class PostsContainer extends React.Component {
     if (failed) return <div><p>Sory, there was an error fetching posts</p></div>;
     if (_.isEmpty(content)) return <div><p>Sorry, no posts found</p></div>;
     return (
-      <div className="posts">
-        <div className="postsContainer">
-          <FeedContainer
-            content={content}
-            hasMore={hasMore && !fetchingMore}
-            loadMore={loadMore}
-            fetchingMore={fetchingMore}
-          />
-        </div>
-      </div>
+      <Container>
+        <FeedContainer
+          content={content}
+          hasMore={hasMore && !fetchingMore}
+          loadMore={loadMore}
+          fetchingMore={fetchingMore}
+        />
+      </Container>
     );
   }
 }

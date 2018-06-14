@@ -13,6 +13,7 @@ import { getFeed } from '../reducers';
 import Loading from '../components/misc/Loading';
 
 import FeedContainer from './MediaPageFeedContainer';
+import { Container } from './PostsContainer';
 
 class PostsContainer extends React.Component {
   static propTypes = {
@@ -93,16 +94,14 @@ class PostsContainer extends React.Component {
     if (failed) return <div><p>Sory, there was an error fetching posts</p></div>;
     if (_.isEmpty(content)) return <div><p>Sorry, no posts found</p></div>;
     return (
-      <div className="posts">
-        <div className="postsContainer">
-          <FeedContainer
-            content={content}
-            fetchingMore={fetchingMore}
-            hasMore={hasMore && !fetchingMore}
-            loadMore={loadMore}
-          />
-        </div>
-      </div>
+      <Container>
+        <FeedContainer
+          content={content}
+          fetchingMore={fetchingMore}
+          hasMore={hasMore && !fetchingMore}
+          loadMore={loadMore}
+        />
+      </Container>
     );
   }
 }

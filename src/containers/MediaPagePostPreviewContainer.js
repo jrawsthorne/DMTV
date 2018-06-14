@@ -14,19 +14,17 @@ class MediaPagePostPreviewContainer extends React.Component {
     const { media } = post;
     const backdropPath = media.episodePath || media.backdropPath || '';
     return (
-      <div className="postsLayout__post">
-        <MediaPagePostPreview
-          overview={post.body}
-          id={post.id}
-          title={post.title}
-          permlink={post.permlink}
-          backdropPath={backdropPath}
-          author={post.author}
-          url={`/${post.url}`}
-          handleLikeClick={this.handleLikeClick}
-          post={post}
-        />
-      </div>
+      <MediaPagePostPreview
+        overview={post.body}
+        id={post.id}
+        title={post.title}
+        permlink={post.permlink}
+        backdropPath={backdropPath}
+        author={post.author}
+        url={`/${post.url}`}
+        handleLikeClick={this.handleLikeClick}
+        post={post}
+      />
     );
   }
 }
