@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Menu, Icon, Layout, Avatar } from 'antd';
+import { Menu, Icon, Layout, Avatar, Popover } from 'antd';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -41,7 +41,13 @@ class Topnav extends React.Component {
     (
       <Menu className="Topnav__menu-container__menu" mode="horizontal">
         <Menu.Item key="username">
-          <Link to={`/@${this.props.username}`}><Avatar size="large" src={`https://steemitimages.com/u/${this.props.username}/avatar/small`} /></Link>
+          <Popover
+            content={
+              <Link to="/subscriptions">Subscriptions</Link>
+            }
+          >
+            <Link to={`/@${this.props.username}`}><Avatar size="large" src={`https://steemitimages.com/u/${this.props.username}/avatar/small`} /></Link>
+          </Popover>
         </Menu.Item>
         <Menu.Item key="divider" disabled>|</Menu.Item>
         <Menu.Item key="logout">
