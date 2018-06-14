@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Avatar } from 'antd';
 import urlParse from 'url-parse';
+import classNames from 'classnames';
 import './ProfileHeader.less';
 
 const ProfileHeader = (props) => {
@@ -17,17 +17,16 @@ const ProfileHeader = (props) => {
   }
   return (
     <div className="ProfileHeader">
+      {/* change background colour if there isn't a cover image */}
       <div
         className="ProfileHeader__background"
-        style={props.coverImage ? { background: `linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url(https://steemitimages.com/2048x512/${props.coverImage})` } : { background: 'linear-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.8))' }}
+        style={props.coverImage ? { background: `linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url(https://steemitimages.com/2048x512/${props.coverImage})` } : { background: '#f5f5f5' }}
       >
         <div className="ProfileHeader__main" style={{ position: 'relative' }}>
-          <div className="ProfileHeader__main__avatar">
-            <Avatar src={`https://steemitimages.com/u/${props.username}/avatar/large`} />
-          </div>
-          <div className="ProfileHeader__main__info">
+          <div className="ProfileHeader__main__avatar" style={{ backgroundImage: `url(https://steemitimages.com/u/${props.username}/avatar/large)` }} />
+          <div className={classNames('ProfileHeader__main__info', { noCoverImage: !props.coverImage })}>
             <div className="ProfileHeader__main__info__name">
-              {props.name && props.name}
+              {props.name ? props.name : props.username}
             </div>
             <div className="ProfileHeader__main__info__about">
               <p>{`@${props.username}`}</p>

@@ -7,33 +7,40 @@
   }
   &__main {
     display: flex;
+    text-align: center;
     margin: 0 auto;
     max-width: 1011px;
     padding: 24px 20px;
     @media (min-width: 768px) {
       padding: 30px 0;
     }
-    align-items: flex-start;
-    flex-direction: row;
+    align-items: center;
+    flex-direction: column;
     &__avatar {
-      margin-right: 30px;
-      .ant-avatar {
-        min-width: 100px;
-        width: 100px;
-        height: 100px;
-        line-height: 100px;
-        border-radius: 100px;
-        & > img {
-          width: auto;
-          height: auto
-        }
-      }
+      display: block!important;
+      border-radius: 50%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      width: 100px;
+      height: 100px;
     }
     &__info {
       ::selection {
         background: #ccc;
       }
-      color: white!important;
+      color: white;
+      &.noCoverImage {
+        color: #94959a;
+        .ProfileHeader__main__info__about {
+          &__website a {
+            color: #444;
+            &:hover {
+                color: #ccc;
+            }
+          }
+        }
+      }
       display: flex;
       flex-direction: column;
       &__name {
@@ -45,9 +52,15 @@
         }
         &__website a {
           color: #ccc;
+          &.noCoverImage {
+            color: #444;
+          }
           text-decoration: underline;
           &:hover {
-            color: #eee
+            color: #eee;
+            &.noCoverImage {
+              color: #ccc;
+            }
           }
         }
       }
