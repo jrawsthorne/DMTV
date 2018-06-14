@@ -51,7 +51,8 @@ export const fetchPosts = ({ sortBy = 'created', category, limit = 20 }) => (
   getState,
   { steemAPI },
 ) => {
-  const posts = getState().posts.items;
+  const state = getState();
+  const posts = getPosts(state);
   let query = {};
   if (category === 'movie' || category === 'show' || category === 'episode') {
     query.mediaType = category;
@@ -133,6 +134,73 @@ export const fetchMorePosts = ({ sortBy = 'created', category, limit = 20 }) => 
     meta: {
       sortBy,
       category: category || 'all',
+      limit,
+      lastPost,
+    },
+  });
+};
+
+export const fetchSubscriptions = ({ limit = 20 }) => (
+  dispatch,
+  getState,
+  { steemAPI },
+) => {
+  const state = getState();
+  const posts = getPosts(state);
+  dispatch({
+    type: FETCH_POSTS,
+    payload: axios.get(`${process.env.API_URL}/subscriptions`, { params: { limit }, ...getAuthHeaders() })
+      .then(res =>
+        Promise.all(res.data.results.map(post => /* loop through each post from the db */
+          (!_.get(posts, `@${post.author}/${post.permlink}`) ?
+          /* get the post from steem if not stored */
+            steemAPI.getContentAsync(post.author, post.permlink)
+              .then(steemPost => getPostData(steemPost, post))
+              .catch(() => Promise.resolve(null)) /* carry on if error finding post */
+            : _.get(posts, `@${post.author}/${post.permlink}`)
+          )))
+          .then(p => ({
+            count: res.data.count,
+            posts: p.filter(post => post !== null), /* eliminate posts that errored */
+          }))),
+    meta: {
+      sortBy: 'created',
+      category: 'subscriptions',
+      limit,
+    },
+  });
+};
+
+export const fetchMoreSubscriptions = ({ limit = 20 }) => (
+  dispatch,
+  getState,
+  { steemAPI },
+) => {
+  const state = getState();
+  const feed = getFeed(state);
+  const posts = getPosts(state);
+  const feedContent = getFeedFromState('created', 'subscriptions', feed);
+  const lastPost = posts[feedContent[feedContent.length - 1]];
+  const { createdAt: createdBefore } = lastPost;
+  dispatch({
+    type: FETCH_POSTS,
+    payload: axios.get(`${process.env.API_URL}/subscriptions`, { params: { limit, createdBefore }, ...getAuthHeaders() })
+      .then(res =>
+        Promise.all(res.data.results.map(post => /* loop through each post from the db */
+          (!_.get(posts, `@${post.author}/${post.permlink}`) ?
+          /* get the post from steem if not stored */
+            steemAPI.getContentAsync(post.author, post.permlink)
+              .then(steemPost => getPostData(steemPost, post))
+              .catch(() => Promise.resolve(null)) /* carry on if error finding post */
+            : _.get(posts, `@${post.author}/${post.permlink}`)
+          )))
+          .then(p => ({
+            count: res.data.count,
+            posts: p.filter(post => post !== null), /* eliminate posts that errored */
+          }))),
+    meta: {
+      sortBy: 'created',
+      category: 'subscriptions',
       limit,
       lastPost,
     },

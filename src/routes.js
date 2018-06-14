@@ -36,6 +36,11 @@ const PersonPage = Loadable({
   loading: (() => null),
 });
 
+const SubscriptionPage = Loadable({
+  loader: () => import('./components/subscription/SubscriptionPage'),
+  loading: (() => null),
+});
+
 const routes = [
   {
     component: Wrapper,
@@ -69,6 +74,11 @@ const routes = [
         path: '/new',
         exact: true,
         component: NewPostPage,
+      },
+      {
+        path: '/subscriptions',
+        exact: true,
+        component: SubscriptionPage,
       },
       {
         path: '/person/:id',
