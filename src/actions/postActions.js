@@ -1,7 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import { push } from 'connected-react-router';
-import { FETCH_POSTS, FETCH_POST, NEW_POST_INFO, CREATE_POST } from './types';
+import { FETCH_POSTS, FETCH_POST, NEW_POST_INFO, CREATE_POST, LIKE_POST } from './types';
 import { createPermlink } from '../helpers/steemitHelpers';
 import { getAuthHeaders } from './authActions';
 import { getFeed, getPosts } from '../reducers';
@@ -29,7 +29,11 @@ const getPostData = (steemPost, post) => ({
 });
 
 // fetch post from db and return steem and db info
-export const fetchPost = (author, permlink) => (dispatch, getState, { steemAPI }) => dispatch({
+export const fetchPost = (author, permlink, afterLike = false) => (
+  dispatch,
+  getState,
+  { steemAPI },
+) => dispatch({
   type: FETCH_POST,
   payload: axios.get(`${process.env.API_URL}/posts/@${author}/${permlink}`)
     .then(res => res.data)
@@ -40,6 +44,7 @@ export const fetchPost = (author, permlink) => (dispatch, getState, { steemAPI }
   meta: {
     author,
     permlink,
+    afterLike,
     globalError: 'Sorry, there was an error fetching the post',
   },
 });
@@ -291,6 +296,30 @@ export const createPost = postData => (dispatch, getState, { steemConnectAPI }) 
       ).then(() => axios.post(`${process.env.API_URL}/posts/add`, { author, permlink }, getAuthHeaders()).then(() => dispatch(push(`/@${author}/${permlink}`))))),
     meta: {
       globalError: 'Sorry, an error ocurred adding your post',
+    },
+  });
+};
+
+export const votePost = (author, permlink, weight = 10000) => (
+  dispatch,
+  getState,
+  { steemConnectAPI },
+) => {
+  const { auth } = getState();
+  if (!auth.isAuthenticated) {
+    return null;
+  }
+
+  const voter = auth.user.name;
+
+  return dispatch({
+    type: LIKE_POST,
+    payload: steemConnectAPI.vote(voter, author, permlink, weight).then((res) => {
+      dispatch(fetchPost(author, permlink, true)).then(() => res);
+    }),
+    meta: {
+      postId: `@${author}/${permlink}`,
+      weight,
     },
   });
 };

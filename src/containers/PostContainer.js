@@ -46,7 +46,7 @@ class PostContainer extends React.Component {
     } = this.props;
     if (failed) return 'Sorry, there was an error fetching the post';
     if (fetching || !loaded) return <Loading />;
-    return <Post body={post.body} title={post.title} />;
+    return <Post post={post} />;
   }
 }
 

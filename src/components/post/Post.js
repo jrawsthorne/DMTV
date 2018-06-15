@@ -2,17 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Body from '../../helpers/bodyHelpers';
+import LikeButton from './LikeButton';
+import Upvotes from './Upvotes';
 
-const Post = ({ title, body }) => (
+
+const Post = ({ post }) => (
   <React.Fragment>
-    <h1>{title}</h1>
-    <Body body={body} returnType="Object" />
+    <h1>{post.title}</h1>
+    <Body body={post.body} returnType="Object" />
+    <span style={{ marginTop: 20 }}>
+      <LikeButton post={post} />
+      <Upvotes votes={post.active_votes} />
+    </span>
   </React.Fragment>
 );
 
 Post.propTypes = {
-  title: PropTypes.string.isRequired,
-  body: PropTypes.string.isRequired,
+  post: PropTypes.shape().isRequired,
 };
 
 export default Post;
