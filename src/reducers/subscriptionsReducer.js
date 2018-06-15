@@ -7,6 +7,7 @@ const initialState = {
   failed: false,
   fetching: false,
   items: [],
+  pendingSubscriptions: [],
 };
 
 export default (state = initialState, action) => {
@@ -36,16 +37,31 @@ export default (state = initialState, action) => {
         loaded: true,
         failed: true,
       };
-    case types.SUBSCRIBE_CHANGE_PENDING:
+    case types.SUBSCRIBE_CHANGE_PENDING: {
+      const { type, tmdbid, subscribed } = action.meta;
       return {
         ...state,
         fetching: true,
         loaded: false,
         failed: false,
+        pendingSubscriptions: [
+          ...state.pendingSubscriptions,
+          {
+            type,
+            tmdbid: parseInt(tmdbid, 10),
+            subscribed: !!subscribed,
+          },
+        ],
       };
+    }
     case types.SUBSCRIBE_CHANGE_FULFILLED: {
       const { type, tmdbid, subscribed } = action.meta;
       message.destroy();
+      /* remove subscription from pending */
+      const pendingSubscriptions = _.filter(
+        state.pendingSubscriptions,
+        (subscription => subscription.type !== type && subscription.tmdbid !== tmdbid),
+      );
       /* if unsubscribing */
       if (JSON.parse(subscribed) === false) {
         message.success('Unubscribed successfully', 0.5);
@@ -64,6 +80,7 @@ export default (state = initialState, action) => {
           loaded: true,
           failed: false,
           items: subscriptions,
+          pendingSubscriptions,
         };
       }
       /* if subscribing */
@@ -77,6 +94,7 @@ export default (state = initialState, action) => {
           ...state.items,
           action.payload,
         ],
+        pendingSubscriptions,
       };
     }
     case types.SUBSCRIBE_CHANGE_REJECTED:

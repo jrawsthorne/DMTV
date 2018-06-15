@@ -6,13 +6,7 @@ import { Rate } from 'antd';
 import { userRateChange } from '../../actions/mediaActions';
 
 class StarRating extends React.Component {
-  state = {
-    rating: 0,
-  }
   handleRateChange = (value) => {
-    /* set state to prevent flickering */
-    /* TODO: pendingRate action instead */
-    this.setState({ rating: value });
     const {
       mediaType, tmdbid, seasonNum, episodeNum,
     } = this.props;
@@ -23,12 +17,17 @@ class StarRating extends React.Component {
   }
   render() {
     const {
-      loaded, fetching, userRating,
+      fetching, userRating, pendingRating,
     } = this.props;
-    const { rating } = this.state;
+
+    let rating = userRating;
+    if (pendingRating) {
+      rating = pendingRating.score;
+    }
+
     return (
       <Rate
-        value={loaded ? userRating : rating}
+        value={rating}
         onChange={this.handleRateChange}
         disabled={fetching} /* disable while changing */
       />
@@ -42,17 +41,17 @@ StarRating.propTypes = {
   seasonNum: PropTypes.string,
   episodeNum: PropTypes.string,
   fetching: PropTypes.bool,
-  loaded: PropTypes.bool,
   userRating: PropTypes.number,
   userRateChange: PropTypes.func.isRequired,
+  pendingRating: PropTypes.shape(),
 };
 
 StarRating.defaultProps = {
   episodeNum: undefined,
   seasonNum: undefined,
   fetching: false,
-  loaded: false,
   userRating: 0,
+  pendingRating: null,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -68,8 +67,8 @@ const mapStateToProps = (state, ownProps) => {
   }
   return {
     fetching: _.get(state, 'ratings.fetching', false),
-    loaded: _.get(state, 'ratings.loaded', false),
     userRating,
+    pendingRating: _.find(state.ratings.pendingRatings, query),
   };
 };
 
