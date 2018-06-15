@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 import { Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import BodyShort from './BodyShort';
+import LikeButton from './LikeButton';
+import Upvotes from './Upvotes';
 
 import './PostPreview.less';
+
 
 const PostPreview = ({
   url,
@@ -33,6 +36,10 @@ const PostPreview = ({
           <Icon style={{ fontSize: 12, marginRight: 5 }} type="clock-circle-o" /> {created} - <Link to={`/@${post.author}`}>{post.author}</Link>
         </p>
         <BodyShort body={overview} /> <Link to={url}>Read more</Link>
+        <span style={{ marginTop: 10, display: 'block' }}>
+          <LikeButton post={post} />
+          <Upvotes votes={post.active_votes} />
+        </span>
       </div>
     </React.Fragment>
   );

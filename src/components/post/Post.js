@@ -10,7 +10,7 @@ const Post = ({ post }) => (
   <React.Fragment>
     <h1>{post.title}</h1>
     <Body body={post.body} returnType="Object" />
-    <span>
+    <span style={{ marginTop: 20 }}>
       <LikeButton post={post} />
       <Upvotes votes={post.active_votes} />
     </span>
