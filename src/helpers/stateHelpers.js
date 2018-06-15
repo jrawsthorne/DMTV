@@ -21,6 +21,8 @@ export const getFeedFromState = (sortBy, category = 'all', state) => {
             query += `.episodes.${episodeNum}`;
           }
         }
+      } else if (category.author) {
+        query += `.${category.author}`;
       } else {
         query += `.${category}`;
       }
@@ -52,6 +54,8 @@ export const getFeedStatusFromState = (sortBy, category = 'all', feedState) => {
             query += `.episodes.${episodeNum}`;
           }
         }
+      } else if (category.author) {
+        query += `.${category.author}`;
       } else {
         query += `.${category}`;
       }
