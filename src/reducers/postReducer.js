@@ -38,7 +38,9 @@ export default (state = initialState, action) => {
         itemStates,
       };
     }
-    case types.FETCH_POST_PENDING:
+    case types.FETCH_POST_PENDING: {
+      /* don't cause reload in ui */
+      if (action.meta.afterLike) return state;
       /* set pending state for that post */
       return {
         ...state,
@@ -52,6 +54,7 @@ export default (state = initialState, action) => {
           },
         },
       };
+    }
     case types.FETCH_POST_FULFILLED:
     /* set fulfilled state for that post */
     /* add data for that post to /posts/post/author/permlink */
