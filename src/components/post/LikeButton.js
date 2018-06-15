@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import * as actions from '../../actions/postActions';
 
+import './LikeButton.less';
+
 const LoadingIcon = <Icon type="loading" style={{ fontSize: 20 }} spin />;
 
 class LikeButton extends React.Component {
