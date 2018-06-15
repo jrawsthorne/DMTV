@@ -8,6 +8,7 @@ const initialState = {
   items: {},
   itemStates: {},
   newPost: {},
+  pendingLikes: [],
 };
 
 export default (state = initialState, action) => {
@@ -123,6 +124,29 @@ export default (state = initialState, action) => {
           broadcasted: true,
         },
       };
+    case types.LIKE_POST_PENDING:
+      return {
+        ...state,
+        pendingLikes: [
+          ...state.pendingLikes,
+          {
+            postId: action.meta.postId,
+            weight: action.meta.weight,
+          },
+        ],
+      };
+    case types.LIKE_POST_FULFILLED:
+    case types.LIKE_POST_REJECTED: {
+      const { weight, postId } = action.meta;
+      const pendingLikes = _.filter(
+        state.pendingLikes,
+        (like => like.postId !== postId && like.weight !== weight),
+      );
+      return {
+        ...state,
+        pendingLikes,
+      };
+    }
     default:
       return state;
   }
