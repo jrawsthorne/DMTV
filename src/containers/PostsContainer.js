@@ -10,8 +10,6 @@ import {
 } from '../helpers/stateHelpers';
 import { getFeed } from '../reducers';
 
-import Loading from '../components/misc/Loading';
-
 import FeedContainer from './FeedContainer';
 
 class PostsContainer extends React.Component {
@@ -66,11 +64,10 @@ class PostsContainer extends React.Component {
     const content = getFeedFromState(sortBy, category, feed);
     const loadMore = () => fetchMorePosts({ category, sortBy });
     const {
-      fetching, loaded, hasMore, failed, fetchingMore,
+      hasMore, fetchingMore, fetching, loaded, failed,
     } = getFeedStatusFromState(sortBy, category, feed);
-    if (fetching || !loaded) return <Loading />;
     if (failed) return <div><p>Sory, there was an error fetching posts</p></div>;
-    if (_.isEmpty(content)) return <div><p>Sorry, no posts found</p></div>;
+    if (loaded && _.isEmpty(content)) return <div><p>Sorry, no posts found</p></div>;
     return (
       <div className="posts">
         <div className="postsContainer">
@@ -79,6 +76,7 @@ class PostsContainer extends React.Component {
             hasMore={hasMore && !fetchingMore}
             loadMore={loadMore}
             fetchingMore={fetchingMore}
+            fetching={fetching}
           />
         </div>
       </div>
