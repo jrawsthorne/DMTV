@@ -6,14 +6,16 @@ import { Carousel } from 'antd';
 import { Link } from 'react-router-dom';
 import MediaQuery from 'react-responsive';
 import { getMediaItemDetails } from '../../helpers/mediaHelpers';
+import { getMediaStatusFromState } from '../../helpers/stateHelpers';
 import BodyShort from '../post/BodyShort';
+import PostPreviewLoading from '../post/PostPreviewLoading';
 import './Similar.less';
 
 /* show the backdrop, title and overview with link to its page */
-export const SimilarItem = ({ item, url, type }) => {
+export const SimilarItem = ({ item, url, mediaType }) => {
   const {
     backdropPath, title, overview,
-  } = getMediaItemDetails(item, type);
+  } = getMediaItemDetails(item, mediaType);
   return (
     <React.Fragment>
       <Link to={url}>
@@ -29,10 +31,41 @@ export const SimilarItem = ({ item, url, type }) => {
   );
 };
 
+const SimilarLoading = () => (
+  <React.Fragment>
+    <h2>Recommended</h2>
+    <MediaQuery minWidth={1050}>
+      {(matches) => {
+          let num = 1;
+          let centerPadding = '40px';
+          /* if above 1050px */
+          if (matches) {
+            num = 2;
+            centerPadding = '100px';
+          }
+          return (
+            <Carousel
+              slidesToShow={num}
+              centerPadding={centerPadding}
+              centerMode
+              dots={false}
+            >
+              {/* add 3 loaders */}
+              <PostPreviewLoading />
+              <PostPreviewLoading />
+              <PostPreviewLoading />
+            </Carousel>
+          );
+      }}
+    </MediaQuery>
+  </React.Fragment>
+);
+
 const Similar = ({
-  list, type,
+  list, mediaType, fetching, failed, loaded,
 }) => {
-  if (_.isEmpty(list)) return null;
+  if ((fetching || !loaded) && _.isEmpty(list)) return <SimilarLoading />;
+  if (_.isEmpty(list) || failed) return null;
   return (
     <React.Fragment>
       <h2>Recommended</h2>
@@ -65,7 +98,7 @@ const Similar = ({
               infinite={infinite}
             >
               {/* for each item add it to the carousel */}
-              {list.map(item => <SimilarItem key={item.id} type={type} item={item} url={`/${type}/${item.id}`} />)}
+              {list.map(item => <SimilarItem key={item.id} mediaType={mediaType} item={item} url={`/${mediaType}/${item.id}`} />)}
             </Carousel>
           );
         }}
@@ -76,33 +109,28 @@ const Similar = ({
 
 Similar.propTypes = {
   list: PropTypes.arrayOf(PropTypes.shape().isRequired).isRequired,
-  type: PropTypes.string.isRequired,
+  mediaType: PropTypes.string,
+  fetching: PropTypes.bool.isRequired,
+  failed: PropTypes.bool.isRequired,
+  loaded: PropTypes.bool.isRequired,
+};
+
+Similar.defaultProps = {
+  mediaType: null,
 };
 
 SimilarItem.propTypes = {
   item: PropTypes.shape().isRequired,
   url: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
+  mediaType: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const {
-    author, permlink, tmdbid, mediaType,
-  } = ownProps;
-  let type;
-  let id;
-  /* get type and tmdbid from post */
-  if (!mediaType && !tmdbid) {
-    const post = _.get(state, `posts.items[@${author}/${permlink}].media`, {});
-    ({ type, tmdbid: id } = post);
-  } else {
-    /* use type and tmdbid given */
-    type = mediaType;
-    id = tmdbid;
-  }
+  const { tmdbid: id, mediaType } = ownProps;
   return {
-    list: _.get(state, `media.items[${type}s][${id}].similar`, []),
-    type: type || '',
+    list: _.get(state, `media.items[${mediaType}s][${id}].similar`, []),
+    mediaType,
+    ...getMediaStatusFromState({ id, mediaType }, state.media.itemStates),
   };
 };
 

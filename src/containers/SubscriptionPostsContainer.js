@@ -10,8 +10,6 @@ import {
 } from '../helpers/stateHelpers';
 import { getFeed } from '../reducers';
 
-import Loading from '../components/misc/Loading';
-
 import FeedContainer from './FeedContainer';
 
 class SubscriptionPostsContainer extends React.Component {
@@ -46,9 +44,8 @@ class SubscriptionPostsContainer extends React.Component {
     const {
       fetching, loaded, hasMore, failed, fetchingMore,
     } = getFeedStatusFromState('created', 'subscriptions', feed);
-    if (fetching || !loaded) return <Loading />;
     if (failed) return <div><p>Sory, there was an error fetching posts</p></div>;
-    if (_.isEmpty(content)) return <div><p>Sorry, no posts found</p></div>;
+    if (_.isEmpty(content) && loaded) return <div><p>Sorry, no posts found</p></div>;
     return (
       <div className="posts">
         <div className="postsContainer">
@@ -57,6 +54,7 @@ class SubscriptionPostsContainer extends React.Component {
             hasMore={hasMore && !fetchingMore}
             loadMore={loadMore}
             fetchingMore={fetchingMore}
+            fetching={fetching}
           />
         </div>
       </div>

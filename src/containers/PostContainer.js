@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { fetchPost } from '../actions/postActions';
 
-import Loading from '../components/misc/Loading';
+import PostLoading from '../components/post/PostLoading';
 
 import Post from '../components/post/Post';
 
@@ -45,7 +45,7 @@ class PostContainer extends React.Component {
       loaded, failed, fetching, post,
     } = this.props;
     if (failed) return 'Sorry, there was an error fetching the post';
-    if (fetching || !loaded) return <Loading />;
+    if (fetching || !loaded) return <PostLoading />;
     return <Post post={post} />;
   }
 }

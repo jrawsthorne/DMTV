@@ -8,7 +8,7 @@ import { getMediaItemDetails, getNextPrev } from '../helpers/mediaHelpers';
 import { getMediaStatusFromState } from '../helpers/stateHelpers';
 import { getMediaItem } from '../reducers';
 
-import Loading from '../components/misc/Loading';
+import MediaLoading from '../components/media/MediaLoading';
 
 import Media from '../components/media/Media';
 
@@ -71,7 +71,15 @@ class MediaContainer extends React.Component {
       },
     } = this.props;
     if (failed) return <div className="main-content"><p>Sorry, there was an error loading the metadata</p></div>;
-    if (fetching || !loaded) return <Loading />;
+    if (fetching || !loaded) {
+      return (
+        <MediaLoading
+          isAuthenticated={isAuthenticated}
+          isPostPage={path === '/@:author/:permlink'}
+          isNewPostPage={path === '/new'}
+        />
+      );
+    }
     /* get details based on type */
     const {
       backdropPath, posterPath, title, overview,
@@ -112,8 +120,8 @@ class MediaContainer extends React.Component {
 
 MediaContainer.propTypes = {
   mediaItem: PropTypes.shape(),
-  mediaType: PropTypes.string.isRequired,
-  tmdbid: PropTypes.string.isRequired,
+  mediaType: PropTypes.string,
+  tmdbid: PropTypes.string,
   seasonNum: PropTypes.string,
   episodeNum: PropTypes.string,
   fetchMedia: PropTypes.func.isRequired,
@@ -125,6 +133,8 @@ MediaContainer.propTypes = {
 };
 
 MediaContainer.defaultProps = {
+  mediaType: null,
+  tmdbid: null,
   episodeNum: undefined,
   seasonNum: undefined,
   mediaItem: undefined,
