@@ -6,6 +6,7 @@ import LikeButton from './Buttons/LikeButton';
 import Upvotes from './Counts/Upvotes';
 import CommentButton from './Buttons/CommentButton';
 import CommentCount from './Counts/CommentCount';
+import Comments from '../../containers/CommentsContainer';
 
 
 const Post = ({ post }) => (
@@ -18,6 +19,9 @@ const Post = ({ post }) => (
       <CommentButton post={post} />
       <CommentCount count={post.children} />
     </span>
+    <div className="Comments" style={{ marginTop: 25 }}>
+      <Comments author={post.author} permlink={post.permlink} id={post.id} count={post.children} />
+    </div>
   </React.Fragment>
 );
 
