@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Icon, Spin } from 'antd';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import * as actions from '../../actions/postActions';
+import * as actions from '../../../actions/postActions';
 
 import './LikeButton.less';
 
