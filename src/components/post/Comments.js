@@ -56,8 +56,12 @@ const Comments = ({ comments }) =>
             <Body body={comment.body} returnType="Object" />
             <LikeButton post={comment} type="comment" />
             <Upvotes votes={comment.active_votes} />
-            <CommentButton post={comment} />
-            <CommentCount count={comment.children} />
+            {comment.children > 0 && (
+              <React.Fragment>
+                <CommentButton post={comment} />
+                <CommentCount count={comment.children} />
+              </React.Fragment>
+            )}
             {/* if there are replies to the comment, show the replies */}
             {comment.children > 0 && <CommentsContainer
               author={comment.author}
