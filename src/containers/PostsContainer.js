@@ -66,7 +66,9 @@ class PostsContainer extends React.Component {
     const {
       hasMore, fetchingMore, fetching, loaded, failed,
     } = getFeedStatusFromState(sortBy, category, feed);
-    if (failed) return <div><p>Sory, there was an error fetching posts</p></div>;
+    if (failed && _.isEmpty(content)) {
+      return <div><p>Sory, there was an error fetching posts</p></div>;
+    }
     if (loaded && _.isEmpty(content)) return <div><p>Sorry, no posts found</p></div>;
     return (
       <div className="posts">

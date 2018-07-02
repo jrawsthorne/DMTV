@@ -56,6 +56,7 @@ const feedCategory = (state = {}, action) => {
       return {
         ...state,
         fetching: false,
+        fetchingMore: false,
         loaded: true,
         failed: true,
         hasMore: false,
