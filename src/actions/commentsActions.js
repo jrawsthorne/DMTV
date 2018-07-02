@@ -7,7 +7,12 @@ export const fetchReplies = (author, permlink, id, afterLike = false) => (
   { steemAPI },
 ) => dispatch({
   type: FETCH_REPLIES,
-  payload: steemAPI.getContentRepliesAsync(author, permlink),
+  payload: steemAPI.getContentRepliesAsync(author, permlink).then(replies =>
+    Promise.all(replies.map(reply =>
+      steemAPI.getActiveVotesAsync(reply.author, reply.permlink).then(votes => ({
+        ...reply,
+        active_votes: votes,
+      }))))),
   meta: {
     author,
     permlink,
