@@ -86,7 +86,7 @@ class CommentsContainer extends React.Component {
 const mapStateToProps = (state, ownProps) => ({
   replies: _.get(state.comments.childrenById, ownProps.id, []).map(postId =>
     state.comments.comments[postId]),
-  fetching: state.comments.fetching,
+  fetching: _.includes(state.comments.fetching, ownProps.id),
 });
 
 export default connect(mapStateToProps, { fetchReplies })(CommentsContainer);

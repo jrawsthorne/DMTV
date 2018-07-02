@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import * as types from '../actions/types';
 import { arrayToObject } from '../helpers/mediaHelpers';
 
@@ -5,7 +6,7 @@ const initialState = {
   childrenById: {},
   comments: {},
   pendingVotes: [],
-  fetching: false,
+  fetching: [],
 };
 
 const childrenById = (state = {}, action) => {
@@ -35,10 +36,10 @@ const commentsData = (state = {}, action) => {
 const fetching = (state = initialState.fetching, action) => {
   switch (action.type) {
     case types.FETCH_REPLIES_PENDING:
-      return true;
+      return [...state, action.meta.id];
     case types.FETCH_REPLIES_FULFILLED:
     case types.FETCH_REPLIES_REJECTED:
-      return false;
+      return _.without(state, action.meta.id);
     default:
       return state;
   }
