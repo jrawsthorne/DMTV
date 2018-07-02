@@ -6,6 +6,7 @@ import MediaContainer from '../../containers/MediaContainer';
 import MediaPostsContainer from '../../containers/MediaPostsContainer';
 import Similar from '../media/Similar';
 import ScrollToTop from '../misc/ScrollToTop';
+import ReloadFeedButton from '../misc/ReloadFeedButton';
 
 import './MediaPage.less';
 
@@ -25,7 +26,17 @@ const MediaPage = ({ match }) => {
       />
       <Layout className="main-content MediaPage">
         <Divider type="horizontal" />
-        <h2>Latest Posts</h2>
+        <h2>Latest Posts
+          <ReloadFeedButton
+            sortBy="created"
+            category={{
+              type: mediaType,
+              tmdbid: id,
+              seasonNum,
+              episodeNum,
+            }}
+          />
+        </h2>
         <MediaPostsContainer />
         <Divider type="horizontal" />
         <Similar mediaType={mediaType} tmdbid={id} />

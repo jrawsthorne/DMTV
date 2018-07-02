@@ -51,7 +51,7 @@ export const fetchPost = (author, permlink, afterLike = false) => (
 
 // add sortby options
 
-export const fetchPosts = ({ sortBy = 'created', category, limit = 20 }) => (
+export const fetchPosts = ({ sortBy = 'created', category, limit = 20 }, reload) => (
   dispatch,
   getState,
   { steemAPI },
@@ -90,6 +90,7 @@ export const fetchPosts = ({ sortBy = 'created', category, limit = 20 }) => (
       sortBy,
       category: category || 'all',
       limit,
+      reload,
     },
   });
 };
@@ -145,7 +146,7 @@ export const fetchMorePosts = ({ sortBy = 'created', category, limit = 20 }) => 
   });
 };
 
-export const fetchSubscriptions = ({ limit = 20 }) => (
+export const fetchSubscriptions = ({ limit = 20 }, reload) => (
   dispatch,
   getState,
   { steemAPI },
@@ -172,6 +173,7 @@ export const fetchSubscriptions = ({ limit = 20 }) => (
       sortBy: 'created',
       category: 'subscriptions',
       limit,
+      reload,
     },
   });
 };
