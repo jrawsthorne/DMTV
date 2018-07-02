@@ -7,31 +7,52 @@ import CommentsContainer from '../../containers/CommentsContainer';
 import './Comments.less';
 
 const Comments = ({ comments }) =>
-  comments.map(comment =>
-    (
-      <Card
+  comments.map((comment) => {
+    if (comment.depth === 1) {
+      return (
+        <Card
+          key={comment.id}
+          style={{ marginBottom: 15 }}
+          hoverable
+          className="Comment"
+        >
+          <Card.Meta
+            avatar={<div className="Comment__avatar" style={{ backgroundImage: `url(https://steemitimages.com/u/${comment.author}/avatar/large)` }} />}
+            title={<Link to={`/@${comment.author}`}>{comment.author}</Link>}
+            description={
+              <div className="Comment__body">
+                <Body body={comment.body} returnType="Object" />
+                {/* if there are replies to the comment, show the replies */}
+                {comment.children > 0 && <CommentsContainer
+                  author={comment.author}
+                  permlink={comment.permlink}
+                  id={comment.id}
+                  count={comment.children}
+                />}
+              </div>}
+          />
+        </Card>);
+    }
+    return (
+      <Card.Meta
+        style={{ padding: '10px 0' }}
         key={comment.id}
-        type={comment.depth > 1 && 'inner'}
-        style={comment.depth === 1 ? { marginBottom: 15 } : {}}
-        className="Comment"
-      >
-        <Card.Meta
-          avatar={<div className="Comment__avatar" style={{ backgroundImage: `url(https://steemitimages.com/u/${comment.author}/avatar/large)` }} />}
-          title={<Link to={`/@${comment.author}`}>{comment.author}</Link>}
-          description={
-            <div className="Comment__body">
-              <Body body={comment.body} returnType="Object" />
-              {/* if there are replies to the comment, show the replies */}
-              {comment.children > 0 && <CommentsContainer
-                author={comment.author}
-                permlink={comment.permlink}
-                id={comment.id}
-                count={comment.children}
-              />}
-            </div>}
-        />
-      </Card>
-    ));
+        avatar={<div className="Comment__avatar" style={{ backgroundImage: `url(https://steemitimages.com/u/${comment.author}/avatar/large)` }} />}
+        title={<Link to={`/@${comment.author}`}>{comment.author}</Link>}
+        description={
+          <div className="Comment__body">
+            <Body body={comment.body} returnType="Object" />
+            {/* if there are replies to the comment, show the replies */}
+            {comment.children > 0 && <CommentsContainer
+              author={comment.author}
+              permlink={comment.permlink}
+              id={comment.id}
+              count={comment.children}
+            />}
+          </div>}
+      />
+    );
+  });
 
 Comments.propTypes = {
   comments: PropTypes.arrayOf(PropTypes.shape()),

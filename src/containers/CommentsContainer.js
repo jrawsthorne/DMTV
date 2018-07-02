@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { Button } from 'antd';
 import { connect } from 'react-redux';
 import { fetchReplies } from '../actions/commentsActions';
 import Comments from '../components/post/Comments';
 
-import Loading from '../components/misc/Loading';
+import CommentsLoading from '../components/post/CommentsLoading';
 
 class CommentsContainer extends React.Component {
   static propTypes = {
@@ -16,7 +17,11 @@ class CommentsContainer extends React.Component {
     id: PropTypes.number.isRequired,
     count: PropTypes.number.isRequired,
     replies: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+    root: PropTypes.bool,
   };
+  static defaultProps = {
+    root: false,
+  }
   /* don't show the replies initially */
   state = {
     showReplies: false,
@@ -59,7 +64,7 @@ class CommentsContainer extends React.Component {
   }
   render() {
     const {
-      fetching, replies, count, id,
+      fetching, replies, count, root,
     } = this.props;
     const { showReplies } = this.state;
     if (count === 0) return 'No comments';
@@ -70,17 +75,10 @@ class CommentsContainer extends React.Component {
      * show loading if there are currently no replies, replies are being fetched
      * and replies should be shown
     */
-    if (showReplies && replies.length === 0 && fetching) return <Loading />;
+    if (showReplies && replies.length === 0 && fetching) return <CommentsLoading root={root} />;
     /* otherwise show a link to view the replies */
     return (
-      <p
-        role="presentation"
-        className="Comments__showReplies"
-        onClick={this.handleShowClick}
-        onKeyPress={this.handleShowClick}
-        key={`show-replies-${id}`}
-      >View {count} {count === 1 ? 'reply' : 'replies'}
-      </p>
+      <Button onClick={this.handleShowClick}>View {count} {count === 1 ? 'reply' : 'replies'}</Button>
     );
   }
 }

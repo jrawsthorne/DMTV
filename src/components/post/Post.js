@@ -20,7 +20,13 @@ const Post = ({ post }) => (
       <CommentCount count={post.children} />
     </span>
     <div className="Comments" style={{ marginTop: 25 }}>
-      <Comments author={post.author} permlink={post.permlink} id={post.id} count={post.children} />
+      <Comments
+        root
+        author={post.author}
+        permlink={post.permlink}
+        id={post.id}
+        count={post.children}
+      />
     </div>
   </React.Fragment>
 );
