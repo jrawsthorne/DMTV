@@ -56,6 +56,14 @@ const comments = (state = initialState, action) => {
         childrenById: childrenById(state.childrenById, action),
         fetching: fetching(state.fetching, action),
       };
+    case types.FETCH_REPLY_FULFILLED:
+      return {
+        ...state,
+        comments: {
+          ...state.comments,
+          [action.payload.id]: action.payload,
+        },
+      };
     default:
       return state;
   }

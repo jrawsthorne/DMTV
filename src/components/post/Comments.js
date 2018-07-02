@@ -4,6 +4,10 @@ import { Card } from 'antd';
 import { Link } from 'react-router-dom';
 import Body from '../../helpers/bodyHelpers';
 import CommentsContainer from '../../containers/CommentsContainer';
+import LikeButton from './Buttons/LikeButton';
+import Upvotes from './Counts/Upvotes';
+import CommentButton from './Buttons/CommentButton';
+import CommentCount from './Counts/CommentCount';
 import './Comments.less';
 
 const Comments = ({ comments }) =>
@@ -22,6 +26,14 @@ const Comments = ({ comments }) =>
             description={
               <div className="Comment__body">
                 <Body body={comment.body} returnType="Object" />
+                <LikeButton post={comment} type="comment" />
+                <Upvotes votes={comment.active_votes} />
+                {comment.children > 0 && (
+                  <React.Fragment>
+                    <CommentButton post={comment} />
+                    <CommentCount count={comment.children} />
+                  </React.Fragment>
+                )}
                 {/* if there are replies to the comment, show the replies */}
                 {comment.children > 0 && <CommentsContainer
                   author={comment.author}
@@ -35,13 +47,17 @@ const Comments = ({ comments }) =>
     }
     return (
       <Card.Meta
-        style={{ padding: '10px 0' }}
+        style={{ padding: '20px 0 10px 0' }}
         key={comment.id}
         avatar={<div className="Comment__avatar" style={{ backgroundImage: `url(https://steemitimages.com/u/${comment.author}/avatar/large)` }} />}
         title={<Link to={`/@${comment.author}`}>{comment.author}</Link>}
         description={
           <div className="Comment__body">
             <Body body={comment.body} returnType="Object" />
+            <LikeButton post={comment} type="comment" />
+            <Upvotes votes={comment.active_votes} />
+            <CommentButton post={comment} />
+            <CommentCount count={comment.children} />
             {/* if there are replies to the comment, show the replies */}
             {comment.children > 0 && <CommentsContainer
               author={comment.author}

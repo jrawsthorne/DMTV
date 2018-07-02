@@ -78,7 +78,7 @@ class CommentsContainer extends React.Component {
     if (showReplies && replies.length === 0 && fetching) return <CommentsLoading root={root} />;
     /* otherwise show a link to view the replies */
     return (
-      <Button onClick={this.handleShowClick}>View {count} {count === 1 ? 'reply' : 'replies'}</Button>
+      <Button style={root ? {} : { marginLeft: 10 }} onClick={this.handleShowClick}>View {count} {count === 1 ? 'reply' : 'replies'}</Button>
     );
   }
 }
