@@ -6,6 +6,7 @@ const initialState = {
   childrenById: {},
   comments: {},
   pendingVotes: [],
+  pendingComments: [],
   fetching: [],
 };
 
@@ -35,8 +36,12 @@ const commentsData = (state = {}, action) => {
 
 const fetching = (state = initialState.fetching, action) => {
   switch (action.type) {
-    case types.FETCH_REPLIES_PENDING:
-      return [...state, action.meta.id];
+    case types.FETCH_REPLIES_PENDING: {
+      if (!action.meta.reload) {
+        return [...state, action.meta.id];
+      }
+      return state;
+    }
     case types.FETCH_REPLIES_FULFILLED:
     case types.FETCH_REPLIES_REJECTED:
       return _.without(state, action.meta.id);
@@ -63,6 +68,17 @@ const comments = (state = initialState, action) => {
           ...state.comments,
           [action.payload.id]: action.payload,
         },
+      };
+    case types.SUBMIT_COMMENT_PENDING:
+      return {
+        ...state,
+        pendingComments: [...state, action.meta.parentId],
+      };
+    case types.SUBMIT_COMMENT_FULFILLED:
+    case types.SUBMIT_COMMENT_REJECTED:
+      return {
+        ...state,
+        pendingComments: _.without(state, action.meta.parentId),
       };
     default:
       return state;

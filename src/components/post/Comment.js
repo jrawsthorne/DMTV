@@ -57,7 +57,12 @@ const NestedReply = ({
             handleShowRepliesClick={handleShowRepliesClick}
             count={comment.children}
           />}
-          {isAuthenticated && showReplyBox && <ReplyBox />}
+          {isAuthenticated && showReplyBox && <ReplyBox
+            parentPermlink={comment.permlink}
+            parentAuthor={comment.author}
+            parentId={comment.id}
+            toggleReplyBox={handleShowReplyBoxClick}
+          />}
           {showReplies && loadedReplyCount === 0 && fetching && <CommentsLoading />}
           {loadedReplyCount > 0 && (
                   replies.map(reply =>

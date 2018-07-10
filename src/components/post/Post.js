@@ -7,6 +7,7 @@ import Upvotes from './Counts/Upvotes';
 import CommentButton from './Buttons/CommentButton';
 import CommentCount from './Counts/CommentCount';
 import Comments from '../../containers/CommentsContainer';
+import ReplyBox from './ReplyBox';
 
 
 const Post = ({ post }) => (
@@ -19,6 +20,7 @@ const Post = ({ post }) => (
       <CommentButton post={post} />
       <CommentCount count={post.children} />
     </span>
+    <ReplyBox parentAuthor={post.author} parentPermlink={post.permlink} parentId={post.id} />
     <div className="Comments" style={{ marginTop: 25 }}>
       <Comments
         root
