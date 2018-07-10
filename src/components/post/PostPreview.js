@@ -5,8 +5,10 @@ import { Link } from 'react-router-dom';
 import BodyShort from './BodyShort';
 
 import './PostPreview.less';
-import LikeButton from './LikeButton';
-import Upvotes from './Upvotes';
+import LikeButton from './Buttons/LikeButton';
+import Upvotes from './Counts/Upvotes';
+import CommentButton from './Buttons/CommentButton';
+import CommentCount from './Counts/CommentCount';
 
 const PostPreview = ({
   url,
@@ -41,6 +43,8 @@ const PostPreview = ({
         <span style={{ marginTop: 10, display: 'block' }}>
           <LikeButton post={post} />
           <Upvotes votes={post.active_votes} />
+          <CommentButton post={post} />
+          <CommentCount count={post.children} />
         </span>
       </div>
     </React.Fragment>

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Icon, Spin } from 'antd';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import * as actions from '../../actions/postActions';
+import * as actions from '../../../actions/postActions';
 
 import './LikeButton.less';
 
@@ -11,12 +11,12 @@ const LoadingIcon = <Icon type="loading" style={{ fontSize: 20 }} spin />;
 
 class LikeButton extends React.Component {
   handleLikeClick = (isLiked) => {
-    const { post: { author, permlink }, votePost } = this.props;
+    const { post: { author, permlink }, votePost, type } = this.props;
     let weight = 10000;
     if (isLiked) {
       weight = 0;
     }
-    votePost(author, permlink, weight);
+    votePost(author, permlink, type, weight);
   }
   render() {
     const { userVote, pendingLike } = this.props;
@@ -43,11 +43,13 @@ LikeButton.propTypes = {
   votePost: PropTypes.func.isRequired,
   userVote: PropTypes.shape(),
   pendingLike: PropTypes.shape(),
+  type: PropTypes.string,
 };
 
 LikeButton.defaultProps = {
   userVote: {},
   pendingLike: null,
+  type: 'post',
 };
 
 const mapStateToProps = (state, ownProps) => {

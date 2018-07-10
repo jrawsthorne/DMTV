@@ -7,6 +7,7 @@ import userReducer, * as fromUser from './userReducer';
 import subscriptionsReducer from './subscriptionsReducer';
 import ratingsReducer from './ratingsReducer';
 import peopleReducer, * as fromPeople from './peopleReducer';
+import commentsReducer from './commentsReducer';
 
 export default combineReducers({
   media: mediaReducer,
@@ -17,6 +18,7 @@ export default combineReducers({
   subscriptions: subscriptionsReducer,
   ratings: ratingsReducer,
   people: peopleReducer,
+  comments: commentsReducer,
 });
 
 export const getFeed = state => fromFeed.getFeed(state.feed);

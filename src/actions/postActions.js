@@ -1,7 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import { push } from 'connected-react-router';
-import { FETCH_POSTS, FETCH_POST, NEW_POST_INFO, CREATE_POST, LIKE_POST } from './types';
+import { FETCH_POSTS, FETCH_POST, NEW_POST_INFO, CREATE_POST, LIKE_POST, FETCH_REPLY } from './types';
 import { createPermlink } from '../helpers/steemitHelpers';
 import { getAuthHeaders } from './authActions';
 import { getFeed, getPosts } from '../reducers';
@@ -46,6 +46,21 @@ export const fetchPost = (author, permlink, afterLike = false) => (
     permlink,
     afterLike,
     globalError: 'Sorry, there was an error fetching the post',
+  },
+});
+
+export const fetchReply = (author, permlink, afterLike = false) => (
+  dispatch,
+  getState,
+  { steemAPI },
+) => dispatch({
+  type: FETCH_REPLY,
+  payload: steemAPI.getContentAsync(author, permlink),
+  meta: {
+    author,
+    permlink,
+    afterLike,
+    globalError: 'Sorry, there was an error fetching the reply',
   },
 });
 
@@ -302,7 +317,7 @@ export const createPost = postData => (dispatch, getState, { steemConnectAPI }) 
   });
 };
 
-export const votePost = (author, permlink, weight = 10000) => (
+export const votePost = (author, permlink, type = 'post', weight = 10000) => (
   dispatch,
   getState,
   { steemConnectAPI },
@@ -317,7 +332,11 @@ export const votePost = (author, permlink, weight = 10000) => (
   return dispatch({
     type: LIKE_POST,
     payload: steemConnectAPI.vote(voter, author, permlink, weight).then((res) => {
-      dispatch(fetchPost(author, permlink, true)).then(() => res);
+      if (type === 'post') {
+        dispatch(fetchPost(author, permlink, true)).then(() => res);
+      } else if (type === 'comment') {
+        dispatch(fetchReply(author, permlink, true)).then(() => res);
+      }
     }),
     meta: {
       postId: `@${author}/${permlink}`,

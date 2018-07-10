@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import { Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import BodyShort from './BodyShort';
-import LikeButton from './LikeButton';
-import Upvotes from './Upvotes';
+import LikeButton from './Buttons/LikeButton';
+import Upvotes from './Counts/Upvotes';
+import CommentButton from './Buttons/CommentButton';
+import CommentCount from './Counts/CommentCount';
 
 import './PostPreview.less';
 
@@ -39,6 +41,8 @@ const PostPreview = ({
         <span style={{ marginTop: 10, display: 'block' }}>
           <LikeButton post={post} />
           <Upvotes votes={post.active_votes} />
+          <CommentButton post={post} />
+          <CommentCount count={post.children} />
         </span>
       </div>
     </React.Fragment>
