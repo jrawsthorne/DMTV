@@ -53,7 +53,7 @@ class CommentsContainer extends React.Component {
       fetching, replies, count,
     } = this.props;
     const { showReplies } = this.state;
-    if (count === 0) return 'No comments';
+    if (count === 0 && replies.length === 0) return 'No comments';
     /* if comments already loaded show them */
     /* this means expanded comments maintain state on page changes */
     if (replies.length > 0) {
