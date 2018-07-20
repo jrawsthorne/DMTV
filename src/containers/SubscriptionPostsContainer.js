@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { PostsContainer } from '../components/post/Posts';
 import * as actions from '../actions/postActions';
 import {
   getFeedFromState,
@@ -49,17 +50,15 @@ class SubscriptionPostsContainer extends React.Component {
     }
     if (_.isEmpty(content) && loaded) return <div><p>Sorry, no posts found</p></div>;
     return (
-      <div className="posts">
-        <div className="postsContainer">
-          <FeedContainer
-            content={content}
-            hasMore={hasMore && !fetchingMore}
-            loadMore={loadMore}
-            fetchingMore={fetchingMore}
-            fetching={fetching}
-          />
-        </div>
-      </div>
+      <PostsContainer>
+        <FeedContainer
+          content={content}
+          hasMore={hasMore && !fetchingMore}
+          loadMore={loadMore}
+          fetchingMore={fetchingMore}
+          fetching={fetching}
+        />
+      </PostsContainer>
     );
   }
 }

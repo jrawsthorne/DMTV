@@ -4,8 +4,9 @@ import { Row, Col } from 'antd';
 import Loadable from 'react-loadable';
 import { Link } from 'react-router-dom';
 import MediaQuery from 'react-responsive';
+import ellipsis from 'text-ellipsis';
 import './Media.less';
-import BodyShort from '../post/BodyShort';
+
 
 const SubscribeButton = Loadable({
   loader: () => import('./SubscribeButton'),
@@ -131,7 +132,7 @@ const Media = props => (
           <Col xs={24} sm={24} lg={14}>
             <div className="MediaHeader__info__overview">
               <h4>Overview</h4>
-              <BodyShort body={props.overview} />
+              {ellipsis(props.overview, 200, { ellipsis: '…' })}
             </div>
             {/* popovers for episodes and seasons */}
             {props.seasons && <SelectorPopover type="season" list={props.seasons} tmdbid={props.tmdbid} seasonNum={props.seasonNum} />}

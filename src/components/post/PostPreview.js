@@ -4,7 +4,6 @@ import { Icon } from 'antd';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import BodyShort from './BodyShort';
-import './PostPreview.less';
 import LikeButton from './Buttons/LikeButton';
 import Upvotes from './Counts/Upvotes';
 import CommentButton from './Buttons/CommentButton';

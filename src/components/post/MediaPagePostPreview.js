@@ -8,8 +8,6 @@ import Upvotes from './Counts/Upvotes';
 import CommentButton from './Buttons/CommentButton';
 import CommentCount from './Counts/CommentCount';
 
-import './PostPreview.less';
-
 const PostPreview = ({
   url,
   backdropPath,

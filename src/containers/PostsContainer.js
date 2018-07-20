@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import styled from 'styled-components';
+import { PostsContainer as Container } from '../components/post/Posts';
 import * as actions from '../actions/postActions';
 import {
   getFeedFromState,
@@ -12,11 +12,6 @@ import {
 import { getFeed } from '../reducers';
 
 import FeedContainer from './FeedContainer';
-
-export const Container = styled.div`
-  margin-left: -10px;
-  margin-right: -10px;
-`;
 
 class PostsContainer extends React.Component {
   static propTypes = {
@@ -79,12 +74,12 @@ class PostsContainer extends React.Component {
     return (
       <Container>
         <FeedContainer
-            content={content}
-            hasMore={hasMore && !fetchingMore}
-            loadMore={loadMore}
-            fetchingMore={fetchingMore}
-            fetching={fetching}
-          />
+          content={content}
+          hasMore={hasMore && !fetchingMore}
+          loadMore={loadMore}
+          fetchingMore={fetchingMore}
+          fetching={fetching}
+        />
       </Container>
     );
   }

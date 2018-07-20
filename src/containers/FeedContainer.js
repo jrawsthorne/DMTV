@@ -1,14 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import InfiniteScroll from '../vendor/InfiniteScroll';
 import PostPreviewContainer from './PostPreviewContainer';
-import PostPreviewLoading from '../components/post/PostPreviewLoading';
-
-export const PostsLayout = styled(InfiniteScroll)`
-  display: flex;
-  flex-wrap: wrap;
-`;
+import { PostPreviewLoading } from '../components/post/CardLoading';
+import { PostsLayout } from '../components/post/Posts';
 
 const FeedContainer = ({
   content, hasMore, loadMore, fetchingMore, fetching,
@@ -16,10 +10,9 @@ const FeedContainer = ({
   <PostsLayout
     loadMore={loadMore}
     hasMore={hasMore}
-    className="postsLayout"
     loadingMore={fetchingMore || fetching}
     threshold={1500}
-    loader={<div className="postsLayout__post" key="loader"><PostPreviewLoading /></div>}
+    loader={<PostPreviewLoading key="loader" />}
   >
     {content.map(id => <PostPreviewContainer key={id} postId={id} />)}
   </PostsLayout>

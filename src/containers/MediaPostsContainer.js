@@ -11,9 +11,9 @@ import {
 import { getFeed } from '../reducers';
 
 import FeedContainer from './MediaPageFeedContainer';
-import { Container } from './PostsContainer';
+import { PostsContainer } from '../components/post/Posts';
 
-class PostsContainer extends React.Component {
+class MediaPostsContainer extends React.Component {
   static propTypes = {
     fetchPosts: PropTypes.func.isRequired,
     fetchMorePosts: PropTypes.func.isRequired,
@@ -93,15 +93,15 @@ class PostsContainer extends React.Component {
     }
     if (loaded && _.isEmpty(content)) return <div><p>Sorry, no posts found</p></div>;
     return (
-      <Container>
+      <PostsContainer>
         <FeedContainer
-            content={content}
-            fetchingMore={fetchingMore}
-            hasMore={hasMore && !fetchingMore}
-            loadMore={loadMore}
-            fetching={fetching}
-          />
-      </Container>
+          content={content}
+          fetchingMore={fetchingMore}
+          hasMore={hasMore && !fetchingMore}
+          loadMore={loadMore}
+          fetching={fetching}
+        />
+      </PostsContainer>
     );
   }
 }
@@ -115,4 +115,4 @@ const mapDispatchToProps = ({
   fetchMorePosts: actions.fetchMorePosts,
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PostsContainer));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MediaPostsContainer));

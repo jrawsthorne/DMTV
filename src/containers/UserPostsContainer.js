@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import * as actions from '../actions/postActions';
+import { PostsContainer } from '../components/post/Posts';
 import {
   getFeedFromState,
   getFeedStatusFromState,
@@ -12,7 +13,7 @@ import { getFeed } from '../reducers';
 
 import FeedContainer from './FeedContainer';
 
-class PostsContainer extends React.Component {
+class UserPostsContainer extends React.Component {
   static propTypes = {
     fetchPosts: PropTypes.func.isRequired,
     fetchMorePosts: PropTypes.func.isRequired,
@@ -49,17 +50,15 @@ class PostsContainer extends React.Component {
     }
     if (_.isEmpty(content) && loaded) return <div><p>Sorry, no posts found</p></div>;
     return (
-      <div className="posts">
-        <div className="postsContainer">
-          <FeedContainer
-            content={content}
-            hasMore={hasMore && !fetchingMore}
-            loadMore={loadMore}
-            fetchingMore={fetchingMore}
-            fetching={fetching}
-          />
-        </div>
-      </div>
+      <PostsContainer>
+        <FeedContainer
+          content={content}
+          hasMore={hasMore && !fetchingMore}
+          loadMore={loadMore}
+          fetchingMore={fetchingMore}
+          fetching={fetching}
+        />
+      </PostsContainer>
     );
   }
 }
@@ -73,4 +72,4 @@ const mapDispatchToProps = ({
   fetchMorePosts: actions.fetchMorePosts,
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PostsContainer));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserPostsContainer));
