@@ -10,13 +10,12 @@ import {
 } from '../helpers/stateHelpers';
 import { getFeed } from '../reducers';
 
-import Loading from '../components/misc/Loading';
-
 import FeedContainer from './FeedContainer';
 
 class PostsContainer extends React.Component {
   static propTypes = {
     fetchPosts: PropTypes.func.isRequired,
+    fetchMorePosts: PropTypes.func.isRequired,
     match: PropTypes.shape().isRequired,
     feed: PropTypes.shape().isRequired,
   };
@@ -39,23 +38,25 @@ class PostsContainer extends React.Component {
     }
   }
   render() {
-    const { match: { params: { username } }, feed } = this.props;
-    const loadMore = () => null;
+    const { match: { params: { username } }, feed, fetchMorePosts } = this.props;
+    const loadMore = () => fetchMorePosts({ category: { author: username } });
     const content = getFeedFromState('created', username, feed);
     const {
-      fetching, loaded, hasMore, failed,
+      fetching, loaded, hasMore, failed, fetchingMore,
     } = getFeedStatusFromState('created', username, feed);
-    if (fetching || !loaded) return <Loading />;
-    if (failed) return <div><p>Sory, there was an error fetching posts</p></div>;
-    if (_.isEmpty(content)) return <div><p>Sorry, no posts found</p></div>;
+    if (failed && _.isEmpty(content)) {
+      return <div><p>Sory, there was an error fetching posts</p></div>;
+    }
+    if (_.isEmpty(content) && loaded) return <div><p>Sorry, no posts found</p></div>;
     return (
       <div className="posts">
         <div className="postsContainer">
           <FeedContainer
             content={content}
-            fetching={fetching}
-            hasMore={hasMore}
+            hasMore={hasMore && !fetchingMore}
             loadMore={loadMore}
+            fetchingMore={fetchingMore}
+            fetching={fetching}
           />
         </div>
       </div>
@@ -69,6 +70,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = ({
   fetchPosts: actions.fetchPosts,
+  fetchMorePosts: actions.fetchMorePosts,
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PostsContainer));

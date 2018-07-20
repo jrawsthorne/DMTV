@@ -25,6 +25,17 @@ const feedCategory = (state = {}, action) => {
           fetchingMore: true,
         };
       }
+      if (action.meta.reload) {
+        return {
+          ...state,
+          fetching: true,
+          loaded: false,
+          failed: false,
+          list: [],
+          hasMore: false,
+          fetchingMore: false,
+        };
+      }
       return {
         ...state,
         fetching: true,
@@ -56,6 +67,7 @@ const feedCategory = (state = {}, action) => {
       return {
         ...state,
         fetching: false,
+        fetchingMore: false,
         loaded: true,
         failed: true,
         hasMore: false,

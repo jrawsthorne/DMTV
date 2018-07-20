@@ -15,11 +15,15 @@ class SubscribeButton extends React.Component {
   }
   render() {
     const {
-      loaded, fetching, isSubscribed,
+      isSubscribed, pendingSubscription, fetching,
     } = this.props;
-    const buttonText = isSubscribed ? 'Unsubscribe' : 'Subscribe';
+    let subscribed = isSubscribed;
+    if (pendingSubscription) {
+      ({ subscribed } = pendingSubscription);
+    }
+    const buttonText = subscribed ? 'Unsubscribe' : 'Subscribe';
     return (
-      <Button disabled={fetching || !loaded} onClick={this.handleSubscribeChange}>
+      <Button disabled={fetching} onClick={this.handleSubscribeChange}>
         {buttonText}
       </Button>
     );
@@ -29,10 +33,14 @@ class SubscribeButton extends React.Component {
 SubscribeButton.propTypes = {
   mediaType: PropTypes.string.isRequired,
   tmdbid: PropTypes.string.isRequired,
-  fetching: PropTypes.bool.isRequired,
-  loaded: PropTypes.bool.isRequired,
   isSubscribed: PropTypes.bool.isRequired,
   subscribeChange: PropTypes.func.isRequired,
+  pendingSubscription: PropTypes.shape(),
+  fetching: PropTypes.bool.isRequired,
+};
+
+SubscribeButton.defaultProps = {
+  pendingSubscription: null,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -46,6 +54,7 @@ const mapStateToProps = (state, ownProps) => {
     loaded: _.get(state, 'subscriptions.loaded', false),
     /* isSubscribed if subscription found with specified type and tmdbid */
     isSubscribed: !!_.find(_.get(state, 'subscriptions.items', []), { type, tmdbid: parseInt(tmdbid, 10) }),
+    pendingSubscription: _.find(_.get(state, 'subscriptions.pendingSubscriptions', []), { type, tmdbid: parseInt(tmdbid, 10) }),
   };
 };
 

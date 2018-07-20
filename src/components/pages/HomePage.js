@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Loadable from 'react-loadable';
 import { Layout } from 'antd';
 import ScrollToTop from '../misc/ScrollToTop';
+import ReloadFeedButton from '../misc/ReloadFeedButton';
 
 const PostsContainer = Loadable({
   loader: () => import('../../containers/PostsContainer'),
@@ -44,6 +45,7 @@ class HomePage extends React.Component {
         <h2>
           <SortBySelector sortBy={sortBy} onSortChange={this.handleSortChange} />
           { } <FilterSelector category={category} onFilterChange={this.handleFilterChange} />
+          { } <ReloadFeedButton sortBy={sortBy} category={category} />
         </h2>
         <PostsContainer />
       </Layout>

@@ -4,6 +4,11 @@ import { Icon } from 'antd';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import BodyShort from './BodyShort';
+import './PostPreview.less';
+import LikeButton from './Buttons/LikeButton';
+import Upvotes from './Counts/Upvotes';
+import CommentButton from './Buttons/CommentButton';
+import CommentCount from './Counts/CommentCount';
 
 /* styled components */
 
@@ -75,6 +80,12 @@ const PostPreview = ({
         </PostDetails>
         <h3><Link to={url}>{title}</Link></h3>
         <BodyShort body={overview} /> <Link to={url}>Read more</Link>
+        <span style={{ marginTop: 10, display: 'block' }}>
+          <LikeButton post={post} />
+          <Upvotes votes={post.active_votes} />
+          <CommentButton post={post} />
+          <CommentCount count={post.children} />
+        </span>
       </Body>
     </StyledPostPreview>
   );

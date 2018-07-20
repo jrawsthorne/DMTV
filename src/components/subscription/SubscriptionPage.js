@@ -6,6 +6,7 @@ import { Layout } from 'antd';
 import ScrollToTop from '../misc/ScrollToTop';
 import Loading from '../misc/Loading';
 import Error401Page from '../pages/Error401Page';
+import ReloadFeedButton from '../misc/ReloadFeedButton';
 
 const SubscriptionPostsContainer = Loadable({
   loader: () => import('../../containers/SubscriptionPostsContainer'),
@@ -19,7 +20,7 @@ const SubscriptionPage = ({ authLoaded, isAuthenticated }) => {
   return (
     <Layout className="main-content">
       <ScrollToTop />
-      <h2>Subscriptions</h2>
+      <h2>Subscriptions <ReloadFeedButton type="subscriptions" /></h2>
       <p>Posts from movies and shows you have subscribed to</p>
       <SubscriptionPostsContainer />
     </Layout>

@@ -7,6 +7,7 @@ const initialState = {
   failed: false,
   fetching: false,
   items: [],
+  pendingRatings: [],
 };
 
 export default (state = initialState, action) => {
@@ -36,13 +37,27 @@ export default (state = initialState, action) => {
         loaded: true,
         failed: true,
       };
-    case types.USER_RATE_CHANGE_PENDING:
+    case types.USER_RATE_CHANGE_PENDING: {
+      const {
+        mediaType, tmdbid, seasonNum, episodeNum, value,
+      } = action.meta;
       return {
         ...state,
         fetching: true,
         loaded: false,
         failed: false,
+        pendingRatings: [
+          ...state.pendingRatings,
+          {
+            mediaType,
+            tmdbid: parseInt(tmdbid, 10),
+            seasonNum: parseInt(seasonNum, 10),
+            episodeNum: parseInt(episodeNum, 10),
+            score: value,
+          },
+        ],
       };
+    }
     case types.USER_RATE_CHANGE_FULFILLED: {
       const {
         seasonNum, episodeNum, tmdbid, mediaType, value,
@@ -55,6 +70,15 @@ export default (state = initialState, action) => {
         /* else added message */
         message.success('Rated successfully', 0.5);
       }
+      /* remove rating from pending */
+      const pendingRatings = _.filter(
+        state.pendingRatings,
+        (rating =>
+          rating.mediaType !== mediaType &&
+          rating.tmdbid !== tmdbid &&
+          rating.seasonNum !== seasonNum &&
+          rating.episodeNum !== episodeNum),
+      );
       if (!_.isEmpty(state.items)) {
         const query = { tmdbid: parseInt(tmdbid, 10), mediaType };
         if (seasonNum) query.seasonNum = parseInt(seasonNum, 10);
@@ -72,6 +96,7 @@ export default (state = initialState, action) => {
             loaded: true,
             failed: false,
             items: ratings,
+            pendingRatings,
           };
         }
       }
@@ -85,6 +110,7 @@ export default (state = initialState, action) => {
           ...state.items,
           action.payload,
         ],
+        pendingRatings,
       };
     }
     case types.USER_RATE_CHANGE_REJECTED:
