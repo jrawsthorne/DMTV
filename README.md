@@ -1,6 +1,8 @@
-# Review (name needed)
+# DMTV
 
-The aim is to create an app with a nice interface where movie and TV lovers can come together with the added benefit of monetisation for popular content.
+DMTV is a [STEEM](https://steem.io) backed TV and Movie discussion app. Write interesting reviews or participate in discussions and receive rewards.
+
+Check it out here: https://dmtv.jakerawsthorne.co.uk
 
 ## Usage
 
@@ -21,4 +23,9 @@ yarn dev-server
 yarn build
 ```
 
-#### Shout out to [Busy](https://github.com/busyorg/busy) for inspiration and some styling
+### Run app
+
+###### ```node server.js``` to run the main app
+###### ```node api-server.js``` to run the API
+
+#### Shout out to [Busy](https://github.com/busyorg/busy) for styling and development hints.

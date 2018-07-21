@@ -1,7 +1,7 @@
 {
-  "name": "review",
+  "name": "dmtv",
   "version": "0.1.0",
-  "description": "Blockchain based TV and movie review app",
+  "description": "STEEM backed TV and Movie discussion app",
   "scripts": {
     "dev-server": "run-p auth-server api-server client",
     "auth-server": "node auth-server.js",
