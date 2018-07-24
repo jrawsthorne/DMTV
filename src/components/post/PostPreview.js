@@ -5,18 +5,23 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import BodyShort from './BodyShort';
 import LikeButton from './Buttons/LikeButton';
-import Upvotes from './Counts/Upvotes';
 import CommentButton from './Buttons/CommentButton';
-import CommentCount from './Counts/CommentCount';
 
 /* styled components */
 
-export const StyledPostPreview = styled.div`
+export const PostPreviewContainer = styled.div`
   width: 100%;
   padding: 10px;
   @media (min-width: 768px) {
     width: 50%;
   }
+`;
+
+export const StyledPostPreview = styled.div`
+  background: #fff;
+  box-shadow: 0 0 41px 0 #e0e0e3, 0 0 0 0 #babdce;
+  border-radius: 4px;
+  height: 100%;
 `;
 
 export const Backdrop = styled.div`
@@ -66,27 +71,27 @@ const PostPreview = ({
   let created = new Date(post.created);
   created = created.toLocaleDateString('en-GB', options);
   return (
-    <StyledPostPreview>
-      <Link to={url}>
-        <Backdrop path={backdropPath} />
-      </Link>
-      <Body>
-        <MediaTitle>
-          <Link to={mediaUrl}>{mediaTitle}</Link>
-        </MediaTitle>
-        <PostDetails>
-          <CreatedIcon type="clock-circle-o" /> {created} - <Link to={`/@${post.author}`}>{post.author}</Link>
-        </PostDetails>
-        <h3><Link to={url}>{title}</Link></h3>
-        <BodyShort body={overview} /> <Link to={url}>Read more</Link>
-        <span style={{ marginTop: 10, display: 'block' }}>
-          <LikeButton post={post} />
-          <Upvotes votes={post.active_votes} />
-          <CommentButton post={post} />
-          <CommentCount count={post.children} />
-        </span>
-      </Body>
-    </StyledPostPreview>
+    <PostPreviewContainer>
+      <StyledPostPreview>
+        <Link to={url}>
+          <Backdrop path={backdropPath} />
+        </Link>
+        <Body>
+          <MediaTitle>
+            <Link to={mediaUrl}>{mediaTitle}</Link>
+          </MediaTitle>
+          <PostDetails>
+            <CreatedIcon type="clock-circle-o" /> {created} - <Link to={`/@${post.author}`}>{post.author}</Link>
+          </PostDetails>
+          <h3><Link to={url}>{title}</Link></h3>
+          <BodyShort body={overview} /> <Link to={url}>Read more</Link>
+          <span style={{ marginTop: 10, display: 'block' }}>
+            <LikeButton margin="0 10px 0 0" post={post} votes={post.active_votes} />
+            <CommentButton post={post} count={post.children} />
+          </span>
+        </Body>
+      </StyledPostPreview>
+    </PostPreviewContainer>
   );
 };
 
