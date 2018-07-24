@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import { Layout, Divider } from 'antd';
+import { Layout } from 'antd';
 import classNames from 'classnames';
 import MediaContainer from '../../containers/MediaContainer';
 import PostContainer from '../../containers/PostContainer';
@@ -36,14 +36,12 @@ const PostPage = ({
     </Layout>
     }
     <Layout className={classNames('main-content', 'PostPage__post', { PostPage__post__failed: postFailed })}>
-      {!postFailed && <Divider />}
       <PostContainer
         author={author}
         permlink={permlink}
       />
       {!postFailed &&
       <React.Fragment>
-        <Divider type="horizontal" className="ShowMobile" />
         <Similar mediaType={type} tmdbid={tmdbid} />
       </React.Fragment>
           }
