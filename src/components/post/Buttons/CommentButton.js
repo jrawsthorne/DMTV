@@ -1,13 +1,19 @@
 import React from 'react';
-import { Icon } from 'antd';
-import './CommentButton.less';
+import PropTypes from 'prop-types';
+import { Button } from '../../../styles/theme';
 
-const CommentButton = () => (
-  <Icon
-    className="CommentButton"
-    style={{ fontSize: 20 }}
-    type="message"
-  />
+const CommentButton = ({ count }) => (
+  <Button
+    icon="message"
+    type="info"
+    size="small"
+  >
+    {`${count}` /* antd doesn't like numbers */}
+  </Button>
 );
+
+CommentButton.propTypes = {
+  count: PropTypes.number.isRequired,
+};
 
 export default CommentButton;

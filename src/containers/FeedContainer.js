@@ -1,23 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import InfiniteScroll from '../vendor/InfiniteScroll';
 import PostPreviewContainer from './PostPreviewContainer';
-import PostPreviewLoading from '../components/post/PostPreviewLoading';
+import { PostPreviewLoading } from '../components/post/CardLoading';
+import { PostsLayout } from '../components/post/Posts';
 
 const FeedContainer = ({
   content, hasMore, loadMore, fetchingMore, fetching,
 }) => (
-  <InfiniteScroll
+  <PostsLayout
     loadMore={loadMore}
     hasMore={hasMore}
-    className="postsLayout"
     loadingMore={fetchingMore || fetching}
     threshold={1500}
-    loader={<div className="postsLayout__post" key="loader"><PostPreviewLoading /></div>}
+    loader={<PostPreviewLoading key="loader" />}
   >
     {content.map(id => <PostPreviewContainer key={id} postId={id} />)}
-  </InfiniteScroll>
-
+  </PostsLayout>
 );
 
 FeedContainer.propTypes = {

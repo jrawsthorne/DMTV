@@ -5,28 +5,29 @@ import { connect } from 'react-redux';
 import { Carousel } from 'antd';
 import { Link } from 'react-router-dom';
 import MediaQuery from 'react-responsive';
+import ellipsis from 'text-ellipsis';
 import { getMediaItemDetails } from '../../helpers/mediaHelpers';
 import { getMediaStatusFromState } from '../../helpers/stateHelpers';
-import BodyShort from '../post/BodyShort';
-import PostPreviewLoading from '../post/PostPreviewLoading';
+import CardLoading from '../post/CardLoading';
+import { Body, Backdrop, MediaTitle } from '../post/PostPreview';
 import './Similar.less';
 
 /* show the backdrop, title and overview with link to its page */
 export const SimilarItem = ({ item, url, mediaType }) => {
   const {
-    backdropPath, title, overview,
+    title, overview,
   } = getMediaItemDetails(item, mediaType);
   return (
     <React.Fragment>
       <Link to={url}>
-        <div className="SimilarItem__backdrop" style={{ height: 200, backgroundImage: `${backdropPath && `url(${backdropPath}`})`, backgroundColor: '#444' }} />
+        <Backdrop path={item.backdrop_path} />
       </Link>
-      <div className="SimilarItem__body">
-        <h2 style={{ marginBottom: 0 }}>
+      <Body>
+        <MediaTitle>
           <Link to={url}>{title}</Link>
-        </h2>
-        <BodyShort body={overview} />
-      </div>
+        </MediaTitle>
+        {ellipsis(overview, 200, { ellipsis: '…' })}
+      </Body>
     </React.Fragment>
   );
 };
@@ -51,9 +52,9 @@ const SimilarLoading = () => (
               dots={false}
             >
               {/* add 3 loaders */}
-              <PostPreviewLoading />
-              <PostPreviewLoading />
-              <PostPreviewLoading />
+              <CardLoading />
+              <CardLoading />
+              <CardLoading />
             </Carousel>
           );
       }}

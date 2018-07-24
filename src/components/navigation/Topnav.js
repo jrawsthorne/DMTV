@@ -69,7 +69,7 @@ class Topnav extends React.Component {
           <div className="topnav-layout">
             <div className="left">
               <Link className="Topnav__logo" to="/">
-                Review
+                dmtv
               </Link>
               <span className="Topnav__version">0.1.0</span>
             </div>

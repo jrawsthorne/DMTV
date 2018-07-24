@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Icon } from 'antd';
 import { fetchPosts, fetchSubscriptions } from '../../actions/postActions';
+import { Button } from '../../styles/theme';
+import { getFeedStatusFromState } from '../../helpers/stateHelpers';
 
 class ReloadFeedButton extends React.Component {
   handleClick = () => {
@@ -16,8 +17,14 @@ class ReloadFeedButton extends React.Component {
     }
   }
   render() {
+    const {
+      sortBy, category, feed, type,
+    } = this.props;
+    const {
+      fetching,
+    } = getFeedStatusFromState(type === 'subscriptions' ? 'created' : sortBy, type || category, feed);
     return (
-      <Icon style={{ marginLeft: 10 }} type="reload" onClick={this.handleClick} />
+      <Button margin="0 0 0 10px" shape="circle" loading={fetching} icon="reload" onClick={this.handleClick} />
     );
   }
 }
@@ -28,12 +35,17 @@ ReloadFeedButton.propTypes = {
   fetchPosts: PropTypes.func.isRequired,
   fetchSubscriptions: PropTypes.func.isRequired,
   type: PropTypes.string,
+  feed: PropTypes.shape().isRequired,
 };
 
 ReloadFeedButton.defaultProps = {
-  category: null,
+  category: undefined,
   sortBy: 'trending',
   type: null,
 };
 
-export default connect(null, { fetchPosts, fetchSubscriptions })(ReloadFeedButton);
+const mapStateToProps = state => ({
+  feed: state.feed,
+});
+
+export default connect(mapStateToProps, { fetchPosts, fetchSubscriptions })(ReloadFeedButton);

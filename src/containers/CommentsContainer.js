@@ -2,10 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import { Button } from 'antd';
+import styled from 'styled-components';
+import { Button } from '../styles/theme';
 import { fetchReplies } from '../actions/commentsActions';
 import Comment from './CommentContainer';
 import CommentsLoading from '../components/post/CommentsLoading';
+import ShowRepliesButton from '../components/post/Buttons/ShowRepliesButton';
+
+const RootShowRepliesButton = styled(ShowRepliesButton)`
+  margin: 0 0 20px 0;
+`;
 
 class CommentsContainer extends React.Component {
   /* don't show the replies initially */
@@ -53,11 +59,18 @@ class CommentsContainer extends React.Component {
       fetching, replies, count,
     } = this.props;
     const { showReplies } = this.state;
-    if (count === 0 && replies.length === 0) return 'No comments';
+    if (count === 0 && replies.length === 0) {
+      return (
+        <div>
+          <Button margin="0 0 20px 0" size="small">No comments</Button>
+        </div>
+      );
+    }
+
     /* if comments already loaded show them */
     /* this means expanded comments maintain state on page changes */
     if (replies.length > 0) {
-      return replies.map(comment =>
+      return _.orderBy(replies, 'created', 'desc').map(comment =>
         <Comment key={comment.id} comment={comment} />);
     }
     /*
@@ -67,7 +80,12 @@ class CommentsContainer extends React.Component {
     if (showReplies && replies.length === 0 && fetching) return <CommentsLoading root />;
     /* otherwise show a link to view the replies */
     return (
-      <Button onClick={this.handleShowRepliesClick}>View {count} {count === 1 ? 'reply' : 'replies'}</Button>
+      <div>
+        <RootShowRepliesButton
+          handleShowRepliesClick={this.handleShowRepliesClick}
+          count={count}
+        />
+      </div>
     );
   }
 }

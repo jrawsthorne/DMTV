@@ -2,17 +2,37 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Card } from 'antd';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 import Body from '../../helpers/bodyHelpers';
 import CommentContainer from '../../containers/CommentContainer';
 import LikeButton from './Buttons/LikeButton';
-import Upvotes from './Counts/Upvotes';
-import CommentButton from './Buttons/CommentButton';
-import CommentCount from './Counts/CommentCount';
 import ReplyButton from './Buttons/ReplyButton';
 import CommentsLoading from './CommentsLoading';
 import ReplyBox from './ReplyBox';
 import ShowRepliesButton from './Buttons/ShowRepliesButton';
 import './Comments.less';
+
+const StyledReply = styled.div`
+  padding: ${props => (props.root ? '20px' : '0')};
+  background: #fff;
+  box-shadow: ${props => (props.root ? '0 0 41px 0 #e0e0e3, 0 0 0 0 #babdce' : 'none')};
+  margin-bottom: 20px;
+  border-radius: 4px;
+`;
+
+const ReplyMeta = ({ root, ...restProps }) => <Card.Meta {...restProps} />;
+
+ReplyMeta.propTypes = {
+  root: PropTypes.bool,
+};
+
+ReplyMeta.defaultProps = {
+  root: false,
+};
+
+const StyledReplyMeta = styled(ReplyMeta)`
+  margin: ${props => (props.root ? '0' : '20px 0 0 0')};
+`;
 
 const NestedReply = ({
   comment,
@@ -25,28 +45,17 @@ const NestedReply = ({
   isAuthenticated,
 }) => {
   const root = comment.depth === 1;
-  let styles;
-  if (!root) {
-    styles = { padding: '20px 0 10px 0' };
-  }
   const replyCount = comment.children;
   const loadedReplyCount = replies.length;
   return (
-    <Card.Meta
-      style={styles}
-      avatar={<div className="Comment__avatar" style={{ backgroundImage: `url(https://steemitimages.com/u/${comment.author}/avatar/large)` }} />}
+    <StyledReplyMeta
+      root={root}
+      avatar={<Link to={`/@${comment.author}`}><span className="Comment__avatar" style={{ backgroundImage: `url(https://steemitimages.com/u/${comment.author}/avatar/large)` }} /></Link>}
       title={<Link to={`/@${comment.author}`}>{comment.author}</Link>}
       description={
         <div className="Comment__body">
           <Body body={comment.body} returnType="Object" />
-          <LikeButton post={comment} type="comment" />
-          <Upvotes votes={comment.active_votes} />
-          {replyCount > 0 && (
-          <React.Fragment>
-            <CommentButton post={comment} />
-            <CommentCount count={comment.children} />
-          </React.Fragment>
-                )}
+          <LikeButton post={comment} type="comment" votes={comment.active_votes} />
           {isAuthenticated && <ReplyButton
             parentAuthor={comment.author}
             parentPermlink={comment.permlink}
@@ -77,13 +86,9 @@ const NestedReply = ({
 const Comment = (props) => {
   if (props.comment.depth === 1) {
     return (
-      <Card
-        style={{ marginBottom: 15 }}
-        hoverable
-        className="Comment"
-      >
+      <StyledReply root>
         <NestedReply {...props} />
-      </Card>);
+      </StyledReply>);
   }
   return <NestedReply {...props} />;
 };
