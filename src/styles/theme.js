@@ -3,13 +3,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Button as AntdButton,
+  Tooltip as AntdTooltip,
+  Input,
+  Form,
 } from 'antd';
+
 const colours = {
   primary: '#f5f8fd',
   secondary: '#246ee9',
   accent: '#7276a2',
   darkBlue: '#bebedb',
 };
+
 const theme = {
   containerWidth: '1010px',
   leftWidth: '180px',
@@ -59,6 +64,48 @@ const theme = {
     },
   },
 };
+
+export const TextArea = styled(Input.TextArea)`
+  border-radius: 2px;
+  border: none;
+  color: ${colours.darkBlue};
+  ::placeholder {
+    color: ${colours.darkBlue};
+  }
+  box-shadow: none;
+  margin: ${props => props.margin || '0'};
+  padding: ${props => props.padding || '0'};
+  &:hover, &:focus {
+    border: none;
+    box-shadow: none!important;
+  }
+`;
+
+export const Notification = styled.div`
+  background: ${props => theme.notification.background[props.type || 'default']};
+  padding: 20px;
+  border-radius: 5px;
+  width: 100%;
+  margin-bottom: 10px;
+  p {
+    color: ${props => theme.notification.color[props.type || 'default']};
+    margin-bottom: 0;
+    font-weight: bold;
+  }
+`;
+
+const PropsButton = ({ padding, margin, ...restProps }) => <AntdButton {...restProps} />;
+
+PropsButton.propTypes = {
+  padding: PropTypes.string,
+  margin: PropTypes.string,
+};
+
+PropsButton.defaultProps = {
+  padding: null,
+  margin: null,
+};
+
 export const Button = styled(PropsButton)`
   border-radius: ${props => (props.shape === 'circle' ? '50%' : '2px')};
   text-transform: uppercase;
@@ -94,6 +141,38 @@ export const Button = styled(PropsButton)`
     }
   `}
 `;
+
+export const FormItem = styled(Form.Item)`
+  margin: ${props => props.margin || '0'};
+  padding: ${props => props.padding || '0'};
+  .ant-form-explain {
+    display: none;
+  }
+`;
+
+const StyledTooltip = ({ className, children, ...restProps }) =>
+  <AntdTooltip overlayClassName={className} {...restProps}>{children}</AntdTooltip>;
+
+StyledTooltip.propTypes = {
+  className: PropTypes.string,
+  children: PropTypes.node.isRequired,
+};
+
+StyledTooltip.defaultProps = {
+  className: null,
+};
+
+export const Tooltip = styled(StyledTooltip)`
+  .ant-tooltip-inner {
+    font-weight: bold;
+    color: ${props => (props.type ? theme.button.color[props.type] : theme.button.color.default)};
+    background-color: ${props => (props.type ? theme.button.background[props.type] : theme.button.background.default)};
+  }
+  .ant-tooltip-arrow {
+    border-right-color: ${props => (props.type ? theme.button.background[props.type] : theme.button.background.default)};
+  }
+`;
+
 export default {
   ...theme,
   ...colours,
