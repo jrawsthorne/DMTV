@@ -1,13 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icon, Spin } from 'antd';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import * as actions from '../../../actions/postActions';
+import { Button } from '../../../styles/theme';
 
 import './LikeButton.less';
-
-const LoadingIcon = <Icon type="loading" style={{ fontSize: 20 }} spin />;
 
 class LikeButton extends React.Component {
   handleLikeClick = (isLiked) => {
@@ -19,21 +17,28 @@ class LikeButton extends React.Component {
     votePost(author, permlink, type, weight);
   }
   render() {
-    const { userVote, pendingLike } = this.props;
+    const {
+      userVote, pendingLike, votes, isAuthenticated, margin,
+    } = this.props;
+
+    const upvotes = votes.filter(vote => vote.percent > 0).length;
 
     const postState = {
       isLiked: userVote.percent > 0,
     };
 
-    if (pendingLike) return <Spin indicator={LoadingIcon} />;
-
     return (
-      <Icon
-        className="LikeButton"
+      <Button
+        disabled={!isAuthenticated}
+        loading={pendingLike}
+        icon="like-o"
+        type={postState.isLiked ? 'attention' : 'default'}
         onClick={() => this.handleLikeClick(postState.isLiked)}
-        style={{ fontSize: 20 }}
-        type={postState.isLiked ? 'like' : 'like-o'}
-      />
+        margin={margin}
+        size="small"
+      >
+        {`${upvotes}` /* antd doesn't like numbers */}
+      </Button>
     );
   }
 }
@@ -44,12 +49,17 @@ LikeButton.propTypes = {
   userVote: PropTypes.shape(),
   pendingLike: PropTypes.shape(),
   type: PropTypes.string,
+  votes: PropTypes.arrayOf(PropTypes.shape()),
+  isAuthenticated: PropTypes.bool.isRequired,
+  margin: PropTypes.string,
 };
 
 LikeButton.defaultProps = {
   userVote: {},
   pendingLike: null,
   type: 'post',
+  votes: [],
+  margin: '0',
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -57,6 +67,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     userVote: _.find(activeVotes, { voter: state.auth.user.name }),
     pendingLike: _.find(state.posts.pendingLikes, { postId: `@${author}/${permlink}` }),
+    isAuthenticated: state.auth.isAuthenticated,
   };
 };
 
