@@ -2,8 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Button } from 'antd';
+import { Button } from '../../styles/theme';
 import { newPostInfo } from '../../actions/postActions';
+
+const StyledNewPostButton = Button.extend`
+  width: 100%;
+  @media (min-width: 768px) {
+    margin-left: 10px;
+    width: auto;
+  }
+`;
 
 class NewPostButton extends React.Component {
   handleNewPostClick = () => {
@@ -28,9 +36,9 @@ class NewPostButton extends React.Component {
   }
   render() {
     return (
-      <Button className="NewPostButton" onClick={this.handleNewPostClick}>
+      <StyledNewPostButton onClick={this.handleNewPostClick}>
         New Post
-      </Button>
+      </StyledNewPostButton>
     );
   }
 }
