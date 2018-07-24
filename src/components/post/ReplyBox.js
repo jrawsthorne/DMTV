@@ -2,12 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { Input, Card, Form, Button } from 'antd';
-import { Link } from 'react-router-dom';
+import { Form, Icon } from 'antd';
+import { Button, TextArea, FormItem, Tooltip } from '../../styles/theme';
 import * as actions from '../../actions/commentsActions';
-import Body from '../../helpers/bodyHelpers';
+import styled, { css } from '../../../node_modules/styled-components';
 
-const FormItem = Form.Item;
+const StyledReplyBox = styled.div`
+  padding: ${props => (props.root ? '20px' : '0')};
+  background: #fff;
+  box-shadow: ${props => (props.root ? '0 0 41px 0 #e0e0e3, 0 0 0 0 #babdce' : 'none')};
+  margin-top: ${props => (props.root ? '0' : '20px')};
+  ${props => props.root && css`
+    margin-bottom: 20px;
+  `}
+  border-radius: 4px;
+`;
 
 class ReplyInput extends React.Component {
   handleSubmit = (e) => {
@@ -30,8 +39,8 @@ class ReplyInput extends React.Component {
           parentId,
           values.body,
         ).then(() => {
-          resetFields();
           toggleReplyBox();
+          resetFields();
         });
       }
     });
@@ -39,48 +48,52 @@ class ReplyInput extends React.Component {
   render() {
     const {
       broadcasting,
-      form: { getFieldDecorator, getFieldValue },
+      form: {
+        getFieldDecorator, getFieldError, getFieldValue, isFieldTouched,
+      },
+      root,
     } = this.props;
-    const body = getFieldValue('body');
+
+    const touched = isFieldTouched('body');
+    const empty = !getFieldValue('body');
+    const error = getFieldError('body');
+    const isError = !!getFieldError('body');
+
     return (
-      <Form hideRequiredMark onSubmit={this.handleSubmit}>
-        <FormItem className="Body" placeholder="Enter your comment">
+      <Form hideRequiredMark onSubmit={this.handleSubmit} style={{ paddingLeft: 21 }}>
+        <FormItem margin="0 0 10px 0" placeholder="Enter your comment">
           {getFieldDecorator('body', {
                 initialValue: '',
                 rules: [
                   {
                     required: true,
-                    message: 'Body can\'t be empty',
+                    message: 'Comment can\'t be empty',
                   },
                 ],
-              })(<Input.TextArea />)}
+              })(<TextArea placeholder="Enter your comment" autoFocus={!root} autosize={{ minRows: 3, maxRows: 6 }} />)}
         </FormItem>
-        {!_.isEmpty(body) && <h2>Preview</h2>}
-        {<Body body={body} returnType="Object" />}
-        <Form.Item>
-          <Button loading={broadcasting} htmlType="submit">Submit</Button>
-        </Form.Item>
+        <FormItem>
+          <Tooltip type={isError && 'error'} placement="right" title={error}>
+            <Button
+              icon={isError ? 'warning' : 'message'}
+              type={isError ? 'error' : 'default'}
+              disabled={empty && !touched}
+              loading={broadcasting}
+              htmlType="submit"
+              size="small"
+            >
+              {isError ? 'Error' : 'Submit'}
+            </Button>
+          </Tooltip>
+        </FormItem>
       </Form>
     );
   }
 }
 
-const ReplyBox = ({
-  username,
-  isAuthenticated,
-  broadcasting,
-  form,
-  submitComment,
-  parentAuthor,
-  parentPermlink,
-  parentId,
-  toggleReplyBox,
-}) => {
-  if (isAuthenticated) {
-    return (<Card.Meta
-      style={{ padding: '20px 0 10px 0' }}
-      avatar={<div className="Comment__avatar" style={{ backgroundImage: `url(https://steemitimages.com/u/${username}/avatar/large)` }} />}
-      title={<Link to={`/@${username}`}>{username}</Link>}
+/*
+<StyledReplyBox
+      avatar={<Link to={`/@${username}`}><div className="Comment__avatar" style={{ backgroundImage: `url(https://steemitimages.com/u/${username}/avatar/large)` }} /></Link>}
       description={<ReplyInput
         form={form}
         broadcasting={broadcasting}
@@ -90,13 +103,41 @@ const ReplyBox = ({
         parentId={parentId}
         toggleReplyBox={toggleReplyBox}
       />}
-    />);
+    />
+    */
+
+const ReplyBox = ({
+  isAuthenticated,
+  broadcasting,
+  form,
+  submitComment,
+  parentAuthor,
+  parentPermlink,
+  parentId,
+  toggleReplyBox,
+  root,
+}) => {
+  if (isAuthenticated) {
+    return (
+      <StyledReplyBox root={root}>
+        <p style={{ color: '#bebedb', fontWeight: 'bold', marginBottom: 5 }}><Icon type="rollback" style={{ marginRight: 5 }} />Reply {parentAuthor} </p>
+        <ReplyInput
+          form={form}
+          broadcasting={broadcasting}
+          submitComment={submitComment}
+          parentAuthor={parentAuthor}
+          parentPermlink={parentPermlink}
+          parentId={parentId}
+          toggleReplyBox={toggleReplyBox}
+          root={root}
+        />
+      </StyledReplyBox>
+    );
   }
   return null;
 };
 
 ReplyBox.propTypes = {
-  username: PropTypes.string.isRequired,
   isAuthenticated: PropTypes.bool.isRequired,
   broadcasting: PropTypes.bool.isRequired,
   form: PropTypes.shape().isRequired,
@@ -105,6 +146,7 @@ ReplyBox.propTypes = {
   parentPermlink: PropTypes.string.isRequired,
   parentId: PropTypes.number.isRequired,
   toggleReplyBox: PropTypes.func,
+  root: PropTypes.bool,
 };
 
 ReplyInput.propTypes = {
@@ -115,14 +157,17 @@ ReplyInput.propTypes = {
   parentPermlink: PropTypes.string.isRequired,
   parentId: PropTypes.number.isRequired,
   toggleReplyBox: PropTypes.func,
+  root: PropTypes.bool,
 };
 
 ReplyInput.defaultProps = {
   toggleReplyBox: () => null,
+  root: false,
 };
 
 ReplyBox.defaultProps = {
   toggleReplyBox: () => null,
+  root: false,
 };
 
 const mapStateToProps = (state, ownProps) => ({
