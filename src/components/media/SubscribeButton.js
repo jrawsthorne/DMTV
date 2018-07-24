@@ -2,8 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import { Button } from 'antd';
+import { Button } from '../../styles/theme';
 import { subscribeChange } from '../../actions/mediaActions';
+
+const StyledSubscribeButton = Button.extend`
+  width: 100%;
+`;
 
 class SubscribeButton extends React.Component {
   handleSubscribeChange = () => {
@@ -23,9 +27,9 @@ class SubscribeButton extends React.Component {
     }
     const buttonText = subscribed ? 'Unsubscribe' : 'Subscribe';
     return (
-      <Button disabled={fetching} onClick={this.handleSubscribeChange}>
+      <StyledSubscribeButton icon={subscribed ? 'minus-square-o' : 'plus-square-o'} type={subscribed ? 'attention' : 'default'} loading={pendingSubscription} disabled={fetching && !pendingSubscription} onClick={this.handleSubscribeChange}>
         {buttonText}
-      </Button>
+      </StyledSubscribeButton>
     );
   }
 }
