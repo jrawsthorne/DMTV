@@ -10,6 +10,8 @@ import thunk from 'redux-thunk';
 import Cookie from 'js-cookie';
 import { ConnectedRouter, connectRouter, routerMiddleware } from 'connected-react-router';
 import promiseMiddleware from 'redux-promise-middleware';
+import { ThemeProvider } from 'styled-components';
+import theme from './styles/theme';
 import { mountResponsive } from './vendor/responsive';
 import errorMiddleware from './errorMiddleware';
 import theMovieDBAPI from './apis/theMovieDBAPI';
@@ -51,9 +53,11 @@ mountResponsive(store);
 
 ReactDOM.render(
   <Provider store={store}>
-    <ConnectedRouter history={history}>
-      <Switch>{renderRoutes(routes)}</Switch>
-    </ConnectedRouter>
+    <ThemeProvider theme={theme}>
+      <ConnectedRouter history={history}>
+        <Switch>{renderRoutes(routes)}</Switch>
+      </ConnectedRouter>
+    </ThemeProvider>
   </Provider>
   , document.getElementById('root'),
 );
