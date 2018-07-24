@@ -48,12 +48,25 @@ CardLoading.defaultProps = {
   className: null,
 };
 
-export const PostPreviewLoading = styled(CardLoading)`
+export const PostPreviewLoadingContainer = styled.div`
   width: 100%;
   padding: 10px;
   @media (min-width: 768px) {
     width: 50%;
   }
 `;
+
+export const PreviewLoading = styled(CardLoading)`
+  background: #fff;
+  box-shadow: 0 0 41px 0 #e0e0e3, 0 0 0 0 #babdce;
+  border-radius: 4px;
+  height: 100%;
+`;
+
+export const PostPreviewLoading = () => (
+  <PostPreviewLoadingContainer>
+    <PreviewLoading />
+  </PostPreviewLoadingContainer>
+);
 
 export default CardLoading;
